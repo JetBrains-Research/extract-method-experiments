@@ -293,9 +293,9 @@ public class FalseDatasetCreator {
         int fragmentLocs = locsString(fragment);
         MembersSets members = new MemberSetsGenerator().instanceMembers(root);
 
-        int totalConnectivity = ConnectivityCalculator.calcConnectivity(fragment, members.total, md.getName());
-        int methodConnectivity = ConnectivityCalculator.calcConnectivity(fragment, members.methods, md.getName());
-        int fieldsConnectivity = ConnectivityCalculator.calcConnectivity(fragment, members.fields, null);
+        int totalConnectivity = CouplingCalculator.calcConnectivity(fragment, members.total);
+        int methodConnectivity = CouplingCalculator.calcConnectivity(fragment, members.methods);
+        int fieldsConnectivity = CouplingCalculator.calcConnectivity(fragment, members.fields);
 
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivity, fieldsConnectivity));
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivityPerLine, (double)fieldsConnectivity / fragmentLocs));

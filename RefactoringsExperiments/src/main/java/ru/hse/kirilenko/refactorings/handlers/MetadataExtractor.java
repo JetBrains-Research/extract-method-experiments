@@ -15,7 +15,7 @@ import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
 import ru.hse.kirilenko.refactorings.csv.models.Feature;
 import ru.hse.kirilenko.refactorings.utils.*;
-import ru.hse.kirilenko.refactorings.utils.calcers.ConnectivityCalculator;
+import ru.hse.kirilenko.refactorings.utils.calcers.CouplingCalculator;
 import ru.hse.kirilenko.refactorings.utils.calcers.KeywordsCalculator;
 import ru.hse.kirilenko.refactorings.utils.calcers.MemberSetsGenerator;
 import ru.hse.kirilenko.refactorings.utils.calcers.MembersSets;
@@ -141,9 +141,9 @@ public class MetadataExtractor {
                 MethodDeclaration md = (MethodDeclaration)cur;
                 MethodDataExtractor.extractParamsCount(md, out);
                 MethodDataExtractor.isVoidMethod(md, out);
-                int totalConnectivity = ConnectivityCalculator.calcConnectivity(fragment, instanceMembers.total, md.getName());
-                int methodConnectivity = ConnectivityCalculator.calcConnectivity(fragment, instanceMembers.methods, md.getName());
-                int fieldsConnectivity = ConnectivityCalculator.calcConnectivity(fragment, instanceMembers.fields, null);
+                int totalConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.total);
+                int methodConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.methods);
+                int fieldsConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.fields);
 
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivity, totalConnectivity));
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivityPerLine, (double)totalConnectivity / (er - fr + 1)));

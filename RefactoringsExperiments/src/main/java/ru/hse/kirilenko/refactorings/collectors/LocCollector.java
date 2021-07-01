@@ -1,10 +1,12 @@
 package ru.hse.kirilenko.refactorings.collectors;
 
+/*
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.GridPane;
+*/
 
 import java.util.HashMap;
 

@@ -1,8 +1,8 @@
 package ru.hse.kirilenko.refactorings;
 
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+//import javafx.application.Platform;
+//import javafx.scene.control.Label;
+//import javafx.scene.control.ProgressBar;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -26,7 +26,7 @@ public class RefactoringsExtractor {
         this.repoName = repoName;
     }
 
-    public void run(ProgressBar bar, Label repoL, Label totalRefactoringsCount) throws Exception {
+    public void run() throws Exception {
         GitService gitService = new GitServiceImpl();
         GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
 
@@ -43,12 +43,8 @@ public class RefactoringsExtractor {
             this.total = count;
         }
 
-        Platform.runLater(() -> {
-            bar.setProgress((double)current / total);
-            repoL.setText(current + "/" + total);
-        });
 
-        miner.detectAll(repo, "master", new CustomRefactoringHandler(out, repoURL, repoName, me, total, bar, repoL, totalRefactoringsCount));
+        miner.detectAll(repo, "master", new CustomRefactoringHandler(out, repoURL, repoName, me, total/*, bar, repoL, totalRefactoringsCount*/));
         out.close();
     }
 }

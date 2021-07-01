@@ -3,9 +3,9 @@ package ru.hse.kirilenko.refactorings.handlers;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+//import javafx.application.Platform;
+//import javafx.scene.control.Label;
+//import javafx.scene.control.ProgressBar;
 import org.apache.commons.lang3.StringUtils;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
@@ -30,26 +30,26 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final MetadataExtractor metadataExtractor;
     private int current = 0;
     private int total;
-    private ProgressBar bar;
-    private Label repoL;
-    private Label totalRefactoringsCount;
+//    private ProgressBar bar;
+//    private Label repoL;
+//    private Label totalRefactoringsCount;
 
     public CustomRefactoringHandler(final PrintWriter out,
                                     final String repoURL,
                                     final String repoName,
                                     final MetadataExtractor metadataExtractor,
-                                    int total,
-                                    final ProgressBar bar,
+                                    int total
+                                    /*,final ProgressBar bar,
                                     final Label repoL,
-                                    final Label totalRefactoringsCount) {
+                                    final Label totalRefactoringsCount*/) {
         this.out = out;
         this.repoURL = repoURL;
         this.repoName = repoName;
         this.metadataExtractor = metadataExtractor;
         this.total = total;
-        this.totalRefactoringsCount = totalRefactoringsCount;
-        this.bar = bar;
-        this.repoL = repoL;
+//        this.totalRefactoringsCount = totalRefactoringsCount;
+//        this.bar = bar;
+//        this.repoL = repoL;
     }
 
     @Override
@@ -59,11 +59,11 @@ public class CustomRefactoringHandler extends RefactoringHandler {
 
     public void handle(String commitId, List<Refactoring> refactorings) {
         current++;
-        Platform.runLater(() -> {
-            bar.setProgress((double)current / total);
-            repoL.setText(current + "/" + total);
-        });
-        handleCommit(commitId, refactorings, out, totalRefactoringsCount);
+//        Platform.runLater(() -> {
+//            bar.setProgress((double)current / total);
+//            repoL.setText(current + "/" + total);
+//        });
+        handleCommit(commitId, refactorings, out);
     }
 
     public void handleException(String commitId, Exception e) {
@@ -75,20 +75,21 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         printLn(String.valueOf(errorCommitsCount), out);
     }
 
-    private void handleCommit(String commitId, List<Refactoring> refactorings, PrintWriter pw, Label l) {
+    private void handleCommit(String commitId, List<Refactoring> refactorings, PrintWriter pw) {
         boolean hasExtractMethod = false;
         for (Refactoring ref : refactorings) {
             if (ref.getRefactoringType() == RefactoringType.EXTRACT_OPERATION) {
                 hasExtractMethod = true;
-                Platform.runLater(() -> {
-                    int curCount = Integer.parseInt(l.getText()) + 1;
-                    l.setText(Integer.toString(curCount));
-                });
+//                Platform.runLater(() -> {
+//                    int curCount = Integer.parseInt(l.getText()) + 1;
+//                    l.setText(Integer.toString(curCount));
+//                });
             }
         }
 
-        String commonURL = repoURL.substring(0, repoURL.length() - 4) + "/commit/" + commitId;
-        String blobURL = repoURL.substring(0, repoURL.length() - 4) + "/blob/" + commitId;
+        String substring = repoURL.substring(0, repoURL.length() - 4);
+        String commonURL = substring + "/commit/" + commitId;
+        String blobURL = substring + "/blob/" + commitId;
 
         if (hasExtractMethod) {
             System.err.println("COMMIT ID: " + commitId);

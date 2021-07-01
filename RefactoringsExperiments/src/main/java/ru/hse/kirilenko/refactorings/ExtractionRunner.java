@@ -1,8 +1,8 @@
 package ru.hse.kirilenko.refactorings;
 
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+//import javafx.application.Platform;
+//import javafx.scene.control.Label;
+//import javafx.scene.control.ProgressBar;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -19,17 +19,13 @@ public class ExtractionRunner {
         this.repos = repos;
     }
 
-    public void run(ProgressBar allBar, ProgressBar bar, Label all, Label repoL, Label totalRefactoringsCount) {
+    public void run() {
         total = 0;
         current = 0;
         total = Math.max(repos.size(), 1);
 
         for (String repo: repos) {
             current++;
-            Platform.runLater(() -> {
-                allBar.setProgress((double)current / total);
-                all.setText(current + "/" + total);
-            });
             String url = "https://github.com/" + repo + ".git";
             String pathToResult = repo;
             if (ExtractionConfig.noSubfolders) {
@@ -44,7 +40,7 @@ public class ExtractionRunner {
                 System.out.println("Run repo with URL: " + url);
                 final PrintWriter printWriter = new PrintWriter(fileWriter);
                 RefactoringsExtractor extractor = new RefactoringsExtractor(printWriter, url, repo);
-                extractor.run(bar, repoL, totalRefactoringsCount);
+                extractor.run();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

@@ -1,8 +1,7 @@
 package ru.hse.kirilenko.refactorings;
-
-//import javafx.application.Platform;
-//import javafx.scene.control.Label;
-//import javafx.scene.control.ProgressBar;
+/*import javafx.application.Platform;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;*/
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;

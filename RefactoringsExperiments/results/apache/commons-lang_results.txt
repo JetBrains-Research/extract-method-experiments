@@ -1,0 +1,3254 @@
+COMMIT ID: 8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2
+URL: https://github.com/apache/commons-lang/commit/8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2
+DESCRIPTION: Extract Method	public newInstance(type Class<T>, length int) : T[] extracted from public addAll(array1 T[], array2 T...) : T[] in class org.apache.commons.lang3.ArrayUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2/src/main/java/org/apache/commons/lang3/ArrayUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2/src/main/java/org/apache/commons/lang3/ArrayUtils.java#L4217
+DIRECTLY EXTRACTED OPERATION:
+     * Delegates to {@link Array#newInstance(Class,int)} using generics.
+     *
+     * @param <T> The array type.
+     * @param type The array class.
+     * @param length the array length
+     * @return The new array.
+     * @since 3.13.0
+     */
+    @SuppressWarnings("unchecked") // OK, because array and values are of type T
+    public static <T> T[] newInstance(final Class<T> type, final int length) {
+        return (T[]) Array.newInstance(type, length);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 468
+FRAGMENT LINE AVG SIZE: 36.0
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 13
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 13
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public newInstance(type Class<T>, length int) : T[] extracted from public subarray(array T[], startIndexInclusive int, endIndexExclusive int) : T[] in class org.apache.commons.lang3.ArrayUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2/src/main/java/org/apache/commons/lang3/ArrayUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2/src/main/java/org/apache/commons/lang3/ArrayUtils.java#L4217
+DIRECTLY EXTRACTED OPERATION:
+     * Delegates to {@link Array#newInstance(Class,int)} using generics.
+     *
+     * @param <T> The array type.
+     * @param type The array class.
+     * @param length the array length
+     * @return The new array.
+     * @since 3.13.0
+     */
+    @SuppressWarnings("unchecked") // OK, because array and values are of type T
+    public static <T> T[] newInstance(final Class<T> type, final int length) {
+        return (T[]) Array.newInstance(type, length);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 468
+FRAGMENT LINE AVG SIZE: 36.0
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 13
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 13
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public newInstance(type Class<T>, length int) : T[] extracted from public subarray(array T[], startIndexInclusive int, endIndexExclusive int) : T[] in class org.apache.commons.lang3.ArrayUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2/src/main/java/org/apache/commons/lang3/ArrayUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/8ae6a3925ab3bcfa0450b9aa92f4d00693b4c8d2/src/main/java/org/apache/commons/lang3/ArrayUtils.java#L4217
+DIRECTLY EXTRACTED OPERATION:
+     * Delegates to {@link Array#newInstance(Class,int)} using generics.
+     *
+     * @param <T> The array type.
+     * @param type The array class.
+     * @param length the array length
+     * @return The new array.
+     * @since 3.13.0
+     */
+    @SuppressWarnings("unchecked") // OK, because array and values are of type T
+    public static <T> T[] newInstance(final Class<T> type, final int length) {
+        return (T[]) Array.newInstance(type, length);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 468
+FRAGMENT LINE AVG SIZE: 36.0
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 13
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 13
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 79eb89e351ef350707d082f3713e4b9fd3a81aeb
+URL: https://github.com/apache/commons-lang/commit/79eb89e351ef350707d082f3713e4b9fd3a81aeb
+DESCRIPTION: Extract Method	public getFirstEnumIgnoreCase(enumClass Class<E>, enumName String, stringFunction Function<E,String>, defaultEnum E) : E extracted from public getEnumIgnoreCase(enumClass Class<E>, enumName String, defaultEnum E) : E in class org.apache.commons.lang3.EnumUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/79eb89e351ef350707d082f3713e4b9fd3a81aeb/src/main/java/org/apache/commons/lang3/EnumUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/79eb89e351ef350707d082f3713e4b9fd3a81aeb/src/main/java/org/apache/commons/lang3/EnumUtils.java#L261
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Gets the enum for the class, returning {@code defaultEnum} if not found.</p>
+     *
+     * <p>This method differs from {@link Enum#valueOf} in that it does not throw an exception
+     * for an invalid enum name and performs case insensitive matching of the name.</p>
+     *
+     * @param <E>         the type of the enumeration
+     * @param enumClass   the class of the enum to query, not null
+     * @param enumName    the enum name, null returns default enum
+     * @param stringFunction the function that gets the string for an enum for comparison to {@code enumName}.
+     * @param defaultEnum the default enum
+     * @return the enum, default enum if not found
+     * @since 3.13.0
+     */
+    public static <E extends Enum<E>> E getFirstEnumIgnoreCase(final Class<E> enumClass, final String enumName,
+        final Function<E, String> stringFunction, final E defaultEnum) {
+        if (enumName == null || !enumClass.isEnum()) {
+            return defaultEnum;
+        }
+        for (final E each : enumClass.getEnumConstants()) {
+            if (enumName.equalsIgnoreCase(stringFunction.apply(each))) {
+                return each;
+            }
+        }
+        return defaultEnum;
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1209
+FRAGMENT LINE AVG SIZE: 46.5
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 3 4 3 2 2 1 1 
+AREA: 39
+AVG DEPTH: 1.5
+NUMBER OF LINES IN FRAGMENT: 26
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: a2b2b35ac3b969686c647e57f5ca3bacc63f2c56
+URL: https://github.com/apache/commons-lang/commit/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56
+DESCRIPTION: Extract Method	private isZero(mant String, dec String) : boolean extracted from public createNumber(str String) : Number in class org.apache.commons.lang3.math.NumberUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L852
+DIRECTLY EXTRACTED OPERATION:
+     * Utility method for {@link #createNumber(java.lang.String)}.
+     *
+     * <p>This will check if the magnitude of the number is zero by checking if there
+     * are only zeros before and after the decimal place.</p>
+     *
+     * <p>Note: It is <strong>assumed</strong> that the input string has been converted
+     * to either a Float or Double with a value of zero when this method is called.
+     * This eliminates invalid input for example {@code ".", ".D", ".e0"}.</p>
+     *
+     * <p>Thus the method only requires checking if both arguments are null, empty or
+     * contain only zeros.</p>
+     *
+     * <p>Given {@code s = mant + "." + dec}:</p>
+     * <ul>
+     * <li>{@code true} if s is {@code "0.0"}
+     * <li>{@code true} if s is {@code "0."}
+     * <li>{@code true} if s is {@code ".0"}
+     * <li>{@code false} otherwise (this assumes {@code "."} is not possible)
+     * </ul>
+     *
+     * @param mant the mantissa decimal digits before the decimal point (sign must be removed; never null)
+     * @param dec the decimal digits after the decimal point (exponent and type specifier removed;
+     *            can be null)
+     * @return true if the magnitude is zero
+     */
+    private static boolean isZero(final String mant, String dec) {
+        return isAllZeros(mant) && isAllZeros(dec);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1323
+FRAGMENT LINE AVG SIZE: 45.62068965517241
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 29
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 29
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private isZero(mant String, dec String) : boolean extracted from public createNumber(str String) : Number in class org.apache.commons.lang3.math.NumberUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L852
+DIRECTLY EXTRACTED OPERATION:
+     * Utility method for {@link #createNumber(java.lang.String)}.
+     *
+     * <p>This will check if the magnitude of the number is zero by checking if there
+     * are only zeros before and after the decimal place.</p>
+     *
+     * <p>Note: It is <strong>assumed</strong> that the input string has been converted
+     * to either a Float or Double with a value of zero when this method is called.
+     * This eliminates invalid input for example {@code ".", ".D", ".e0"}.</p>
+     *
+     * <p>Thus the method only requires checking if both arguments are null, empty or
+     * contain only zeros.</p>
+     *
+     * <p>Given {@code s = mant + "." + dec}:</p>
+     * <ul>
+     * <li>{@code true} if s is {@code "0.0"}
+     * <li>{@code true} if s is {@code "0."}
+     * <li>{@code true} if s is {@code ".0"}
+     * <li>{@code false} otherwise (this assumes {@code "."} is not possible)
+     * </ul>
+     *
+     * @param mant the mantissa decimal digits before the decimal point (sign must be removed; never null)
+     * @param dec the decimal digits after the decimal point (exponent and type specifier removed;
+     *            can be null)
+     * @return true if the magnitude is zero
+     */
+    private static boolean isZero(final String mant, String dec) {
+        return isAllZeros(mant) && isAllZeros(dec);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1323
+FRAGMENT LINE AVG SIZE: 45.62068965517241
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 29
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 29
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private isZero(mant String, dec String) : boolean extracted from public createNumber(str String) : Number in class org.apache.commons.lang3.math.NumberUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L852
+DIRECTLY EXTRACTED OPERATION:
+     * Utility method for {@link #createNumber(java.lang.String)}.
+     *
+     * <p>This will check if the magnitude of the number is zero by checking if there
+     * are only zeros before and after the decimal place.</p>
+     *
+     * <p>Note: It is <strong>assumed</strong> that the input string has been converted
+     * to either a Float or Double with a value of zero when this method is called.
+     * This eliminates invalid input for example {@code ".", ".D", ".e0"}.</p>
+     *
+     * <p>Thus the method only requires checking if both arguments are null, empty or
+     * contain only zeros.</p>
+     *
+     * <p>Given {@code s = mant + "." + dec}:</p>
+     * <ul>
+     * <li>{@code true} if s is {@code "0.0"}
+     * <li>{@code true} if s is {@code "0."}
+     * <li>{@code true} if s is {@code ".0"}
+     * <li>{@code false} otherwise (this assumes {@code "."} is not possible)
+     * </ul>
+     *
+     * @param mant the mantissa decimal digits before the decimal point (sign must be removed; never null)
+     * @param dec the decimal digits after the decimal point (exponent and type specifier removed;
+     *            can be null)
+     * @return true if the magnitude is zero
+     */
+    private static boolean isZero(final String mant, String dec) {
+        return isAllZeros(mant) && isAllZeros(dec);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1323
+FRAGMENT LINE AVG SIZE: 45.62068965517241
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 29
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 29
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private isZero(mant String, dec String) : boolean extracted from public createNumber(str String) : Number in class org.apache.commons.lang3.math.NumberUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/a2b2b35ac3b969686c647e57f5ca3bacc63f2c56/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L852
+DIRECTLY EXTRACTED OPERATION:
+     * Utility method for {@link #createNumber(java.lang.String)}.
+     *
+     * <p>This will check if the magnitude of the number is zero by checking if there
+     * are only zeros before and after the decimal place.</p>
+     *
+     * <p>Note: It is <strong>assumed</strong> that the input string has been converted
+     * to either a Float or Double with a value of zero when this method is called.
+     * This eliminates invalid input for example {@code ".", ".D", ".e0"}.</p>
+     *
+     * <p>Thus the method only requires checking if both arguments are null, empty or
+     * contain only zeros.</p>
+     *
+     * <p>Given {@code s = mant + "." + dec}:</p>
+     * <ul>
+     * <li>{@code true} if s is {@code "0.0"}
+     * <li>{@code true} if s is {@code "0."}
+     * <li>{@code true} if s is {@code ".0"}
+     * <li>{@code false} otherwise (this assumes {@code "."} is not possible)
+     * </ul>
+     *
+     * @param mant the mantissa decimal digits before the decimal point (sign must be removed; never null)
+     * @param dec the decimal digits after the decimal point (exponent and type specifier removed;
+     *            can be null)
+     * @return true if the magnitude is zero
+     */
+    private static boolean isZero(final String mant, String dec) {
+        return isAllZeros(mant) && isAllZeros(dec);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1323
+FRAGMENT LINE AVG SIZE: 45.62068965517241
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 29
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 29
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: dddd8c4e26f1d254c55749e4b44ae7c6cce5001d
+URL: https://github.com/apache/commons-lang/commit/dddd8c4e26f1d254c55749e4b44ae7c6cce5001d
+DESCRIPTION: Extract Method	public isNotEmpty() : boolean extracted from public appendSeparator(separator char) : StrBuilder in class org.apache.commons.lang3.text.StrBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/dddd8c4e26f1d254c55749e4b44ae7c6cce5001d/src/main/java/org/apache/commons/lang3/text/StrBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/dddd8c4e26f1d254c55749e4b44ae7c6cce5001d/src/main/java/org/apache/commons/lang3/text/StrBuilder.java#L285
+DIRECTLY EXTRACTED OPERATION:
+     * Checks is the string builder is not empty (convenience Collections API style method).
+     * <p>
+     * This method is the same as checking {@link #length()} and is provided to match the
+     * API of Collections.
+     *
+     * @return {@code true} if the size is greater than {@code 0}.
+     * @since 3.12
+     */
+    public boolean isNotEmpty() {
+        return size > 0;
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 388
+FRAGMENT LINE AVG SIZE: 32.333333333333336
+DEPTHS:
+0 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 12
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 12
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public isNotEmpty() : boolean extracted from public appendSeparator(standard char, defaultIfEmpty char) : StrBuilder in class org.apache.commons.lang3.text.StrBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/dddd8c4e26f1d254c55749e4b44ae7c6cce5001d/src/main/java/org/apache/commons/lang3/text/StrBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/dddd8c4e26f1d254c55749e4b44ae7c6cce5001d/src/main/java/org/apache/commons/lang3/text/StrBuilder.java#L285
+DIRECTLY EXTRACTED OPERATION:
+     * Checks is the string builder is not empty (convenience Collections API style method).
+     * <p>
+     * This method is the same as checking {@link #length()} and is provided to match the
+     * API of Collections.
+     *
+     * @return {@code true} if the size is greater than {@code 0}.
+     * @since 3.12
+     */
+    public boolean isNotEmpty() {
+        return size > 0;
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 388
+FRAGMENT LINE AVG SIZE: 32.333333333333336
+DEPTHS:
+0 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 12
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 12
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 2a8356cd433ccbe3338c823ad7c61b6f895cccf2
+URL: https://github.com/apache/commons-lang/commit/2a8356cd433ccbe3338c823ad7c61b6f895cccf2
+DESCRIPTION: Extract Method	private toStringOrEmpty(obj Object) : String extracted from public join(iterator Iterator<?>, separator char) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/2a8356cd433ccbe3338c823ad7c61b6f895cccf2/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/2a8356cd433ccbe3338c823ad7c61b6f895cccf2/src/main/java/org/apache/commons/lang3/StringUtils.java#L9051
+DIRECTLY EXTRACTED OPERATION:
+        return Objects.toString(obj, EMPTY);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 52
+FRAGMENT LINE AVG SIZE: 17.333333333333332
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: c9722131d50de2a78aaf79a222fa5135431b9a73
+URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testLang315() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testLang315() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSimple() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSimpleGet() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSplit() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSplit() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSplit() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSuspend() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSuspend() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testStopWatchSuspend() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testToSplitString() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testToSplitStringWithMessage() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testToString() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private sleepQuietly(millis int) : void extracted from public testToStringWithMessage() : void in class org.apache.commons.lang3.time.StopWatchTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c9722131d50de2a78aaf79a222fa5135431b9a73/src/test/java/org/apache/commons/lang3/time/StopWatchTest.java#L72
+DIRECTLY EXTRACTED OPERATION:
+        try {
+            Thread.sleep(millis);
+        } catch (final InterruptedException ex) {
+            // ignore
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 137
+FRAGMENT LINE AVG SIZE: 19.571428571428573
+DEPTHS:
+2 3 3 3 2 1 1 
+AREA: 15
+AVG DEPTH: 2.142857142857143
+NUMBER OF LINES IN FRAGMENT: 7
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 93d520a3e1781d99f99711df7016f474b36fbf82
+URL: https://github.com/apache/commons-lang/commit/93d520a3e1781d99f99711df7016f474b36fbf82
+DESCRIPTION: Extract Method	private containsAny(test ToBooleanBiFunction<CharSequence,CharSequence>, cs CharSequence, searchCharSequences CharSequence...) : boolean extracted from public containsAny(cs CharSequence, searchCharSequences CharSequence...) : boolean in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/93d520a3e1781d99f99711df7016f474b36fbf82/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/93d520a3e1781d99f99711df7016f474b36fbf82/src/main/java/org/apache/commons/lang3/StringUtils.java#L1182
+DIRECTLY EXTRACTED OPERATION:
+     * <p>
+     * Checks if the CharSequence contains any of the CharSequences in the given array.
+     * </p>
+     *
+     * <p>
+     * A {@code null} {@code cs} CharSequence will return {@code false}. A {@code null} or zero length search array will
+     * return {@code false}.
+     * </p>
+     *
+     * @param cs The CharSequence to check, may be null
+     * @param searchCharSequences The array of CharSequences to search for, may be null. Individual CharSequences may be
+     *        null as well.
+     * @return {@code true} if any of the search CharSequences are found, {@code false} otherwise
+     * @since 3.12
+     */
+    private static boolean containsAny(final ToBooleanBiFunction<CharSequence, CharSequence> test,
+        final CharSequence cs, final CharSequence... searchCharSequences) {
+        if (isEmpty(cs) || ArrayUtils.isEmpty(searchCharSequences)) {
+            return false;
+        }
+        for (final CharSequence searchCharSequence : searchCharSequences) {
+            if (test.applyAsBoolean(cs, searchCharSequence)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+PARAMS COUNT: 3
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1130
+FRAGMENT LINE AVG SIZE: 40.357142857142854
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 3 4 3 2 2 1 1 
+AREA: 41
+AVG DEPTH: 1.4642857142857142
+NUMBER OF LINES IN FRAGMENT: 28
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: dd5d284e86cc83b1ef8088fa8cba383d95957850
+URL: https://github.com/apache/commons-lang/commit/dd5d284e86cc83b1ef8088fa8cba383d95957850
+DESCRIPTION: Extract Method	private testSingleLocale(locale Locale) : void extracted from public java15BuggyLocaleTest() : void in class org.apache.commons.lang3.time.FastDateParserTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/dd5d284e86cc83b1ef8088fa8cba383d95957850/src/test/java/org/apache/commons/lang3/time/FastDateParserTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/dd5d284e86cc83b1ef8088fa8cba383d95957850/src/test/java/org/apache/commons/lang3/time/FastDateParserTest.java#L734
+DIRECTLY EXTRACTED OPERATION:
+        final Calendar cal = Calendar.getInstance(GMT);
+        cal.clear();
+        cal.set(2003, Calendar.FEBRUARY, 10);
+        final SimpleDateFormat sdf = new SimpleDateFormat(LONG_FORMAT, locale);
+        final String formattedDate = sdf.format(cal.getTime());
+        sdf.parse(formattedDate);
+        sdf.parse(formattedDate.toUpperCase(locale));
+        sdf.parse(formattedDate.toLowerCase(locale));
+    }
+}
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 417
+FRAGMENT LINE AVG SIZE: 41.7
+DEPTHS:
+1 2 2 2 2 2 2 2 1 0 
+AREA: 16
+AVG DEPTH: 1.6
+NUMBER OF LINES IN FRAGMENT: 10
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 1dddec8ba867bc31233ba194f0753ea35818cbfd
+URL: https://github.com/apache/commons-lang/commit/1dddec8ba867bc31233ba194f0753ea35818cbfd
+DESCRIPTION: Extract Method	protected appendDetail(buffer StringBuffer, fieldName String, i int, item Object) : void extracted from protected appendDetail(buffer StringBuffer, fieldName String, array Object[]) : void in class org.apache.commons.lang3.builder.ToStringStyle
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/1dddec8ba867bc31233ba194f0753ea35818cbfd/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/1dddec8ba867bc31233ba194f0753ea35818cbfd/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java#L937
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Append to the {@code toString} the detail of an
+     * {@code Object} array item.</p>
+     *
+     * @param buffer  the {@code StringBuffer} to populate
+     * @param fieldName  the field name, typically not used as already appended
+     * @param i the array item index to add
+     * @param item the array item to add
+     * @since 3.11
+     */
+    protected void appendDetail(final StringBuffer buffer, final String fieldName, int i, final Object item) {
+        if (i > 0) {
+            buffer.append(arraySeparator);
+        }
+        if (item == null) {
+            appendNullText(buffer, fieldName);
+        } else {
+            appendInternal(buffer, fieldName, item, arrayContentDetail);
+        }
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: true
+FRAGMENT LENGTH: 721
+FRAGMENT LINE AVG SIZE: 36.05
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 2 3 2 2 3 3 3 2 1 1 
+AREA: 31
+AVG DEPTH: 1.55
+NUMBER OF LINES IN FRAGMENT: 20
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	protected appendDetail(buffer StringBuffer, fieldName String, i int, item Object) : void extracted from protected reflectionAppendArrayDetail(buffer StringBuffer, fieldName String, array Object) : void in class org.apache.commons.lang3.builder.ToStringStyle
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/1dddec8ba867bc31233ba194f0753ea35818cbfd/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/1dddec8ba867bc31233ba194f0753ea35818cbfd/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java#L937
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Append to the {@code toString} the detail of an
+     * {@code Object} array item.</p>
+     *
+     * @param buffer  the {@code StringBuffer} to populate
+     * @param fieldName  the field name, typically not used as already appended
+     * @param i the array item index to add
+     * @param item the array item to add
+     * @since 3.11
+     */
+    protected void appendDetail(final StringBuffer buffer, final String fieldName, int i, final Object item) {
+        if (i > 0) {
+            buffer.append(arraySeparator);
+        }
+        if (item == null) {
+            appendNullText(buffer, fieldName);
+        } else {
+            appendInternal(buffer, fieldName, item, arrayContentDetail);
+        }
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: true
+FRAGMENT LENGTH: 721
+FRAGMENT LINE AVG SIZE: 36.05
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 2 3 2 2 3 3 3 2 1 1 
+AREA: 31
+AVG DEPTH: 1.55
+NUMBER OF LINES IN FRAGMENT: 20
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 3d4ed4a8ac63db1e51601ffc31fed44dccbb276c
+URL: https://github.com/apache/commons-lang/commit/3d4ed4a8ac63db1e51601ffc31fed44dccbb276c
+DESCRIPTION: Extract Method	private runTest(delay long, exclusiveLock boolean, runTimeCheck LongConsumer) : void extracted from package testReadLock() : void in class org.apache.commons.lang3.LocksTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/3d4ed4a8ac63db1e51601ffc31fed44dccbb276c/src/test/java/org/apache/commons/lang3/LocksTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/3d4ed4a8ac63db1e51601ffc31fed44dccbb276c/src/test/java/org/apache/commons/lang3/LocksTest.java#L47
+DIRECTLY EXTRACTED OPERATION:
+        final boolean[] booleanValues = new boolean[10];
+        final Lock<boolean[]> lock = Locks.lock(booleanValues);
+        final boolean[] runningValues = new boolean[10];
+
+        final long startTime = System.currentTimeMillis();
+        for (int i = 0;  i < booleanValues.length;  i++) {
+            final int index = i;
+            final FailableConsumer<boolean[], ?> consumer = (b) -> {
+                b[index] = false;
+                Thread.sleep(delay);
+                b[index] = true;
+                modify(runningValues, index, false);
+            };
+            final Thread t = new Thread(() -> {
+                if (exclusiveLock) {
+                    lock.runWriteLocked(consumer);
+                } else {
+                    lock.runReadLocked(consumer);
+                }
+            });
+            modify(runningValues, i, true);
+            t.start();
+        }
+        while (someValueIsTrue(runningValues)) {
+            Thread.sleep(100);
+        }
+        final long endTime = System.currentTimeMillis();
+        for (int i = 0;  i < booleanValues.length;  i++) {
+            assertTrue(booleanValues[i]);
+        }
+        runTimeCheck.accept(endTime-startTime);
+    }
+
+PARAMS COUNT: 3
+IS VOID METHOD: true
+FRAGMENT LENGTH: 1206
+FRAGMENT LINE AVG SIZE: 36.54545454545455
+DEPTHS:
+1 2 2 2 2 2 3 3 4 4 4 4 3 3 4 5 5 5 4 3 3 3 2 2 3 2 2 2 3 2 2 1 1 
+AREA: 93
+AVG DEPTH: 2.8181818181818183
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 4a934610e7d911df707a23ad338ab2e4aa14daa4
+URL: https://github.com/apache/commons-lang/commit/4a934610e7d911df707a23ad338ab2e4aa14daa4
+DESCRIPTION: Extract Method	public getEnum(enumClass Class<E>, enumName String, defaultEnum E) : E extracted from public getEnum(enumClass Class<E>, enumName String) : E in class org.apache.commons.lang3.EnumUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/4a934610e7d911df707a23ad338ab2e4aa14daa4/src/main/java/org/apache/commons/lang3/EnumUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/4a934610e7d911df707a23ad338ab2e4aa14daa4/src/main/java/org/apache/commons/lang3/EnumUtils.java#L125
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Gets the enum for the class, returning {@code defaultEnum} if not found.</p>
+     *
+     * <p>This method differs from {@link Enum#valueOf} in that it does not throw an exception
+     * for an invalid enum name.</p>
+     *
+     * @param <E> the type of the enumeration
+     * @param enumClass   the class of the enum to query, not null
+     * @param enumName    the enum name, null returns default enum
+     * @param defaultEnum the default enum
+     * @return the enum, default enum if not found
+     * @since 3.10
+     */
+    public static <E extends Enum<E>> E getEnum(final Class<E> enumClass, final String enumName, final E defaultEnum) {
+        if (enumName == null) {
+            return defaultEnum;
+        }
+        try {
+            return Enum.valueOf(enumClass, enumName);
+        } catch (final IllegalArgumentException ex) {
+            return defaultEnum;
+        }
+    }
+
+PARAMS COUNT: 3
+IS VOID METHOD: false
+FRAGMENT LENGTH: 899
+FRAGMENT LINE AVG SIZE: 39.08695652173913
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 3 3 3 2 1 1 
+AREA: 34
+AVG DEPTH: 1.4782608695652173
+NUMBER OF LINES IN FRAGMENT: 23
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public getEnumIgnoreCase(enumClass Class<E>, enumName String, defaultEnum E) : E extracted from public getEnumIgnoreCase(enumClass Class<E>, enumName String) : E in class org.apache.commons.lang3.EnumUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/4a934610e7d911df707a23ad338ab2e4aa14daa4/src/main/java/org/apache/commons/lang3/EnumUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/4a934610e7d911df707a23ad338ab2e4aa14daa4/src/main/java/org/apache/commons/lang3/EnumUtils.java#L165
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Gets the enum for the class, returning {@code defaultEnum} if not found.</p>
+     *
+     * <p>This method differs from {@link Enum#valueOf} in that it does not throw an exception
+     * for an invalid enum name and performs case insensitive matching of the name.</p>
+     *
+     * @param <E>         the type of the enumeration
+     * @param enumClass   the class of the enum to query, not null
+     * @param enumName    the enum name, null returns default enum
+     * @param defaultEnum the default enum
+     * @return the enum, default enum if not found
+     * @since 3.10
+     */
+    public static <E extends Enum<E>> E getEnumIgnoreCase(final Class<E> enumClass, final String enumName, final E defaultEnum) {
+        if (enumName == null || !enumClass.isEnum()) {
+            return defaultEnum;
+        }
+        for (final E each : enumClass.getEnumConstants()) {
+            if (each.name().equalsIgnoreCase(enumName)) {
+                return each;
+            }
+        }
+        return defaultEnum;
+    }
+
+PARAMS COUNT: 3
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1026
+FRAGMENT LINE AVG SIZE: 42.75
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 3 4 3 2 2 1 1 
+AREA: 37
+AVG DEPTH: 1.5416666666666667
+NUMBER OF LINES IN FRAGMENT: 24
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: bedae6950d43008929d9cd109c9e8fb163793bd7
+URL: https://github.com/apache/commons-lang/commit/bedae6950d43008929d9cd109c9e8fb163793bd7
+DESCRIPTION: Extract Method	private useFull(runAheadTarget int, source int, originalLength int, desiredLength int) : boolean extracted from public getAbbreviatedName(className String, len int) : String in class org.apache.commons.lang3.ClassUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/bedae6950d43008929d9cd109c9e8fb163793bd7/src/main/java/org/apache/commons/lang3/ClassUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/bedae6950d43008929d9cd109c9e8fb163793bd7/src/main/java/org/apache/commons/lang3/ClassUtils.java#L518
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Decides if the part that was just copied to its destination
+     * location in the work array can be kept as it was copied or must be
+     * abbreviated. It must be kept when the part is the last one, which
+     * is the simple name of the class. In this case the {@code source}
+     * index, from where the characters are copied points one position
+     * after the last character, a.k.a. {@code source ==
+     * originalLength}</p>
+     *
+     * <p>If the part is not the last one then it can be kept
+     * unabridged if the number of the characters copied so far plus
+     * the character that are to be copied is less than or equal to the
+     * desired length.</p>
+     *
+     * @param runAheadTarget the target index (where the characters were
+     *                       copied to) pointing after the last character
+     *                       copied when the current part was copied
+     * @param source         the source index (where the characters were
+     *                       copied from) pointing after the last
+     *                       character copied when the current part was
+     *                       copied
+     * @param originalLength the original length of the class full name,
+     *                       which is abbreviated
+     * @param desiredLength  the desired length of the abbreviated class
+     *                       name
+     * @return {@code true} if it can be kept in its original length
+     * {@code false} if the current part has to be abbreviated and
+     */
+    private static boolean useFull(final int runAheadTarget,
+                                   final int source,
+                                   final int originalLength,
+                                   final int desiredLength) {
+        return source >= originalLength ||
+            runAheadTarget + originalLength - source <= desiredLength;
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1883
+FRAGMENT LINE AVG SIZE: 53.8
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 1 1 
+AREA: 36
+AVG DEPTH: 1.0285714285714285
+NUMBER OF LINES IN FRAGMENT: 35
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: a32c188c32fd0c4a8149bcda524d704dd609da6e
+URL: https://github.com/apache/commons-lang/commit/a32c188c32fd0c4a8149bcda524d704dd609da6e
+DESCRIPTION: Extract Method	private throwOnOdd() : void extracted from package FailureOnOddInvocations() in class org.apache.commons.lang3.FunctionsTest.FailureOnOddInvocations
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/a32c188c32fd0c4a8149bcda524d704dd609da6e/src/test/java/org/apache/commons/lang3/FunctionsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/a32c188c32fd0c4a8149bcda524d704dd609da6e/src/test/java/org/apache/commons/lang3/FunctionsTest.java#L102
+DIRECTLY EXTRACTED OPERATION:
+            final int i = ++invocation;
+            if (i % 2 == 1) {
+                throw new SomeException("Odd Invocation: " + i);
+            }
+        }
+        static boolean failingBool() throws SomeException {
+IS VOID METHOD: true
+FRAGMENT LENGTH: 219
+FRAGMENT LINE AVG SIZE: 36.5
+DEPTHS:
+2 3 4 3 2 2 
+AREA: 16
+AVG DEPTH: 2.6666666666666665
+NUMBER OF LINES IN FRAGMENT: 6
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 5e7d64d6b2719afb1e5f4785d80d24ac5a19a782
+URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public isSameDay(date1 Date, date2 Date) : boolean in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public isSameDay(cal1 Calendar, cal2 Calendar) : boolean in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public isSameInstant(date1 Date, date2 Date) : boolean in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public isSameInstant(cal1 Calendar, cal2 Calendar) : boolean in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public isSameLocalTime(cal1 Calendar, cal2 Calendar) : boolean in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public round(date Calendar, field int) : Calendar in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public round(date Object, field int) : Date in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public truncate(date Calendar, field int) : Calendar in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public truncate(date Object, field int) : Date in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public ceiling(date Calendar, field int) : Calendar in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public ceiling(date Object, field int) : Date in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public iterator(focus Calendar, rangeStyle int) : Iterator<Calendar> in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from public iterator(focus Object, rangeStyle int) : Iterator<?> in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private nullDateIllegalArgumentException() : IllegalArgumentException extracted from private getFragment(calendar Calendar, fragment int, unit TimeUnit) : long in class org.apache.commons.lang3.time.DateUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5e7d64d6b2719afb1e5f4785d80d24ac5a19a782/src/main/java/org/apache/commons/lang3/time/DateUtils.java#L751
+DIRECTLY EXTRACTED OPERATION:
+        return new IllegalArgumentException("The date must not be null");
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 81
+FRAGMENT LINE AVG SIZE: 27.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 81ee0d062c888d8f8bcbc154cd7f0143710f458c
+URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array Object[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array long[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array int[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array byte[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array short[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array char[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array double[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array float[], separator char, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private newStringBuilder(noOfItems int) : StringBuilder extracted from public join(array Object[], separator String, startIndex int, endIndex int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/81ee0d062c888d8f8bcbc154cd7f0143710f458c/src/main/java/org/apache/commons/lang3/StringUtils.java#L2836
+DIRECTLY EXTRACTED OPERATION:
+        return new StringBuilder(noOfItems * 16);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 57
+FRAGMENT LINE AVG SIZE: 19.0
+DEPTHS:
+1 1 1 
+AREA: 3
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 3
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 8e8e78d849825696237b9f540f3e082a44b1e838
+URL: https://github.com/apache/commons-lang/commit/8e8e78d849825696237b9f540f3e082a44b1e838
+DESCRIPTION: Extract Method	public getSimpleName(cls Class<?>, valueIfNull String) : String extracted from public getSimpleName(cls Class<?>) : String in class org.apache.commons.lang3.ClassUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/8e8e78d849825696237b9f540f3e082a44b1e838/src/main/java/org/apache/commons/lang3/ClassUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/8e8e78d849825696237b9f540f3e082a44b1e838/src/main/java/org/apache/commons/lang3/ClassUtils.java#L255
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Null-safe version of <code>aClass.getSimpleName()</code></p>
+     *
+     * @param cls the class for which to get the simple name; may be null
+     * @param valueIfNull  the value to return if null
+     * @return the simple class name or {@code valueIfNull}
+     * @since 3.0
+     * @see Class#getSimpleName()
+     */
+    public static String getSimpleName(final Class<?> cls, String valueIfNull) {
+        return cls == null ? valueIfNull : cls.getSimpleName();
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 479
+FRAGMENT LINE AVG SIZE: 39.916666666666664
+DEPTHS:
+0 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 12
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 12
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 46007c151e4cd79891eed4d289ff372ba39d5b8c
+URL: https://github.com/apache/commons-lang/commit/46007c151e4cd79891eed4d289ff372ba39d5b8c
+DESCRIPTION: Extract Method	public getMethodsWithAnnotation(cls Class<?>, annotationCls Class<? extends Annotation>, searchSupers boolean, ignoreAccess boolean) : Method[] extracted from public getMethodsWithAnnotation(cls Class<?>, annotationCls Class<? extends Annotation>) : Method[] in class org.apache.commons.lang3.reflect.MethodUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/46007c151e4cd79891eed4d289ff372ba39d5b8c/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/46007c151e4cd79891eed4d289ff372ba39d5b8c/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java#L862
+DIRECTLY EXTRACTED OPERATION:
+     * Gets all methods of the given class that are annotated with the given annotation.
+     * @param cls
+     *            the {@link Class} to query
+     * @param annotationCls
+     *            the {@link java.lang.annotation.Annotation} that must be present on a method to be matched
+     * @param searchSupers
+     *            determines if also a lookup in the entire inheritance hierarchy of the given class should be performed
+     * @param ignoreAccess
+     *            determines if also non public methods should be considered
+     * @return an array of Methods (possibly empty).
+     * @throws IllegalArgumentException
+     *            if the class or annotation are {@code null}
+     * @since 3.6
+     */
+    public static Method[] getMethodsWithAnnotation(final Class<?> cls, final Class<? extends Annotation> annotationCls,
+                                                    boolean searchSupers, boolean ignoreAccess) {
+        final List<Method> annotatedMethodsList = getMethodsListWithAnnotation(cls, annotationCls, searchSupers,
+                ignoreAccess);
+        return annotatedMethodsList.toArray(new Method[annotatedMethodsList.size()]);
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1178
+FRAGMENT LINE AVG SIZE: 56.095238095238095
+DEPTHS:
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 0 0 0 -1 -1 
+AREA: -18
+AVG DEPTH: -0.8571428571428571
+NUMBER OF LINES IN FRAGMENT: 21
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public getMethodsListWithAnnotation(cls Class<?>, annotationCls Class<? extends Annotation>, searchSupers boolean, ignoreAccess boolean) : List<Method> extracted from public getMethodsListWithAnnotation(cls Class<?>, annotationCls Class<? extends Annotation>) : List<Method> in class org.apache.commons.lang3.reflect.MethodUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/46007c151e4cd79891eed4d289ff372ba39d5b8c/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/46007c151e4cd79891eed4d289ff372ba39d5b8c/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java#L884
+DIRECTLY EXTRACTED OPERATION:
+     * Gets all methods of the given class that are annotated with the given annotation.
+     * @param cls
+     *            the {@link Class} to query
+     * @param annotationCls
+     *            the {@link Annotation} that must be present on a method to be matched
+     * @param searchSupers
+     *            determines if also a lookup in the entire inheritance hierarchy of the given class should be performed
+     * @param ignoreAccess
+     *            determines if also non public methods should be considered
+     * @return a list of Methods (possibly empty).
+     * @throws IllegalArgumentException
+     *            if the class or annotation are {@code null}
+     * @since 3.6
+     */
+    public static List<Method> getMethodsListWithAnnotation(final Class<?> cls,
+                                                            final Class<? extends Annotation> annotationCls,
+                                                            boolean searchSupers, boolean ignoreAccess) {
+
+        Validate.isTrue(cls != null, "The class must not be null");
+        Validate.isTrue(annotationCls != null, "The annotation class must not be null");
+        List<Class<?>> classes = (searchSupers ? getAllSuperclassesAndInterfaces(cls)
+                : new ArrayList<Class<?>>());
+        classes.add(0, cls);
+        final List<Method> annotatedMethods = new ArrayList<>();
+        for (Class<?> acls : classes) {
+            final Method[] methods = (ignoreAccess ? acls.getDeclaredMethods() : acls.getMethods());
+            for (final Method method : methods) {
+                if (method.getAnnotation(annotationCls) != null) {
+                    annotatedMethods.add(method);
+                }
+            }
+        }
+        return annotatedMethods;
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1768
+FRAGMENT LINE AVG SIZE: 50.51428571428571
+DEPTHS:
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0 1 1 2 3 2 1 0 0 -1 -1 
+AREA: -9
+AVG DEPTH: -0.2571428571428571
+NUMBER OF LINES IN FRAGMENT: 35
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: d3146a545612422d3f8078f10afa00342b327199
+URL: https://github.com/apache/commons-lang/commit/d3146a545612422d3f8078f10afa00342b327199
+DESCRIPTION: Extract Method	private isISO639LanguageCode(str String) : boolean extracted from private parseLocale(str String, len int) : Locale in class org.apache.commons.lang3.LocaleUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/d3146a545612422d3f8078f10afa00342b327199/src/main/java/org/apache/commons/lang3/LocaleUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/d3146a545612422d3f8078f10afa00342b327199/src/main/java/org/apache/commons/lang3/LocaleUtils.java#L167
+DIRECTLY EXTRACTED OPERATION:
+     * Checks whether the given String is a ISO 639 compliant language code.
+     *
+     * @param str the String to check.
+     * @return true, if the given String is a ISO 639 compliant language code.
+     */
+    private static boolean isISO639LanguageCode(final String str) {
+        return StringUtils.isAllLowerCase(str) && (str.length() == 2 || str.length() == 3);
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 377
+FRAGMENT LINE AVG SIZE: 41.888888888888886
+DEPTHS:
+0 1 1 1 1 1 2 1 1 
+AREA: 9
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 9
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private isISO3166CountryCode(str String) : boolean extracted from private parseLocale(str String, len int) : Locale in class org.apache.commons.lang3.LocaleUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/d3146a545612422d3f8078f10afa00342b327199/src/main/java/org/apache/commons/lang3/LocaleUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/d3146a545612422d3f8078f10afa00342b327199/src/main/java/org/apache/commons/lang3/LocaleUtils.java#L177
+DIRECTLY EXTRACTED OPERATION:
+     * Checks whether the given String is a ISO 3166 alpha-2 country code.
+     *
+     * @param str the String to check
+     * @return true, is the given String is a ISO 3166 compliant country code.
+     */
+    private static boolean isISO3166CountryCode(final String str) {
+        return StringUtils.isAllUpperCase(str) && str.length() == 2;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 351
+FRAGMENT LINE AVG SIZE: 39.0
+DEPTHS:
+0 1 1 1 1 1 2 1 1 
+AREA: 9
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 9
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: d547412bbd2a1ca56769a2bfa13b7ed9547310ca
+URL: https://github.com/apache/commons-lang/commit/d547412bbd2a1ca56769a2bfa13b7ed9547310ca
+DESCRIPTION: Extract Method	private parseLocale(str String, len int) : Locale extracted from public toLocale(str String) : Locale in class org.apache.commons.lang3.LocaleUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/d547412bbd2a1ca56769a2bfa13b7ed9547310ca/src/main/java/org/apache/commons/lang3/LocaleUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/d547412bbd2a1ca56769a2bfa13b7ed9547310ca/src/main/java/org/apache/commons/lang3/LocaleUtils.java#L129
+DIRECTLY EXTRACTED OPERATION:
+        final String[] segments = str.split("_", -1);
+        final int segmentCount = segments.length -1;
+        final String country = segments[0];
+        switch (segmentCount) {
+            case 0:
+                if (StringUtils.isAllLowerCase(str) && (len == 2 || len == 3)) {
+                    return new Locale(str);
+                }
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+
+            case 1:
+                if (StringUtils.isAllLowerCase(country) &&
+                    (country.length() == 2 || country.length() == 3) &&
+                     (segments[1].length() == 2 && StringUtils.isAllUpperCase(segments[1])) ||
+                      (segments[1].length() == 3 && StringUtils.isNumeric(segments[1]))) {
+                    return new Locale(country, segments[1]);
+                }
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+
+            case 2:
+                if (StringUtils.isAllLowerCase(country) &&
+                    (country.length() == 2 || country.length() == 3) &&
+                    (segments[1].length() == 0 || segments[1].length() == 2 && StringUtils.isAllUpperCase(segments[1])) &&
+                     segments[2].length() > 0) {
+                    return new Locale(country, segments[1], segments[2]);
+                }
+
+            //$FALL-THROUGH$
+            default:
+                throw new IllegalArgumentException("Invalid locale format: " + str);
+        }
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1502
+FRAGMENT LINE AVG SIZE: 45.515151515151516
+DEPTHS:
+1 2 2 2 3 3 4 3 3 3 3 3 3 3 3 4 3 3 3 3 3 3 3 3 4 3 3 3 3 3 2 1 1 
+AREA: 92
+AVG DEPTH: 2.787878787878788
+NUMBER OF LINES IN FRAGMENT: 33
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 0095d8adf26b9469115b1be0358cb09d1fcb5fd4
+URL: https://github.com/apache/commons-lang/commit/0095d8adf26b9469115b1be0358cb09d1fcb5fd4
+DESCRIPTION: Extract Method	public setTestTransients(testTransients boolean) : EqualsBuilder extracted from public reflectionEquals(lhs Object, rhs Object, testTransients boolean, reflectUpToClass Class<?>, excludeFields String...) : boolean in class org.apache.commons.lang3.builder.EqualsBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java#L240
+DIRECTLY EXTRACTED OPERATION:
+     * Set testing transients behavior for calls 
+     * of {@link #reflectionAppend(Object, Object)}.
+     * @param testTransients whether to test transient fields
+     * @return EqualsBuilder - used to chain calls.
+     */
+    public EqualsBuilder setTestTransients(boolean testTransients) {
+        this.testTransients = testTransients;
+        return this;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 368
+FRAGMENT LINE AVG SIZE: 36.8
+DEPTHS:
+0 1 1 1 1 1 2 2 1 1 
+AREA: 11
+AVG DEPTH: 1.1
+NUMBER OF LINES IN FRAGMENT: 10
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public setTestRecursive(testRecursive boolean) : EqualsBuilder extracted from public reflectionEquals(lhs Object, rhs Object, testTransients boolean, reflectUpToClass Class<?>, excludeFields String...) : boolean in class org.apache.commons.lang3.builder.EqualsBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java#L262
+DIRECTLY EXTRACTED OPERATION:
+     * Set recursive test behavior 
+     * of {@link #reflectionAppend(Object, Object)}.
+     * @param testRecursive  whether to do a recursive test
+     * @return EqualsBuilder - used to chain calls.
+     */
+    public EqualsBuilder setTestRecursive(boolean testRecursive) {
+        this.testRecursive = testRecursive;
+        return this;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 348
+FRAGMENT LINE AVG SIZE: 34.8
+DEPTHS:
+0 1 1 1 1 1 2 2 1 1 
+AREA: 11
+AVG DEPTH: 1.1
+NUMBER OF LINES IN FRAGMENT: 10
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public setReflectUpToClass(reflectUpToClass Class<?>) : EqualsBuilder extracted from public reflectionEquals(lhs Object, rhs Object, testTransients boolean, reflectUpToClass Class<?>, excludeFields String...) : boolean in class org.apache.commons.lang3.builder.EqualsBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java#L283
+DIRECTLY EXTRACTED OPERATION:
+     * Set the superclass to reflect up to
+     * at reflective tests.
+     * @return EqualsBuilder - used to chain calls.
+     */
+    public EqualsBuilder setReflectUpToClass(Class<?> reflectUpToClass) {
+        this.reflectUpToClass = reflectUpToClass;
+        return this;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 283
+FRAGMENT LINE AVG SIZE: 31.444444444444443
+DEPTHS:
+0 1 1 1 1 2 2 1 1 
+AREA: 10
+AVG DEPTH: 1.1111111111111112
+NUMBER OF LINES IN FRAGMENT: 9
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public setExcludeFields(excludeFields String...) : EqualsBuilder extracted from public reflectionEquals(lhs Object, rhs Object, testTransients boolean, reflectUpToClass Class<?>, excludeFields String...) : boolean in class org.apache.commons.lang3.builder.EqualsBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java#L302
+DIRECTLY EXTRACTED OPERATION:
+     * Set field names to be excluded by reflection tests.
+     * @param excludeFields
+     * @return EqualsBuilder - used to chain calls.
+     */
+    public EqualsBuilder setExcludeFields(String... excludeFields) {
+        this.excludeFields = excludeFields;
+        return this;
+    }
+    
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 292
+FRAGMENT LINE AVG SIZE: 32.44444444444444
+DEPTHS:
+0 1 1 1 1 2 2 1 1 
+AREA: 10
+AVG DEPTH: 1.1111111111111112
+NUMBER OF LINES IN FRAGMENT: 9
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public reflectionAppend(lhs Object, rhs Object) : EqualsBuilder extracted from public reflectionEquals(lhs Object, rhs Object, testTransients boolean, reflectUpToClass Class<?>, excludeFields String...) : boolean in class org.apache.commons.lang3.builder.EqualsBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java#L479
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Tests if two <code>objects</code> by using reflection.</p>
+     * 
+     * <p>It uses <code>AccessibleObject.setAccessible</code> to gain access to private
+     * fields. This means that it will throw a security exception if run under
+     * a security manager, if the permissions are not set up correctly. It is also
+     * not as efficient as testing explicitly. Non-primitive fields are compared using 
+     * <code>equals()</code>.</p>
+     * 
+     * <p>If the testTransients field is set to <code>true</code>, transient
+     * members will be tested, otherwise they are ignored, as they are likely
+     * derived fields, and not part of the value of the <code>Object</code>.</p>
+     *
+     * <p>Static fields will not be included. Superclass fields will be appended
+     * up to and including the specified superclass in field <code>reflectUpToClass</code>.
+     * A null superclass is treated as java.lang.Object.</p>
+     * 
+     * <p>Field names listed in field <code>excludeFields</code> will be ignored.</p>
+     * 
+     * @param lhs  the left hand object
+     * @param rhs  the left hand object
+     * @return EqualsBuilder - used to chain calls.
+     */
+    public EqualsBuilder reflectionAppend(final Object lhs, final Object rhs) {
+        if(!isEquals)
+            return this;
+        
+        if (lhs == rhs) {
+            return this;
+        }
+        if (lhs == null || rhs == null) {
+            isEquals = false;
+            return this;
+        }
+        // Find the leaf class since there may be transients in the leaf
+        // class or in classes between the leaf and root.
+        // If we are not testing transients or a subclass has no ivars,
+        // then a subclass can test equals to a superclass.
+        final Class<?> lhsClass = lhs.getClass();
+        final Class<?> rhsClass = rhs.getClass();
+        Class<?> testClass;
+        if (lhsClass.isInstance(rhs)) {
+            testClass = lhsClass;
+            if (!rhsClass.isInstance(lhs)) {
+                // rhsClass is a subclass of lhsClass
+                testClass = rhsClass;
+            }
+        } else if (rhsClass.isInstance(lhs)) {
+            testClass = rhsClass;
+            if (!lhsClass.isInstance(rhs)) {
+                // lhsClass is a subclass of rhsClass
+                testClass = lhsClass;
+            }
+        } else {
+            // The two classes are not related.
+            isEquals = false;
+            return this;
+        }
+        
+        try {
+            if (testClass.isArray()) {
+                append(lhs, rhs);
+            } else {
+                reflectionAppend(lhs, rhs, testClass);
+                while (testClass.getSuperclass() != null && testClass != reflectUpToClass) {
+                    testClass = testClass.getSuperclass();
+                    reflectionAppend(lhs, rhs, testClass);
+                }
+            }
+        } catch (final IllegalArgumentException e) {
+            // In this case, we tried to test a subclass vs. a superclass and
+            // the subclass has ivars or the ivars are transient and
+            // we are testing transients.
+            // If a subclass has ivars that we are trying to test them, we get an
+            // exception and we know that the objects are not equal.
+            isEquals = false;
+            return this;
+        }
+        return this;
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: false
+FRAGMENT LENGTH: 3359
+FRAGMENT LINE AVG SIZE: 41.9875
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 3 2 2 3 3 2 2 2 2 2 2 2 2 2 3 3 4 4 3 3 3 3 4 4 3 3 3 3 3 2 2 2 3 4 4 4 4 5 5 4 3 3 3 3 3 3 3 3 3 2 2 1 1 
+AREA: 182
+AVG DEPTH: 2.275
+NUMBER OF LINES IN FRAGMENT: 80
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public reflectionEquals(lhs Object, rhs Object, testTransients boolean, reflectUpToClass Class<?>, testRecursive boolean, excludeFields String...) : boolean extracted from public reflectionEquals(lhs Object, rhs Object, testTransients boolean, reflectUpToClass Class<?>, excludeFields String...) : boolean in class org.apache.commons.lang3.builder.EqualsBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/0095d8adf26b9469115b1be0358cb09d1fcb5fd4/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java#L426
+DIRECTLY EXTRACTED OPERATION:
+     * <p>This method uses reflection to determine if the two <code>Object</code>s
+     * are equal.</p>
+     *
+     * <p>It uses <code>AccessibleObject.setAccessible</code> to gain access to private
+     * fields. This means that it will throw a security exception if run under
+     * a security manager, if the permissions are not set up correctly. It is also
+     * not as efficient as testing explicitly. Non-primitive fields are compared using 
+     * <code>equals()</code>.</p>
+     *
+     * <p>If the testTransients parameter is set to <code>true</code>, transient
+     * members will be tested, otherwise they are ignored, as they are likely
+     * derived fields, and not part of the value of the <code>Object</code>.</p>
+     *
+     * <p>Static fields will not be included. Superclass fields will be appended
+     * up to and including the specified superclass. A null superclass is treated
+     * as java.lang.Object.</p>
+     * 
+     * <p>If the testRecursive parameter is set to <code>true</code>, non primitive
+     * (and non primitive wrapper) field types will be compared by 
+     * <code>EqualsBuilder</code> recursively instead of invoking their 
+     * <code>equals()</code> method. Leading to a deep reflection equals test.
+     *
+     * @param lhs  <code>this</code> object
+     * @param rhs  the other object
+     * @param testTransients  whether to include transient fields
+     * @param reflectUpToClass  the superclass to reflect up to (inclusive),
+     *  may be <code>null</code>
+     * @param testRecursive  whether to call reflection equals on non primitive
+     *  fields recursively. 
+     * @param excludeFields  array of field names to exclude from testing
+     * @return <code>true</code> if the two Objects have tested equals.
+     * 
+     * @see EqualsExclude
+     */
+    public static boolean reflectionEquals(final Object lhs, final Object rhs, final boolean testTransients, final Class<?> reflectUpToClass,
+            boolean testRecursive, final String... excludeFields) {
+        if (lhs == rhs) {
+            return true;
+        }
+        if (lhs == null || rhs == null) {
+            return false;
+        }
+        final EqualsBuilder equalsBuilder = new EqualsBuilder();
+        equalsBuilder.setExcludeFields(excludeFields)
+                    .setReflectUpToClass(reflectUpToClass)
+                    .setTestTransients(testTransients)
+                    .setTestRecursive(testRecursive);
+        
+        equalsBuilder.reflectionAppend(lhs, rhs);
+        return equalsBuilder.isEquals();
+    }
+    
+PARAMS COUNT: 6
+IS VOID METHOD: false
+FRAGMENT LENGTH: 2552
+FRAGMENT LINE AVG SIZE: 49.07692307692308
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 3 2 2 2 2 2 2 2 2 2 1 1 
+AREA: 67
+AVG DEPTH: 1.2884615384615385
+NUMBER OF LINES IN FRAGMENT: 52
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: c37a911d3a1541adc25c8d76f717015b2266d123
+URL: https://github.com/apache/commons-lang/commit/c37a911d3a1541adc25c8d76f717015b2266d123
+DESCRIPTION: Extract Method	public abbreviate(str String, abbrevMarker String, maxWidth int) : String extracted from public abbreviate(str String, offset int, maxWidth int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c37a911d3a1541adc25c8d76f717015b2266d123/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c37a911d3a1541adc25c8d76f717015b2266d123/src/main/java/org/apache/commons/lang3/StringUtils.java#L7424
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Abbreviates a String using another given String as replacement marker. This will turn
+     * "Now is the time for all good men" into "Now is the time for..." if "..." was defined
+     * as the replacement marker.</p>
+     *
+     * <p>Specifically:</p>
+     * <ul>
+     *   <li>If the number of characters in {@code str} is less than or equal to 
+     *       {@code maxWidth}, return {@code str}.</li>
+     *   <li>Else abbreviate it to {@code (substring(str, 0, max-abbrevMarker.length) + abbrevMarker)}.</li>
+     *   <li>If {@code maxWidth} is less than {@code abbrevMarker.length + 1}, throw an
+     *       {@code IllegalArgumentException}.</li>
+     *   <li>In no case will it return a String of length greater than
+     *       {@code maxWidth}.</li>
+     * </ul>
+     *
+     * <pre>
+     * StringUtils.abbreviate(null, "...", *)      = null
+     * StringUtils.abbreviate("abcdefg", null, *)  = "abcdefg"
+     * StringUtils.abbreviate("", "...", 4)        = ""
+     * StringUtils.abbreviate("abcdefg", ".", 5)   = "abcd."
+     * StringUtils.abbreviate("abcdefg", ".", 7)   = "abcdefg"
+     * StringUtils.abbreviate("abcdefg", ".", 8)   = "abcdefg"
+     * StringUtils.abbreviate("abcdefg", "..", 4)  = "ab.."
+     * StringUtils.abbreviate("abcdefg", "..", 3)  = "a.."
+     * StringUtils.abbreviate("abcdefg", "..", 2)  = IllegalArgumentException
+     * StringUtils.abbreviate("abcdefg", "...", 3) = IllegalArgumentException
+     * </pre>
+     *
+     * @param str  the String to check, may be null
+     * @param abbrevMarker  the String used as replacement marker
+     * @param maxWidth  maximum length of result String, must be at least {@code abbrevMarker.length + 1}
+     * @return abbreviated String, {@code null} if null String input
+     * @throws IllegalArgumentException if the width is too small
+     * @since 3.5
+     */
+    public static String abbreviate(final String str, final String abbrevMarker, final int maxWidth) {
+        return abbreviate(str, abbrevMarker, 0, maxWidth);
+    }
+
+PARAMS COUNT: 3
+IS VOID METHOD: false
+FRAGMENT LENGTH: 2015
+FRAGMENT LINE AVG SIZE: 51.666666666666664
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 
+AREA: 39
+AVG DEPTH: 1.0
+NUMBER OF LINES IN FRAGMENT: 39
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public abbreviate(str String, abbrevMarker String, offset int, maxWidth int) : String extracted from public abbreviate(str String, offset int, maxWidth int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c37a911d3a1541adc25c8d76f717015b2266d123/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c37a911d3a1541adc25c8d76f717015b2266d123/src/main/java/org/apache/commons/lang3/StringUtils.java#L7464
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Abbreviates a String using a given replacement marker. This will turn
+     * "Now is the time for all good men" into "...is the time for..." if "..." was defined
+     * as the replacement marker.</p>
+     *
+     * <p>Works like {@code abbreviate(String, String, int)}, but allows you to specify
+     * a "left edge" offset.  Note that this left edge is not necessarily going to
+     * be the leftmost character in the result, or the first character following the
+     * replacement marker, but it will appear somewhere in the result.
+     *
+     * <p>In no case will it return a String of length greater than {@code maxWidth}.</p>
+     *
+     * <pre>
+     * StringUtils.abbreviate(null, null, *, *)                 = null
+     * StringUtils.abbreviate("abcdefghijklmno", null, *, *)    = "abcdefghijklmno"
+     * StringUtils.abbreviate("", "...", 0, 4)                  = ""
+     * StringUtils.abbreviate("abcdefghijklmno", "---", -1, 10) = "abcdefg---"
+     * StringUtils.abbreviate("abcdefghijklmno", ",", 0, 10)    = "abcdefghi,"
+     * StringUtils.abbreviate("abcdefghijklmno", ",", 1, 10)    = "abcdefghi,"
+     * StringUtils.abbreviate("abcdefghijklmno", ",", 2, 10)    = "abcdefghi,"
+     * StringUtils.abbreviate("abcdefghijklmno", "::", 4, 10)   = "::efghij::"
+     * StringUtils.abbreviate("abcdefghijklmno", "...", 6, 10)  = "...ghij..."
+     * StringUtils.abbreviate("abcdefghijklmno", "*", 9, 10)    = "*ghijklmno"
+     * StringUtils.abbreviate("abcdefghijklmno", "'", 10, 10)   = "'ghijklmno"
+     * StringUtils.abbreviate("abcdefghijklmno", "!", 12, 10)   = "!ghijklmno"
+     * StringUtils.abbreviate("abcdefghij", "abra", 0, 4)       = IllegalArgumentException
+     * StringUtils.abbreviate("abcdefghij", "...", 5, 6)        = IllegalArgumentException
+     * </pre>
+     *
+     * @param str  the String to check, may be null
+     * @param abbrevMarker  the String used as replacement marker
+     * @param offset  left edge of source String
+     * @param maxWidth  maximum length of result String, must be at least 4
+     * @return abbreviated String, {@code null} if null String input
+     * @throws IllegalArgumentException if the width is too small
+     * @since 3.5
+     */
+    public static String abbreviate(final String str, final String abbrevMarker, int offset, final int maxWidth) {
+        if (isEmpty(str) || isEmpty(abbrevMarker)) {
+            return str;
+        }
+
+        final int abbrevMarkerLength = abbrevMarker.length();
+        final int minAbbrevWidth = abbrevMarkerLength + 1;
+        final int minAbbrevWidthOffset = abbrevMarkerLength + abbrevMarkerLength + 1;
+
+        if (maxWidth < minAbbrevWidth) {
+            throw new IllegalArgumentException(String.format("Minimum abbreviation width is %d", minAbbrevWidth));
+        }
+        if (str.length() <= maxWidth) {
+            return str;
+        }
+        if (offset > str.length()) {
+            offset = str.length();
+        }
+        if (str.length() - offset < maxWidth - abbrevMarkerLength) {
+            offset = str.length() - (maxWidth - abbrevMarkerLength);
+        }
+        if (offset <= abbrevMarkerLength+1) {
+            return str.substring(0, maxWidth - abbrevMarkerLength) + abbrevMarker;
+        }
+        if (maxWidth < minAbbrevWidthOffset) {
+            throw new IllegalArgumentException(String.format("Minimum abbreviation width with offset is %d", minAbbrevWidthOffset));
+        }
+        if (offset + maxWidth - abbrevMarkerLength < str.length()) {
+            return abbrevMarker + abbreviate(str.substring(offset), abbrevMarker, maxWidth - abbrevMarkerLength);
+        }
+        return abbrevMarker + str.substring(str.length() - (maxWidth - abbrevMarkerLength));
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: false
+FRAGMENT LENGTH: 3706
+FRAGMENT LINE AVG SIZE: 53.710144927536234
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 2 2 2 2 2 3 2 2 3 2 2 3 2 2 3 2 2 3 2 2 3 2 2 3 2 2 1 1 
+AREA: 106
+AVG DEPTH: 1.536231884057971
+NUMBER OF LINES IN FRAGMENT: 69
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 809e2bed22f02264e0ac58bba070f6d84386cfc5
+URL: https://github.com/apache/commons-lang/commit/809e2bed22f02264e0ac58bba070f6d84386cfc5
+DESCRIPTION: Extract Method	private prepareAcquire() : void extracted from public acquire() : void in class org.apache.commons.lang3.concurrent.TimedSemaphore
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/809e2bed22f02264e0ac58bba070f6d84386cfc5/src/main/java/org/apache/commons/lang3/concurrent/TimedSemaphore.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/809e2bed22f02264e0ac58bba070f6d84386cfc5/src/main/java/org/apache/commons/lang3/concurrent/TimedSemaphore.java#L441
+DIRECTLY EXTRACTED OPERATION:
+     * Prepares an acquire operation. Checks for the current state and starts the internal
+     * timer if necessary. This method must be called with the lock of this object held.
+     */
+    private void prepareAcquire() {
+        if (isShutdown()) {
+            throw new IllegalStateException("TimedSemaphore is shut down!");
+        }
+
+        if (task == null) {
+            task = startTimer();
+        }
+    }
+
+IS VOID METHOD: true
+FRAGMENT LENGTH: 418
+FRAGMENT LINE AVG SIZE: 32.15384615384615
+DEPTHS:
+0 1 1 1 2 3 2 2 2 3 2 1 1 
+AREA: 21
+AVG DEPTH: 1.6153846153846154
+NUMBER OF LINES IN FRAGMENT: 13
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private acquirePermit() : boolean extracted from public acquire() : void in class org.apache.commons.lang3.concurrent.TimedSemaphore
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/809e2bed22f02264e0ac58bba070f6d84386cfc5/src/main/java/org/apache/commons/lang3/concurrent/TimedSemaphore.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/809e2bed22f02264e0ac58bba070f6d84386cfc5/src/main/java/org/apache/commons/lang3/concurrent/TimedSemaphore.java#L455
+DIRECTLY EXTRACTED OPERATION:
+     * Internal helper method for acquiring a permit. This method checks whether currently
+     * a permit can be acquired and - if so - increases the internal counter. The return
+     * value indicates whether a permit could be acquired. This method must be called with
+     * the lock of this object held.
+     *
+     * @return a flag whether a permit could be acquired
+     */
+    private boolean acquirePermit() {
+        if (getLimit() <= NO_LIMIT || acquireCount < getLimit()) {
+            acquireCount++;
+            return true;
+        }
+        return false;
+    }
+}
+IS VOID METHOD: false
+FRAGMENT LENGTH: 578
+FRAGMENT LINE AVG SIZE: 38.53333333333333
+DEPTHS:
+0 1 1 1 1 1 1 1 2 3 3 2 2 1 0 
+AREA: 20
+AVG DEPTH: 1.3333333333333333
+NUMBER OF LINES IN FRAGMENT: 15
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: c503d742f094dc2048b72c3f78f5e2e6070a44e1
+URL: https://github.com/apache/commons-lang/commit/c503d742f094dc2048b72c3f78f5e2e6070a44e1
+DESCRIPTION: Extract Method	public isCreatable(str String) : boolean extracted from public isNumber(str String) : boolean in class org.apache.commons.lang3.math.NumberUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c503d742f094dc2048b72c3f78f5e2e6070a44e1/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c503d742f094dc2048b72c3f78f5e2e6070a44e1/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1376
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Checks whether the String a valid Java number.</p>
+     *
+     * <p>Valid numbers include hexadecimal marked with the <code>0x</code> or
+     * <code>0X</code> qualifier, octal numbers, scientific notation and numbers 
+     * marked with a type qualifier (e.g. 123L).</p>
+     * 
+     * <p>Non-hexadecimal strings beginning with a leading zero are
+     * treated as octal values. Thus the string <code>09</code> will return
+     * <code>false</code>, since <code>9</code> is not a valid octal value.
+     * However, numbers beginning with {@code 0.} are treated as decimal.</p>
+     *
+     * <p><code>null</code> and empty/blank {@code String} will return
+     * <code>false</code>.</p>
+     *
+     * <p>Note, {@link #createNumber(String)} should return a number for every
+     * input resuling in <code>true</code>.</p>
+     *
+     * @param str  the <code>String</code> to check
+     * @return <code>true</code> if the string is a correctly formatted number
+     * @since 3.3 the code supports hex {@code 0Xhhh} and octal {@code 0ddd} validation
+     */
+    public static boolean isCreatable(final String str) {
+        if (StringUtils.isEmpty(str)) {
+            return false;
+        }
+        final char[] chars = str.toCharArray();
+        int sz = chars.length;
+        boolean hasExp = false;
+        boolean hasDecPoint = false;
+        boolean allowSigns = false;
+        boolean foundDigit = false;
+        boolean isJava6 = StringUtils.startsWith(System.getProperty("java.version"), "1.6");
+        // deal with any possible sign up front
+        final int start = (chars[0] == '-' || chars[0] == '+') ? 1 : 0;
+        final boolean hasLeadingPlusSign = (start == 1 && chars[0] == '+');
+        if (sz > start + 1 && chars[start] == '0') { // leading 0
+            if (
+                 (chars[start + 1] == 'x') || 
+                 (chars[start + 1] == 'X') 
+            ) { // leading 0x/0X
+                int i = start + 2;
+                if (i == sz) {
+                    return false; // str == "0x"
+                }
+                // checking hex (it can't be anything else)
+                for (; i < chars.length; i++) {
+                    if ((chars[i] < '0' || chars[i] > '9')
+                        && (chars[i] < 'a' || chars[i] > 'f')
+                        && (chars[i] < 'A' || chars[i] > 'F')) {
+                        return false;
+                    }
+                }
+                return true;
+           } else if (Character.isDigit(chars[start + 1])) {
+               // leading 0, but not hex, must be octal
+               int i = start + 1;
+               for (; i < chars.length; i++) {
+                   if (chars[i] < '0' || chars[i] > '7') {
+                       return false;
+                   }
+               }
+               return true;               
+           }
+        }
+        sz--; // don't want to loop to the last char, check it afterwords
+              // for type qualifiers
+        int i = start;
+        // loop to the next to last char or to the last char if we need another digit to
+        // make a valid number (e.g. chars[0..5] = "1234E")
+        while (i < sz || (i < sz + 1 && allowSigns && !foundDigit)) {
+            if (chars[i] >= '0' && chars[i] <= '9') {
+                foundDigit = true;
+                allowSigns = false;
+
+            } else if (chars[i] == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent   
+                    return false;
+                }
+                hasDecPoint = true;
+            } else if (chars[i] == 'e' || chars[i] == 'E') {
+                // we've already taken care of hex.
+                if (hasExp) {
+                    // two E's
+                    return false;
+                }
+                if (!foundDigit) {
+                    return false;
+                }
+                hasExp = true;
+                allowSigns = true;
+            } else if (chars[i] == '+' || chars[i] == '-') {
+                if (!allowSigns) {
+                    return false;
+                }
+                allowSigns = false;
+                foundDigit = false; // we need a digit after the E
+            } else {
+                return false;
+            }
+            i++;
+        }
+        if (i < chars.length) {
+            if (chars[i] >= '0' && chars[i] <= '9') {
+                if (isJava6 && hasLeadingPlusSign && !hasDecPoint) {
+                    return false;
+                }
+                // no type qualifier, OK
+                return true;
+            }
+            if (chars[i] == 'e' || chars[i] == 'E') {
+                // can't have an E at the last byte
+                return false;
+            }
+            if (chars[i] == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent
+                    return false;
+                }
+                // single trailing decimal point after non-exponent is ok
+                return foundDigit;
+            }
+            if (!allowSigns
+                && (chars[i] == 'd'
+                    || chars[i] == 'D'
+                    || chars[i] == 'f'
+                    || chars[i] == 'F')) {
+                return foundDigit;
+            }
+            if (chars[i] == 'l'
+                || chars[i] == 'L') {
+                // not allowing L with an exponent or decimal point
+                return foundDigit && !hasExp && !hasDecPoint;
+            }
+            // last character is illegal
+            return false;
+        }
+        // allowSigns is true iff the val ends in 'E'
+        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        return !allowSigns && foundDigit;
+    }
+    
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 5759
+FRAGMENT LINE AVG SIZE: 40.556338028169016
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 4 4 5 4 4 4 5 5 5 6 5 4 4 4 4 4 4 5 6 5 4 4 3 2 2 2 2 2 2 2 3 4 4 4 4 4 5 5 4 4 4 4 4 5 5 4 4 5 4 4 4 4 4 5 4 4 4 4 4 3 3 2 2 3 4 5 4 4 4 3 3 4 4 3 3 4 5 5 4 4 4 3 3 3 3 3 3 4 3 3 3 4 4 3 3 3 2 2 2 2 1 1 
+AREA: 437
+AVG DEPTH: 3.0774647887323945
+NUMBER OF LINES IN FRAGMENT: 142
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: c7c85ee39892df3ca007c6596c41654865be7e43
+URL: https://github.com/apache/commons-lang/commit/c7c85ee39892df3ca007c6596c41654865be7e43
+DESCRIPTION: Extract Method	private appendArray(lhs Object, rhs Object, comparator Comparator<?>) : void extracted from public append(lhs Object, rhs Object, comparator Comparator<?>) : CompareToBuilder in class org.apache.commons.lang3.builder.CompareToBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/c7c85ee39892df3ca007c6596c41654865be7e43/src/main/java/org/apache/commons/lang3/builder/CompareToBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/c7c85ee39892df3ca007c6596c41654865be7e43/src/main/java/org/apache/commons/lang3/builder/CompareToBuilder.java#L438
+DIRECTLY EXTRACTED OPERATION:
+        // switch on type of array, to dispatch to the correct handler
+        // handles multi dimensional arrays
+        // throws a ClassCastException if rhs is not the correct array type
+        if (lhs instanceof long[]) {
+            append((long[]) lhs, (long[]) rhs);
+        } else if (lhs instanceof int[]) {
+            append((int[]) lhs, (int[]) rhs);
+        } else if (lhs instanceof short[]) {
+            append((short[]) lhs, (short[]) rhs);
+        } else if (lhs instanceof char[]) {
+            append((char[]) lhs, (char[]) rhs);
+        } else if (lhs instanceof byte[]) {
+            append((byte[]) lhs, (byte[]) rhs);
+        } else if (lhs instanceof double[]) {
+            append((double[]) lhs, (double[]) rhs);
+        } else if (lhs instanceof float[]) {
+            append((float[]) lhs, (float[]) rhs);
+        } else if (lhs instanceof boolean[]) {
+            append((boolean[]) lhs, (boolean[]) rhs);
+        } else {
+            // not an array of primitives
+            // throws a ClassCastException if rhs is not an array
+            append((Object[]) lhs, (Object[]) rhs, comparator);
+        }
+    }
+
+PARAMS COUNT: 3
+IS VOID METHOD: true
+FRAGMENT LENGTH: 1144
+FRAGMENT LINE AVG SIZE: 44.0
+DEPTHS:
+1 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 1 1 
+AREA: 68
+AVG DEPTH: 2.6153846153846154
+NUMBER OF LINES IN FRAGMENT: 26
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 0fe9685c8a78ba2d780a3ec1e1a323990dc6d218
+URL: https://github.com/apache/commons-lang/commit/0fe9685c8a78ba2d780a3ec1e1a323990dc6d218
+DESCRIPTION: Extract Method	public wrap(str String, wrapLength int, newLineStr String, wrapLongWords boolean, wrapOn String) : String extracted from public wrap(str String, wrapLength int, newLineStr String, wrapLongWords boolean) : String in class org.apache.commons.lang3.text.WordUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/0fe9685c8a78ba2d780a3ec1e1a323990dc6d218/src/main/java/org/apache/commons/lang3/text/WordUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/0fe9685c8a78ba2d780a3ec1e1a323990dc6d218/src/main/java/org/apache/commons/lang3/text/WordUtils.java#L179
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Wraps a single line of text, identifying words by <code>' '</code>.</p>
+     *
+     * <p>Leading spaces on a new line are stripped.
+     * Trailing spaces are not stripped.</p>
+     *
+     * <table border="1" summary="Wrap Results">
+     *  <tr>
+     *   <th>input</th>
+     *   <th>wrapLenght</th>
+     *   <th>newLineString</th>
+     *   <th>wrapLongWords</th>
+     *   <th>result</th>
+     *  </tr>
+     *  <tr>
+     *   <td>null</td>
+     *   <td>*</td>
+     *   <td>*</td>
+     *   <td>true/false</td>
+     *   <td>null</td>
+     *  </tr>
+     *  <tr>
+     *   <td>""</td>
+     *   <td>*</td>
+     *   <td>*</td>
+     *   <td>true/false</td>
+     *   <td>""</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>true/false</td>
+     *   <td>"Here is one line of\ntext that is going\nto be wrapped after\n20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>"&lt;br /&gt;"</td>
+     *   <td>true/false</td>
+     *   <td>"Here is one line of&lt;br /&gt;text that is going&lt;br /&gt;to be wrapped after&lt;br /&gt;20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>null</td>
+     *   <td>true/false</td>
+     *   <td>"Here is one line of" + systemNewLine + "text that is going" + systemNewLine + "to be wrapped after" + systemNewLine + "20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>false</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apache.org"</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>true</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apach\ne.org"</td>
+     *  </tr>
+     * </table>
+     *
+     * @param str  the String to be word wrapped, may be null
+     * @param wrapLength  the column to wrap the words at, less than 1 is treated as 1
+     * @param newLineStr  the string to insert for a new line,
+     *  <code>null</code> uses the system property line separator
+     * @param wrapLongWords  true if long words (such as URLs) should be wrapped
+     * @param wrapOn regex expression to be used as a breakable characters,
+     *               if blank string is provided a space character will be used
+     * @return a line with newlines inserted, <code>null</code> if null input
+     */
+    public static String wrap(final String str, int wrapLength, String newLineStr, final boolean wrapLongWords, String wrapOn) {
+        if (str == null) {
+            return null;
+        }
+        if (newLineStr == null) {
+            newLineStr = SystemUtils.LINE_SEPARATOR;
+        }
+        if (wrapLength < 1) {
+            wrapLength = 1;
+        }
+        if (StringUtils.isBlank(wrapOn)) {
+            wrapOn = " ";
+        }
+        Pattern patternToWrapOn = Pattern.compile(wrapOn);
+        final int inputLineLength = str.length();
+        int offset = 0;
+        final StringBuilder wrappedLine = new StringBuilder(inputLineLength + 32);
+
+        while (offset < inputLineLength) {
+            int spaceToWrapAt = -1;
+            Matcher matcher = patternToWrapOn.matcher(str.substring(offset, Math.min(offset + wrapLength + 1, inputLineLength)));
+            if (matcher.find()) {
+                if (matcher.start() == 0) {
+                    offset += matcher.end();
+                    continue;
+                }else {
+                    spaceToWrapAt = matcher.start();
+                }
+            }
+
+            // only last line without leading spaces is left
+            if(inputLineLength - offset <= wrapLength) {
+                break;
+            }
+
+            while(matcher.find()){
+                spaceToWrapAt = matcher.start() + offset;
+            }
+
+            if (spaceToWrapAt >= offset) {
+                // normal case
+                wrappedLine.append(str.substring(offset, spaceToWrapAt));
+                wrappedLine.append(newLineStr);
+                offset = spaceToWrapAt + 1;
+
+            } else {
+                // really long word or URL
+                if (wrapLongWords) {
+                    // wrap really long word one line at a time
+                    wrappedLine.append(str.substring(offset, wrapLength + offset));
+                    wrappedLine.append(newLineStr);
+                    offset += wrapLength;
+                } else {
+                    // do not wrap really long word, just extend beyond limit
+                    matcher = patternToWrapOn.matcher(str.substring(offset + wrapLength));
+                    if (matcher.find()) {
+                        spaceToWrapAt = matcher.start() + offset + wrapLength;
+                    }
+
+                    if (spaceToWrapAt >= 0) {
+                        wrappedLine.append(str.substring(offset, spaceToWrapAt));
+                        wrappedLine.append(newLineStr);
+                        offset = spaceToWrapAt + 1;
+                    } else {
+                        wrappedLine.append(str.substring(offset));
+                        offset = inputLineLength;
+                    }
+                }
+            }
+        }
+
+        // Whatever is left in line is short enough to just pass through
+        wrappedLine.append(str.substring(offset));
+
+        return wrappedLine.toString();
+    }
+
+PARAMS COUNT: 5
+IS VOID METHOD: false
+FRAGMENT LENGTH: 5753
+FRAGMENT LINE AVG SIZE: 38.35333333333333
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 3 2 2 3 2 2 3 2 2 2 2 2 2 2 3 3 3 4 5 5 5 5 4 3 3 3 3 4 3 3 3 4 3 3 3 4 4 4 4 4 4 4 4 5 5 5 5 5 5 5 5 6 5 5 5 6 6 6 6 6 6 5 4 3 2 2 2 2 2 2 1 1 
+AREA: 343
+AVG DEPTH: 2.2866666666666666
+NUMBER OF LINES IN FRAGMENT: 150
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 18b1bc203bdb236bfd9084193aa2d55d4b605139
+URL: https://github.com/apache/commons-lang/commit/18b1bc203bdb236bfd9084193aa2d55d4b605139
+DESCRIPTION: Extract Method	private appendArray(object Object) : void extracted from public append(object Object) : HashCodeBuilder in class org.apache.commons.lang3.builder.HashCodeBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/18b1bc203bdb236bfd9084193aa2d55d4b605139/src/main/java/org/apache/commons/lang3/builder/HashCodeBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/18b1bc203bdb236bfd9084193aa2d55d4b605139/src/main/java/org/apache/commons/lang3/builder/HashCodeBuilder.java#L861
+DIRECTLY EXTRACTED OPERATION:
+     * <p>
+     * Append a <code>hashCode</code> for an array.
+     * </p>
+     *
+     * @param object
+     *            the array to add to the <code>hashCode</code>
+     */
+    private void appendArray(final Object object) {
+        // 'Switch' on type of array, to dispatch to the correct handler
+        // This handles multi dimensional arrays
+        if (object instanceof long[]) {
+            append((long[]) object);
+        } else if (object instanceof int[]) {
+            append((int[]) object);
+        } else if (object instanceof short[]) {
+            append((short[]) object);
+        } else if (object instanceof char[]) {
+            append((char[]) object);
+        } else if (object instanceof byte[]) {
+            append((byte[]) object);
+        } else if (object instanceof double[]) {
+            append((double[]) object);
+        } else if (object instanceof float[]) {
+            append((float[]) object);
+        } else if (object instanceof boolean[]) {
+            append((boolean[]) object);
+        } else {
+            // Not an array of primitives
+            append((Object[]) object);
+        }
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: true
+FRAGMENT LENGTH: 1141
+FRAGMENT LINE AVG SIZE: 35.65625
+DEPTHS:
+0 1 1 1 1 1 1 1 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 1 1 
+AREA: 71
+AVG DEPTH: 2.21875
+NUMBER OF LINES IN FRAGMENT: 32
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 5fef9575646f6583fd2d9ee01368b3deefe6ce82
+URL: https://github.com/apache/commons-lang/commit/5fef9575646f6583fd2d9ee01368b3deefe6ce82
+DESCRIPTION: Extract Method	public invokeMethod(object Object, forceAccess boolean, methodName String, args Object...) : Object extracted from public invokeMethod(object Object, methodName String, args Object[], parameterTypes Class<?>[]) : Object in class org.apache.commons.lang3.reflect.MethodUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5fef9575646f6583fd2d9ee01368b3deefe6ce82/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5fef9575646f6583fd2d9ee01368b3deefe6ce82/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java#L150
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Invokes a named method whose parameter type matches the object type.</p>
+     *
+     * <p>This method supports calls to methods taking primitive parameters 
+     * via passing in wrapping classes. So, for example, a {@code Boolean} object
+     * would match a {@code boolean} primitive.</p>
+     *
+     * <p>This is a convenient wrapper for
+     * {@link #invokeMethod(Object object,boolean forceAccess,String methodName, Object[] args, Class[] parameterTypes)}.
+     * </p>
+     *
+     * @param object invoke method on this object
+     * @param methodName get method with this name
+     * @param args use these arguments - treat null as empty array
+     * @return The value returned by the invoked method
+     *
+     * @throws NoSuchMethodException if there is no such accessible method
+     * @throws InvocationTargetException wraps an exception thrown by the method invoked
+     * @throws IllegalAccessException if the requested method is not accessible via reflection
+     * 
+     * @since 3.5
+     */
+    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName,
+            Object... args) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException {
+        args = ArrayUtils.nullToEmpty(args);
+        final Class<?>[] parameterTypes = ClassUtils.toClass(args);
+        return invokeMethod(object, forceAccess, methodName, args, parameterTypes);
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: false
+FRAGMENT LENGTH: 1453
+FRAGMENT LINE AVG SIZE: 50.10344827586207
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 1 1 
+AREA: 31
+AVG DEPTH: 1.0689655172413792
+NUMBER OF LINES IN FRAGMENT: 29
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	public invokeMethod(object Object, forceAccess boolean, methodName String, args Object[], parameterTypes Class<?>[]) : Object extracted from public invokeMethod(object Object, methodName String, args Object[], parameterTypes Class<?>[]) : Object in class org.apache.commons.lang3.reflect.MethodUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/5fef9575646f6583fd2d9ee01368b3deefe6ce82/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/5fef9575646f6583fd2d9ee01368b3deefe6ce82/src/main/java/org/apache/commons/lang3/reflect/MethodUtils.java#L180
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Invokes a named method whose parameter type matches the object type.</p>
+     *
+     * <p>This method supports calls to methods taking primitive parameters 
+     * via passing in wrapping classes. So, for example, a {@code Boolean} object
+     * would match a {@code boolean} primitive.</p>
+     *
+     * @param object invoke method on this object
+     * @param forceAccess force access to invoke method even if it's not accessible
+     * @param methodName get method with this name
+     * @param args use these arguments - treat null as empty array
+     * @param parameterTypes match these parameters - treat null as empty array
+     * @return The value returned by the invoked method
+     *
+     * @throws NoSuchMethodException if there is no such accessible method
+     * @throws InvocationTargetException wraps an exception thrown by the method invoked
+     * @throws IllegalAccessException if the requested method is not accessible via reflection
+     */
+    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName,
+            Object[] args, Class<?>[] parameterTypes)
+            throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException {
+        parameterTypes = ArrayUtils.nullToEmpty(parameterTypes);
+        args = ArrayUtils.nullToEmpty(args);
+        
+        final String messagePrefix;
+        Method method = null;
+        boolean isOriginallyAccessible = false;
+        Object result = null;
+        
+        try {
+            if (forceAccess) {
+            	messagePrefix = "No such method: ";
+            	method = getMatchingMethod(object.getClass(),
+                        methodName, parameterTypes);
+            	if (method != null) {
+            	    isOriginallyAccessible = method.isAccessible();
+            	    if (!isOriginallyAccessible) {
+            	        method.setAccessible(true);
+            	    }
+            	}
+            }  else {
+            	messagePrefix = "No such accessible method: ";
+            	method = getMatchingAccessibleMethod(object.getClass(),
+                        methodName, parameterTypes);
+            }
+            
+            if (method == null) {
+                throw new NoSuchMethodException(messagePrefix
+                        + methodName + "() on object: "
+                        + object.getClass().getName());
+            }
+            args = toVarArgs(method, args);
+            
+            result = method.invoke(object, args);
+        }
+        finally {
+            if (method != null && forceAccess && method.isAccessible() != isOriginallyAccessible) {
+                method.setAccessible(isOriginallyAccessible);
+            }
+        }
+        
+        return result;
+    }
+    
+PARAMS COUNT: 5
+IS VOID METHOD: false
+FRAGMENT LENGTH: 2767
+FRAGMENT LINE AVG SIZE: 43.234375
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 3 4 4 4 4 5 5 6 5 4 4 4 4 4 3 3 3 4 4 4 3 3 3 3 2 2 3 4 3 2 2 2 1 1 
+AREA: 153
+AVG DEPTH: 2.390625
+NUMBER OF LINES IN FRAGMENT: 64
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: eccf213204b776e40efcc031f4c0df560b9421e9
+URL: https://github.com/apache/commons-lang/commit/eccf213204b776e40efcc031f4c0df560b9421e9
+DESCRIPTION: Extract Method	private replace(text String, searchString String, replacement String, max int, ignoreCase boolean) : String extracted from public replace(text String, searchString String, replacement String, max int) : String in class org.apache.commons.lang3.StringUtils
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/eccf213204b776e40efcc031f4c0df560b9421e9/src/main/java/org/apache/commons/lang3/StringUtils.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/eccf213204b776e40efcc031f4c0df560b9421e9/src/main/java/org/apache/commons/lang3/StringUtils.java#L5202
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Replaces a String with another String inside a larger String,
+     * for the first {@code max} values of the search String, 
+     * case sensitively/insensisitively based on {@code ignoreCase} value.</p>
+     *
+     * <p>A {@code null} reference passed to this method is a no-op.</p>
+     *
+     * <pre>
+     * StringUtils.replace(null, *, *, *, false)         = null
+     * StringUtils.replace("", *, *, *, false)           = ""
+     * StringUtils.replace("any", null, *, *, false)     = "any"
+     * StringUtils.replace("any", *, null, *, false)     = "any"
+     * StringUtils.replace("any", "", *, *, false)       = "any"
+     * StringUtils.replace("any", *, *, 0, false)        = "any"
+     * StringUtils.replace("abaa", "a", null, -1, false) = "abaa"
+     * StringUtils.replace("abaa", "a", "", -1, false)   = "b"
+     * StringUtils.replace("abaa", "a", "z", 0, false)   = "abaa"
+     * StringUtils.replace("abaa", "A", "z", 1, false)   = "abaa"
+     * StringUtils.replace("abaa", "A", "z", 1, true)   = "zbaa"
+     * StringUtils.replace("abAa", "a", "z", 2, true)   = "zbza"
+     * StringUtils.replace("abAa", "a", "z", -1, true)  = "zbzz"
+     * </pre>
+     *
+     * @param text  text to search and replace in, may be null
+     * @param searchString  the String to search for (case insensitive), may be null
+     * @param replacement  the String to replace it with, may be null
+     * @param max  maximum number of values to replace, or {@code -1} if no maximum
+     * @param ignoreCase if true replace is case insensitive, otherwise case sensitive
+     * @return the text with any replacements processed,
+     *  {@code null} if null String input
+     */
+     private static String replace(String text, String searchString, String replacement, int max, boolean ignoreCase) {
+         if (isEmpty(text) || isEmpty(searchString) || replacement == null || max == 0) {
+             return text;
+         }
+         String searchText = text;
+         if (ignoreCase) {
+             searchText = text.toLowerCase();
+             searchString = searchString.toLowerCase();
+         }
+         int start = 0;
+         int end = searchText.indexOf(searchString, start);
+         if (end == INDEX_NOT_FOUND) {
+             return text;
+         }
+         final int replLength = searchString.length();
+         int increase = replacement.length() - replLength;
+         increase = increase < 0 ? 0 : increase;
+         increase *= max < 0 ? 16 : max > 64 ? 64 : max;
+         final StringBuilder buf = new StringBuilder(text.length() + increase);
+         while (end != INDEX_NOT_FOUND) {
+             buf.append(text.substring(start, end)).append(replacement);
+             start = end + replLength;
+             if (--max == 0) {
+                 break;
+             }
+             end = searchText.indexOf(searchString, start);
+         }
+         buf.append(text.substring(start));
+         return buf.toString();
+     }
+
+PARAMS COUNT: 5
+IS VOID METHOD: false
+FRAGMENT LENGTH: 2934
+FRAGMENT LINE AVG SIZE: 48.09836065573771
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 2 2 2 3 3 2 2 2 2 3 2 2 2 2 2 2 2 3 3 3 4 3 3 2 2 2 1 1 
+AREA: 99
+AVG DEPTH: 1.6229508196721312
+NUMBER OF LINES IN FRAGMENT: 61
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: bbd1dc343992fde4baaa0309178509dd07eed536
+URL: https://github.com/apache/commons-lang/commit/bbd1dc343992fde4baaa0309178509dd07eed536
+DESCRIPTION: Extract Method	private appendArray(lhs Object, rhs Object) : void extracted from public append(lhs Object, rhs Object) : EqualsBuilder in class org.apache.commons.lang3.builder.EqualsBuilder
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/bbd1dc343992fde4baaa0309178509dd07eed536/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/bbd1dc343992fde4baaa0309178509dd07eed536/src/main/java/org/apache/commons/lang3/builder/EqualsBuilder.java#L490
+DIRECTLY EXTRACTED OPERATION:
+     * <p>Test if an <code>Object</code> is equal to an array.</p>
+     *
+     * @param lhs  the left hand object, an array
+     * @param rhs  the right hand object
+     */
+    private void appendArray(final Object lhs, final Object rhs) {
+        if (lhs.getClass() != rhs.getClass()) {
+            // Here when we compare different dimensions, for example: a boolean[][] to a boolean[]
+            this.setEquals(false);
+        }
+        // 'Switch' on type of array, to dispatch to the correct handler
+        // This handles multi dimensional arrays of the same depth
+        else if (lhs instanceof long[]) {
+            append((long[]) lhs, (long[]) rhs);
+        } else if (lhs instanceof int[]) {
+            append((int[]) lhs, (int[]) rhs);
+        } else if (lhs instanceof short[]) {
+            append((short[]) lhs, (short[]) rhs);
+        } else if (lhs instanceof char[]) {
+            append((char[]) lhs, (char[]) rhs);
+        } else if (lhs instanceof byte[]) {
+            append((byte[]) lhs, (byte[]) rhs);
+        } else if (lhs instanceof double[]) {
+            append((double[]) lhs, (double[]) rhs);
+        } else if (lhs instanceof float[]) {
+            append((float[]) lhs, (float[]) rhs);
+        } else if (lhs instanceof boolean[]) {
+            append((boolean[]) lhs, (boolean[]) rhs);
+        } else {
+            // Not an array of primitives
+            append((Object[]) lhs, (Object[]) rhs);
+        }
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 1453
+FRAGMENT LINE AVG SIZE: 42.73529411764706
+DEPTHS:
+0 1 1 1 1 1 2 3 3 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 1 1 
+AREA: 79
+AVG DEPTH: 2.323529411764706
+NUMBER OF LINES IN FRAGMENT: 34
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: a48071b0d489420bfdc0c2ed7254d1dba243f700
+URL: https://github.com/apache/commons-lang/commit/a48071b0d489420bfdc0c2ed7254d1dba243f700
+DESCRIPTION: Extract Method	public addListener(listener L, allowDuplicate boolean) : void extracted from public addListener(listener L) : void in class org.apache.commons.lang3.event.EventListenerSupport
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/a48071b0d489420bfdc0c2ed7254d1dba243f700/src/main/java/org/apache/commons/lang3/event/EventListenerSupport.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/a48071b0d489420bfdc0c2ed7254d1dba243f700/src/main/java/org/apache/commons/lang3/event/EventListenerSupport.java#L185
+DIRECTLY EXTRACTED OPERATION:
+     * Registers an event listener.  Will not add a pre-existing listener
+     * object to the list if <code>allowDuplicate</code> is false.
+     *
+     * @param listener the event listener (may not be <code>null</code>).
+     * @param allowDuplicate the flag for determining if duplicate listener
+     * objects are allowed to be registered.
+     *
+     * @throws NullPointerException if <code>listener</code> is
+     * <code>null</code>.
+     */
+    public void addListener(final L listener, boolean allowDuplicate) {
+        Validate.notNull(listener, "Listener object cannot be null.");
+        if (allowDuplicate) {
+            listeners.add(listener);
+        } else if (!allowDuplicate && !listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 783
+FRAGMENT LINE AVG SIZE: 41.21052631578947
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 2 2 3 3 3 2 1 1 
+AREA: 27
+AVG DEPTH: 1.4210526315789473
+NUMBER OF LINES IN FRAGMENT: 19
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: e8db7237a9c347d2225fce9b49ff92bb741adffa
+URL: https://github.com/apache/commons-lang/commit/e8db7237a9c347d2225fce9b49ff92bb741adffa
+DESCRIPTION: Extract Method	private isJsonArray(valueAsString String) : boolean extracted from protected appendDetail(buffer StringBuffer, fieldName String, value Object) : void in class org.apache.commons.lang3.builder.ToStringStyle.JsonToStringStyle
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/e8db7237a9c347d2225fce9b49ff92bb741adffa/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/e8db7237a9c347d2225fce9b49ff92bb741adffa/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java#L2594
+DIRECTLY EXTRACTED OPERATION:
+            return valueAsString.startsWith(getArrayStart())
+                    && valueAsString.startsWith(getArrayEnd());
+        }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 136
+FRAGMENT LINE AVG SIZE: 34.0
+DEPTHS:
+2 3 2 2 
+AREA: 9
+AVG DEPTH: 2.25
+NUMBER OF LINES IN FRAGMENT: 4
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private isJsonObject(valueAsString String) : boolean extracted from protected appendDetail(buffer StringBuffer, fieldName String, value Object) : void in class org.apache.commons.lang3.builder.ToStringStyle.JsonToStringStyle
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/e8db7237a9c347d2225fce9b49ff92bb741adffa/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/e8db7237a9c347d2225fce9b49ff92bb741adffa/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java#L2599
+DIRECTLY EXTRACTED OPERATION:
+            return valueAsString.startsWith(getContentStart())
+                    && valueAsString.endsWith(getContentEnd());
+        }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 138
+FRAGMENT LINE AVG SIZE: 34.5
+DEPTHS:
+2 3 2 2 
+AREA: 9
+AVG DEPTH: 2.25
+NUMBER OF LINES IN FRAGMENT: 4
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 775203dd2cfce017910d04c58a0b1b4e0a64923c
+URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c
+DESCRIPTION: Extract Method	private createJuneTestDate(timeZone TimeZone) : Calendar extracted from public testSMTP() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L124
+DIRECTLY EXTRACTED OPERATION:
+        final Calendar cal = Calendar.getInstance(timeZone);
+        cal.set(2003, Calendar.JUNE, 8, 10, 11, 12);
+        return cal;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 141
+FRAGMENT LINE AVG SIZE: 28.2
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private assertFormats(expectedValue String, pattern String, timeZone TimeZone, cal Calendar) : void extracted from public testDateTimeISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L112
+DIRECTLY EXTRACTED OPERATION:
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime().getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal, pattern, timeZone));
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: true
+FRAGMENT LENGTH: 292
+FRAGMENT LINE AVG SIZE: 58.4
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private createFebruaryTestDate(timeZone TimeZone) : Calendar extracted from public testDateTimeISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L118
+DIRECTLY EXTRACTED OPERATION:
+        final Calendar cal = Calendar.getInstance(timeZone);
+        cal.set(2002, Calendar.FEBRUARY, 23, 9, 11, 12);
+        return cal;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 145
+FRAGMENT LINE AVG SIZE: 29.0
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private testGmtMinus3(expectedValue String, pattern String) : void extracted from public testDateTimeISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L130
+DIRECTLY EXTRACTED OPERATION:
+        final TimeZone timeZone = TimeZone.getTimeZone("GMT-3");
+        assertFormats(expectedValue, pattern, timeZone, createFebruaryTestDate(timeZone));
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 163
+FRAGMENT LINE AVG SIZE: 40.75
+DEPTHS:
+1 2 1 1 
+AREA: 5
+AVG DEPTH: 1.25
+NUMBER OF LINES IN FRAGMENT: 4
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private assertFormats(expectedValue String, pattern String, timeZone TimeZone, cal Calendar) : void extracted from public testDateISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L112
+DIRECTLY EXTRACTED OPERATION:
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime().getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal, pattern, timeZone));
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: true
+FRAGMENT LENGTH: 292
+FRAGMENT LINE AVG SIZE: 58.4
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private createFebruaryTestDate(timeZone TimeZone) : Calendar extracted from public testDateISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L118
+DIRECTLY EXTRACTED OPERATION:
+        final Calendar cal = Calendar.getInstance(timeZone);
+        cal.set(2002, Calendar.FEBRUARY, 23, 9, 11, 12);
+        return cal;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 145
+FRAGMENT LINE AVG SIZE: 29.0
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private testGmtMinus3(expectedValue String, pattern String) : void extracted from public testDateISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L130
+DIRECTLY EXTRACTED OPERATION:
+        final TimeZone timeZone = TimeZone.getTimeZone("GMT-3");
+        assertFormats(expectedValue, pattern, timeZone, createFebruaryTestDate(timeZone));
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 163
+FRAGMENT LINE AVG SIZE: 40.75
+DEPTHS:
+1 2 1 1 
+AREA: 5
+AVG DEPTH: 1.25
+NUMBER OF LINES IN FRAGMENT: 4
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private assertFormats(expectedValue String, pattern String, timeZone TimeZone, cal Calendar) : void extracted from public testTimeISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L112
+DIRECTLY EXTRACTED OPERATION:
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime().getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal, pattern, timeZone));
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: true
+FRAGMENT LENGTH: 292
+FRAGMENT LINE AVG SIZE: 58.4
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private createFebruaryTestDate(timeZone TimeZone) : Calendar extracted from public testTimeISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L118
+DIRECTLY EXTRACTED OPERATION:
+        final Calendar cal = Calendar.getInstance(timeZone);
+        cal.set(2002, Calendar.FEBRUARY, 23, 9, 11, 12);
+        return cal;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 145
+FRAGMENT LINE AVG SIZE: 29.0
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private testGmtMinus3(expectedValue String, pattern String) : void extracted from public testTimeISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L130
+DIRECTLY EXTRACTED OPERATION:
+        final TimeZone timeZone = TimeZone.getTimeZone("GMT-3");
+        assertFormats(expectedValue, pattern, timeZone, createFebruaryTestDate(timeZone));
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 163
+FRAGMENT LINE AVG SIZE: 40.75
+DEPTHS:
+1 2 1 1 
+AREA: 5
+AVG DEPTH: 1.25
+NUMBER OF LINES IN FRAGMENT: 4
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private assertFormats(expectedValue String, pattern String, timeZone TimeZone, cal Calendar) : void extracted from public testTimeNoTISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L112
+DIRECTLY EXTRACTED OPERATION:
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal.getTime().getTime(), pattern, timeZone));
+        assertEquals(expectedValue, DateFormatUtils.format(cal, pattern, timeZone));
+    }
+
+PARAMS COUNT: 4
+IS VOID METHOD: true
+FRAGMENT LENGTH: 292
+FRAGMENT LINE AVG SIZE: 58.4
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private createFebruaryTestDate(timeZone TimeZone) : Calendar extracted from public testTimeNoTISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L118
+DIRECTLY EXTRACTED OPERATION:
+        final Calendar cal = Calendar.getInstance(timeZone);
+        cal.set(2002, Calendar.FEBRUARY, 23, 9, 11, 12);
+        return cal;
+    }
+
+PARAMS COUNT: 1
+IS VOID METHOD: false
+FRAGMENT LENGTH: 145
+FRAGMENT LINE AVG SIZE: 29.0
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private testGmtMinus3(expectedValue String, pattern String) : void extracted from public testTimeNoTISO() : void in class org.apache.commons.lang3.time.DateFormatUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/775203dd2cfce017910d04c58a0b1b4e0a64923c/src/test/java/org/apache/commons/lang3/time/DateFormatUtilsTest.java#L130
+DIRECTLY EXTRACTED OPERATION:
+        final TimeZone timeZone = TimeZone.getTimeZone("GMT-3");
+        assertFormats(expectedValue, pattern, timeZone, createFebruaryTestDate(timeZone));
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 163
+FRAGMENT LINE AVG SIZE: 40.75
+DEPTHS:
+1 2 1 1 
+AREA: 5
+AVG DEPTH: 1.25
+NUMBER OF LINES IN FRAGMENT: 4
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 76cc69c3f08cbf31efd56f631504496307ab7a5c
+URL: https://github.com/apache/commons-lang/commit/76cc69c3f08cbf31efd56f631504496307ab7a5c
+DESCRIPTION: Extract Method	private allPublicChildFields() : Field[] extracted from public testGetAllFields() : void in class org.apache.commons.lang3.reflect.FieldUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/76cc69c3f08cbf31efd56f631504496307ab7a5c/src/test/java/org/apache/commons/lang3/reflect/FieldUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/76cc69c3f08cbf31efd56f631504496307ab7a5c/src/test/java/org/apache/commons/lang3/reflect/FieldUtilsTest.java#L149
+DIRECTLY EXTRACTED OPERATION:
+        Class<? super PublicChild> parentClass = PublicChild.class.getSuperclass();
+		final Field[] fieldsParent =  parentClass.getDeclaredFields();
+        assertArrayEquals(fieldsParent, FieldUtils.getAllFields(parentClass));
+
+		final Field[] fieldsPublicChild = PublicChild.class.getDeclaredFields();
+        return ArrayUtils.addAll(fieldsPublicChild, fieldsParent);
+    }
+
+IS VOID METHOD: false
+FRAGMENT LENGTH: 378
+FRAGMENT LINE AVG SIZE: 47.25
+DEPTHS:
+1 2 2 2 2 2 1 1 
+AREA: 13
+AVG DEPTH: 1.625
+NUMBER OF LINES IN FRAGMENT: 8
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: bdb5d9723056941a0a29aabc2eaf81b2c96956b5
+URL: https://github.com/apache/commons-lang/commit/bdb5d9723056941a0a29aabc2eaf81b2c96956b5
+DESCRIPTION: Extract Method	protected testGetConcurrentOptionallyWithException(expectExceptions boolean, expectedMessage String, expectedCause Exception) : void extracted from public testGetConcurrent() : void in class org.apache.commons.lang3.concurrent.AbstractConcurrentInitializerTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/bdb5d9723056941a0a29aabc2eaf81b2c96956b5/src/test/java/org/apache/commons/lang3/concurrent/AbstractConcurrentInitializerTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/bdb5d9723056941a0a29aabc2eaf81b2c96956b5/src/test/java/org/apache/commons/lang3/concurrent/AbstractConcurrentInitializerTest.java#L95
+DIRECTLY EXTRACTED OPERATION:
+     * Tests whether get() can be invoked from multiple threads concurrently.  Supports the exception-handling case
+     * and the normal, non-exception case.
+     *
+     * Always the same object should be returned, or an exception with the same message and cause should be thrown.
+     *
+     * @throws org.apache.commons.lang3.concurrent.ConcurrentException because the object under test may throw it
+     * @throws java.lang.InterruptedException because the threading API my throw it
+     */
+    protected void testGetConcurrentOptionallyWithException(boolean expectExceptions, String expectedMessage,
+                                                            Exception expectedCause)
+            throws ConcurrentException, InterruptedException {
+
+        final ConcurrentInitializer<Object> initializer = expectExceptions ?
+                createExceptionThrowingInitializer() :
+                createInitializer();
+
+        final int threadCount = 20;
+        final CountDownLatch startLatch = new CountDownLatch(1);
+        class GetThread extends Thread {
+            Object object;
+
+            @Override
+            public void run() {
+                try {
+                    // wait until all threads are ready for maximum parallelism
+                    startLatch.await();
+                    // access the initializer
+                    object = initializer.get();
+                } catch (final InterruptedException iex) {
+                    // ignore
+                } catch (final ConcurrentException cex) {
+                    object = cex;
+                }
+            }
+        }
+
+        final GetThread[] threads = new GetThread[threadCount];
+        for (int i = 0; i < threadCount; i++) {
+            threads[i] = new GetThread();
+            threads[i].start();
+        }
+
+        // fire all threads and wait until they are ready
+        startLatch.countDown();
+        for (final Thread t : threads) {
+            t.join();
+        }
+
+        // check results
+        if ( expectExceptions ) {
+            for (GetThread t : threads) {
+                assertTrue(t.object instanceof Exception);
+                Exception exc = (Exception) t.object;
+                assertEquals(expectedMessage, exc.getMessage());
+                assertSame(expectedCause, exc.getCause());
+            }
+        } else {
+            final Object managedObject = initializer.get();
+            for (final GetThread t : threads) {
+                assertEquals("Wrong object", managedObject, t.object);
+            }
+        }
+    }
+
+PARAMS COUNT: 3
+IS VOID METHOD: true
+FRAGMENT LENGTH: 2548
+FRAGMENT LINE AVG SIZE: 39.8125
+DEPTHS:
+0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 3 3 3 3 4 5 5 5 5 5 5 5 5 4 3 2 2 2 2 3 3 2 2 2 2 2 3 2 2 2 2 3 4 4 4 4 3 3 3 3 4 3 2 1 1 
+AREA: 166
+AVG DEPTH: 2.59375
+NUMBER OF LINES IN FRAGMENT: 64
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 649a089ddc4da251a3eefd1a792b34b782164191
+URL: https://github.com/apache/commons-lang/commit/649a089ddc4da251a3eefd1a792b34b782164191
+DESCRIPTION: Extract Method	private checkParse(locale Locale, sdf SimpleDateFormat, fdf DateParser, formattedDate String) : void extracted from private checkParse(locale Locale, cal Calendar, sdf SimpleDateFormat, fdf DateParser) : void in class org.apache.commons.lang3.time.FastDateParserTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/649a089ddc4da251a3eefd1a792b34b782164191/src/test/java/org/apache/commons/lang3/time/FastDateParserTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/649a089ddc4da251a3eefd1a792b34b782164191/src/test/java/org/apache/commons/lang3/time/FastDateParserTest.java#L333
+DIRECTLY EXTRACTED OPERATION:
+		final Date expectedTime = sdf.parse(formattedDate);
+        final Date actualTime = fdf.parse(formattedDate);
+        assertEquals(locale.toString()+" "+formattedDate +"\n",expectedTime, actualTime);
+	}
+
+FRAGMENT LENGTH: 206
+FRAGMENT LINE AVG SIZE: 41.2
+DEPTHS:
+1 2 2 1 1 
+AREA: 7
+AVG DEPTH: 1.4
+NUMBER OF LINES IN FRAGMENT: 5
+---REFACTORING_FINISH---
+-----REFACTORINGS_END-----
+COMMIT ID: 159415855d06d186e86a70f3d4aba8c2e96d4b34
+URL: https://github.com/apache/commons-lang/commit/159415855d06d186e86a70f3d4aba8c2e96d4b34
+DESCRIPTION: Extract Method	private compareIsNumberWithCreateNumber(val String, expected boolean) : void extracted from public testIsNumber() : void in class org.apache.commons.lang3.math.NumberUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/159415855d06d186e86a70f3d4aba8c2e96d4b34/src/test/java/org/apache/commons/lang3/math/NumberUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/159415855d06d186e86a70f3d4aba8c2e96d4b34/src/test/java/org/apache/commons/lang3/math/NumberUtilsTest.java#L1228
+DIRECTLY EXTRACTED OPERATION:
+        final boolean isValid = NumberUtils.isNumber(val);
+        final boolean canCreate = checkCreateNumber(val);
+        if (isValid == expected && canCreate == expected) {
+            return;
+        }
+        fail("Expecting "+ expected + " for isNumber/createNumber using \"" + val + "\" but got " + isValid + " and " + canCreate);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 346
+FRAGMENT LINE AVG SIZE: 43.25
+DEPTHS:
+1 2 2 3 2 2 1 1 
+AREA: 14
+AVG DEPTH: 1.75
+NUMBER OF LINES IN FRAGMENT: 8
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private compareIsNumberWithCreateNumber(val String, expected boolean) : void extracted from public testIsNumber() : void in class org.apache.commons.lang3.math.NumberUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/159415855d06d186e86a70f3d4aba8c2e96d4b34/src/test/java/org/apache/commons/lang3/math/NumberUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/159415855d06d186e86a70f3d4aba8c2e96d4b34/src/test/java/org/apache/commons/lang3/math/NumberUtilsTest.java#L1228
+DIRECTLY EXTRACTED OPERATION:
+        final boolean isValid = NumberUtils.isNumber(val);
+        final boolean canCreate = checkCreateNumber(val);
+        if (isValid == expected && canCreate == expected) {
+            return;
+        }
+        fail("Expecting "+ expected + " for isNumber/createNumber using \"" + val + "\" but got " + isValid + " and " + canCreate);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 346
+FRAGMENT LINE AVG SIZE: 43.25
+DEPTHS:
+1 2 2 3 2 2 1 1 
+AREA: 14
+AVG DEPTH: 1.75
+NUMBER OF LINES IN FRAGMENT: 8
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private compareIsNumberWithCreateNumber(val String, expected boolean) : void extracted from public testIsNumber() : void in class org.apache.commons.lang3.math.NumberUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/159415855d06d186e86a70f3d4aba8c2e96d4b34/src/test/java/org/apache/commons/lang3/math/NumberUtilsTest.java
+REFACTORING URL: https://github.com/apache/commons-lang/blob/159415855d06d186e86a70f3d4aba8c2e96d4b34/src/test/java/org/apache/commons/lang3/math/NumberUtilsTest.java#L1228
+DIRECTLY EXTRACTED OPERATION:
+        final boolean isValid = NumberUtils.isNumber(val);
+        final boolean canCreate = checkCreateNumber(val);
+        if (isValid == expected && canCreate == expected) {
+            return;
+        }
+        fail("Expecting "+ expected + " for isNumber/createNumber using \"" + val + "\" but got " + isValid + " and " + canCreate);
+    }
+
+PARAMS COUNT: 2
+IS VOID METHOD: true
+FRAGMENT LENGTH: 346
+FRAGMENT LINE AVG SIZE: 43.25
+DEPTHS:
+1 2 2 3 2 2 1 1 
+AREA: 14
+AVG DEPTH: 1.75
+NUMBER OF LINES IN FRAGMENT: 8
+---REFACTORING_FINISH---
+DESCRIPTION: Extract Method	private compareIsNumberWithCreateNumber(val String, expected boolean) : void extracted from public testIsNumber() : void in class org.apache.commons.lang3.math.NumberUtilsTest
+REFACTORING FILE DIFF URL: https://github.com/apache/commons-lang/commit/159415855d06d186e86a70f3d4aba8c2e96d4b34

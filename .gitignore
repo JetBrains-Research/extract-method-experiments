@@ -4,3 +4,4 @@
 */build/
 results/
 *.csv
+*.ipynb

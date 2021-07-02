@@ -1,4 +1,4 @@
-package ru.hse.kirilenko.refactorings.handlers;
+package ru.hse.kirilenko.refactorings.extractors;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -10,7 +10,6 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-import ru.hse.kirilenko.refactorings.ExtractionConfig;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
 import ru.hse.kirilenko.refactorings.csv.models.Feature;

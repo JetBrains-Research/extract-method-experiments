@@ -1,4 +1,4 @@
-package ru.hse.kirilenko.refactorings;
+package ru.hse.kirilenko.refactorings.extractors;
 
 public class ExtractionConfig {
     public static boolean extractDirectly = true;

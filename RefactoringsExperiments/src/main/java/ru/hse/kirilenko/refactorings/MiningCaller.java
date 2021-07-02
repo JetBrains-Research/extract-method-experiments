@@ -1,7 +1,4 @@
 package ru.hse.kirilenko.refactorings;
-/*import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;*/
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -9,17 +6,17 @@ import org.refactoringminer.api.*;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 import ru.hse.kirilenko.refactorings.handlers.CustomRefactoringHandler;
-import ru.hse.kirilenko.refactorings.handlers.MetadataExtractor;
+import ru.hse.kirilenko.refactorings.extractors.MetadataExtractor;
 
 import java.io.PrintWriter;
 
-public class RefactoringsExtractor {
+public class MiningCaller {
     private PrintWriter out;
     private String repoURL;
     private String repoName;
     private int total = 1;
     private int current = 0;
-    public RefactoringsExtractor(PrintWriter out, String repoURL, String repoName) {
+    public MiningCaller(PrintWriter out, String repoURL, String repoName) {
         this.out = out;
         this.repoURL = repoURL;
         this.repoName = repoName;

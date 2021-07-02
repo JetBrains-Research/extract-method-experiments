@@ -1,8 +1,6 @@
-package ru.hse.kirilenko.refactorings;
+package ru.hse.kirilenko.refactorings.extractors;
 
-//import javafx.application.Platform;
-//import javafx.scene.control.Label;
-//import javafx.scene.control.ProgressBar;
+import ru.hse.kirilenko.refactorings.MiningCaller;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -39,7 +37,7 @@ public class ExtractionRunner {
             try(FileWriter fileWriter = new FileWriter(outputFileName)) {
                 System.out.println("Run repo with URL: " + url);
                 final PrintWriter printWriter = new PrintWriter(fileWriter);
-                RefactoringsExtractor extractor = new RefactoringsExtractor(printWriter, url, repo);
+                MiningCaller extractor = new MiningCaller(printWriter, url, repo);
                 extractor.run();
             } catch (Exception ex) {
                 ex.printStackTrace();

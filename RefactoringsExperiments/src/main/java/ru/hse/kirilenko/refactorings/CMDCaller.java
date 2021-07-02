@@ -1,50 +1,45 @@
 package ru.hse.kirilenko.refactorings;
-/*import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;*/
-import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import org.apache.commons.cli.*;
 
 
 public class CMDCaller {
     /**
      Calls for <code>ExtractionRunner</code> from command-line
      */
-    public static void main(String[] args){
-        String path = args[0];
-        System.out.println(path);
-        File file = new File(path);
+    public static void main(String[] args) {
+        //Doing command-line stuff
 
-        try(BufferedReader br = new BufferedReader(new FileReader(file))) {
-            List<String> repos = new ArrayList<>();
-            br.lines().forEach(s -> repos.add(s));
+        CommandLineParser parser = new DefaultParser();
 
-            SparseCSVBuilder.sharedInstance = new SparseCSVBuilder("true.csv", ExtractionConfig.nFeatures);
-            ExtractionRunner runner = new ExtractionRunner(repos);
-            new Thread(() -> runner.run()).start();
+        Options options = new Options();
 
-        } catch(Exception e) {
-            String errormsg = String.format("Warning, there is no such file: %s\nExiting...", path);
-            System.out.println(errormsg);
-            System.exit(0);
+        Option positive = new Option("p", "pos", true, "positive input file path");
+        positive.setRequired(false);
+        options.addOption(positive);
+
+        Option negative = new Option("n", "neg", true, "positive input file path");
+        negative.setRequired(false);
+        options.addOption(negative);
+
+        try {
+            // parse the command line arguments
+            CommandLine line = parser.parse( options, args );
+
+            // choosing what to run
+            if( line.hasOption( "p" ) ) {
+                // print the value of block-size
+                System.out.printf("Collecting true refactorings at %s\n",  line.getOptionValue( "p" ) );
+                TrueRefactoringsExtractorCaller.run(line.getOptionValue( "p" ));
+            }
+            if( line.hasOption( "n" ) ) {
+                // print the value of block-size
+                System.out.printf("Collecting false refactorings at %s\n",  line.getOptionValue( "n" ) );
+                FalseRefactoringsExtractorCaller.run(line.getOptionValue( "n" ));
+            }
+        }
+        catch(ParseException exp) {
+            System.out.println( "Unexpected exception:" + exp.getMessage() );
         }
     }
 }

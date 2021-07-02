@@ -1,4 +1,4 @@
-package ru.hse.kirilenko.refactorings.fd;
+package ru.hse.kirilenko.refactorings.extractors;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -17,7 +17,6 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;
-import ru.hse.kirilenko.refactorings.ExtractionConfig;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
 import ru.hse.kirilenko.refactorings.csv.models.Feature;
@@ -29,33 +28,7 @@ import java.util.*;
 
 import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;
 
-public class FalseDatasetCreator {
-
-    public static void main(String[] args) throws Exception {
-        SparseCSVBuilder.sharedInstance = new SparseCSVBuilder("false.csv", ExtractionConfig.nFeatures);
-        FalseDatasetCreator falseDatasetCreator = new FalseDatasetCreator();
-
-        File file = new File("a.txt");
-
-        try(BufferedReader br = new BufferedReader(new FileReader(file))) {
-            //List<String> repos = new ArrayList<>();
-            br.lines().forEach(s -> {
-                //repos.add(s);
-
-                String url = "https://github.com/" + s + ".git";
-                try {
-                    falseDatasetCreator.run(s, url);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
-
-
-        } catch (Exception ex) {
-            throw ex;
-        }
-    }
+public class FalseRefactoringsExtractor {
 
     public void run(final String repoName, final String repoURL) throws Exception {
         GitService gitService = new GitServiceImpl();
@@ -72,7 +45,7 @@ public class FalseDatasetCreator {
 
             RevCommit commit = allCommits.get(300);
             String commitId = commit.getId().getName();
-
+            System.err.printf("git repo: %s\n", repoName);
             RevTree tree = commit.getTree();
 
             try (TreeWalk treeWalk = new TreeWalk(repo)) {
@@ -82,6 +55,7 @@ public class FalseDatasetCreator {
                         treeWalk.enterSubtree();
                     } else {
                         handleFile(repo, treeWalk.getPathString(), commitId);
+//                        System.err.printf("COMMIT ID: %s\n", commitId);
                     }
                 }
             }

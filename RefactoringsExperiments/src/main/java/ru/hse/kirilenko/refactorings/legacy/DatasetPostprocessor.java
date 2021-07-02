@@ -1,7 +1,6 @@
 package ru.hse.kirilenko.refactorings.legacy;
 
 import org.apache.commons.lang3.StringUtils;
-import ru.hse.kirilenko.refactorings.RefactoringsExtractor;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -8,6 +8,7 @@ import ru.hse.kirilenko.refactorings.utils.trie.Trie;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KeywordsCalculator {
     public static List<String> allKeywords = Arrays.asList(
@@ -37,4 +38,19 @@ public class KeywordsCalculator {
             id += 2;
         }
     }
+
+    public static void calculateToMap(String codeFragmentString, Map<Feature, Double> features, int fragLinesCount) {
+        HashMap<String, Integer> counts = KeywordsCalculator.keywordsTrie.calculate(codeFragmentString);
+        int id = 6;
+        for (String keyword: KeywordsCalculator.allKeywords) {
+            Integer count = counts.get(keyword);
+            if (count == null) {
+                count = 0;
+            }
+
+            features.replace(Feature.fromId(id++), (double) count);
+            features.remove(Feature.fromId(id++), (double)count / fragLinesCount);
+        }
+    }
+
 }

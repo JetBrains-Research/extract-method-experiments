@@ -47,6 +47,7 @@ public class FalseRefactoringsExtractor {
             handleCommit(repo, latestCommit);
         } catch (Exception e){
             System.err.printf("Could not parse repository %s\n", repoURL);
+            e.printStackTrace();
         }
     }
 
@@ -112,11 +113,9 @@ public class FalseRefactoringsExtractor {
                 @Override
                 public void visit(MethodDeclaration n, Object arg) {
                     if(n.getBody() != null){
-                        System.out.println(n.getBody().toString());
-//                        exit(0);
-//                        Fragment fragment = new Fragment(n, repo, filePath, commitId);
-//                        fragment.computeFeatures();
-//                        fragment.writeFeatures();
+//                        System.out.println(n.getBody().toString());
+                        Fragment fragment = new Fragment(n, repo, filePath, commitId);
+                        fragment.processFragment();
                     }
                     super.visit(n, arg);
 

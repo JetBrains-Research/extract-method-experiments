@@ -85,8 +85,8 @@ public class GitBlameAnalyzer {
             }
         }
 
-        features.replace(Feature.TotalCommitsInFragment, (double) commits.size());
-        features.replace(Feature.TotalAuthorsInFragment, (double) authors.size());
+        features.put(Feature.TotalCommitsInFragment, (double) commits.size());
+        features.put(Feature.TotalAuthorsInFragment, (double) authors.size());
 
         int minTime = Integer.MAX_VALUE;
         int maxTime = Integer.MIN_VALUE;
@@ -105,8 +105,8 @@ public class GitBlameAnalyzer {
             for (Integer time : creationDates) {
                 totalTime += time - minTime;
             }
-            features.replace(Feature.LiveTimeOfFragment, (double) maxTime - minTime);
-            features.replace(Feature.AverageLiveTimeOfLine, (double) totalTime / creationDates.size());
+            features.put(Feature.LiveTimeOfFragment, (double) maxTime - minTime);
+            features.put(Feature.AverageLiveTimeOfLine, (double) totalTime / creationDates.size());
         }
     }
 

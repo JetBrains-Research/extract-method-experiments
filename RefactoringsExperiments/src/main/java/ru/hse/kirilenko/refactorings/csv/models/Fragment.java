@@ -2,11 +2,11 @@ package ru.hse.kirilenko.refactorings.csv.models;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.Statement;
+import jdk.nashorn.internal.ir.BlockStatement;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jgit.lib.Repository;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.utils.calcers.*;
@@ -32,16 +32,6 @@ public class Fragment {
     /**
      * commit from which the fragment was taken
      */
-
-    class Statement {
-        String code;
-        Map<Feature, Double> features;
-
-        public Statement(String code) {
-            this.code = code;
-            this.features = new HashMap<Feature, Double>();
-        }
-    }
 
     public Fragment(Node mDec, Repository repo, String filePath, String commitId) {
         this.methodDeclaration = (MethodDeclaration) mDec;
@@ -116,14 +106,12 @@ public class Fragment {
     }
 
     public void processFragment() {
-
-        ASTParser parser = ASTParser.newParser(JLS11);
-        parser.setSource(methodDeclaration.toString().toCharArray());
-        parser.setKind(ASTParser.K_STATEMENTS);
-        Block block = (Block) parser.createAST(null);
-        for(Object s : block.statements()){
-            System.out.println(s.toString());
+        BlockStmt b = methodDeclaration.getBody();
+        while(b.getStmts().size() > 1){
+            b = (BlockStmt) b.getStmts().get(0);
         }
+        System.out.println();
+        System.out.println("------------------------------");
     }
 
 }

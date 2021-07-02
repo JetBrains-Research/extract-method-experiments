@@ -48,8 +48,8 @@ public class KeywordsCalculator {
                 count = 0;
             }
 
-            features.replace(Feature.fromId(id++), (double) count);
-            features.remove(Feature.fromId(id++), (double)count / fragLinesCount);
+            features.put(Feature.fromId(id++), (double) count);
+            features.put(Feature.fromId(id++), (double)count / fragLinesCount);
         }
     }
 

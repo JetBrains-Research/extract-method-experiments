@@ -115,7 +115,7 @@ public class FalseRefactoringsExtractor {
                     if(n.getBody() != null){
 //                        System.out.println(n.getBody().toString());
                         Fragment fragment = new Fragment(n, repo, filePath, commitId);
-                        fragment.processFragment();
+                        fragment.processFragment(3);
                     }
                     super.visit(n, arg);
 

@@ -4,13 +4,15 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import jdk.nashorn.internal.ir.Block;
 import jdk.nashorn.internal.ir.BlockStatement;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jgit.lib.Repository;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.utils.calcers.*;
-
+import org.apache.commons.lang3.SerializationUtils;
+import javax.swing.plaf.nimbus.State;
 import java.util.*;
 
 import static java.lang.System.exit;
@@ -105,13 +107,46 @@ public class Fragment {
 
     }
 
-    public void processFragment() {
-        BlockStmt b = methodDeclaration.getBody();
-        while(b.getStmts().size() > 1){
-            b = (BlockStmt) b.getStmts().get(0);
+    public void processFragment(int threshold) {
+//        System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
+        BlockStmt block = methodDeclaration.getBody();
+        List<Statement> statements = new ArrayList<>();
+//        System.out.printf("Body: -----------------\n%s\n", block);
+        for(Node node : block.getChildrenNodes()){
+            if(node instanceof Statement){
+//                System.out.printf("Statement: ------------\n%s\n", node);
+                statements.add((Statement) node);    //Here may be a problem of *chunky* statements
+            }
+//            System.out.printf("Sub-statements: ------------\n%s\n",node.getChildrenNodes());
         }
-        System.out.println();
-        System.out.println("------------------------------");
+        List<Statement> statementSequence = new ArrayList<>();
+        if(statements.size() <= threshold){
+            return;
+        } else {
+            for(int seqLength = threshold; seqLength<= statements.size(); seqLength++){
+                System.out.printf("size %d, len %d \n", statements.size(), seqLength);
+                for(int shift = 0; shift < statements.size() - seqLength; shift++){
+
+                    for(int index = shift; index < seqLength + shift; index++) {
+                        statementSequence.add(statements.get(index));
+//                        System.out.printf("index %d, statement \n %s\n", index, statements.get(index));
+                    }
+                    //Shenanigans due to lack of copy-constructors and etc.
+
+                    //Change body to compute stuff
+                    BlockStmt newBlock = new BlockStmt(statementSequence);
+                    methodDeclaration.setBody(newBlock);
+                    System.out.printf("%d ---------------------\n%s\n", shift, methodDeclaration);
+                    statementSequence.clear();
+                }
+            }
+
+            //Shenanigans to restore original method.
+//            methodDeclaration.setBody(block);
+//            System.out.printf("Orig: -------------------\n%s\n", methodDeclaration);
+            exit(0);
+        }
+
     }
 
 }

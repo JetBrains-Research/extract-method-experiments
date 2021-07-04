@@ -2,8 +2,8 @@ package ru.hse.kirilenko.refactorings.extractors;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static java.lang.System.exit;
-import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;
+//import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;
 
 public class FalseRefactoringsExtractor {
 
@@ -108,6 +108,7 @@ public class FalseRefactoringsExtractor {
      * contained in contents as InputStream, makes a Fragment,
      * and computes its features*/
     public static void handleMethods(InputStream contents, Repository repo, final String filePath, final String commitId) throws Exception {
+
         try {
             new VoidVisitorAdapter<Object>() {
                 @Override
@@ -121,8 +122,8 @@ public class FalseRefactoringsExtractor {
 
 
                 }
-            }.visit(JavaParser.parse(contents), null);
-        } catch (ParseException e) {
+            }.visit(JavaParser.parse(contents,"UTF-8",false), null);
+        } catch (Exception e) {
             System.err.println("Could not parse a java file");
             e.printStackTrace();
         }

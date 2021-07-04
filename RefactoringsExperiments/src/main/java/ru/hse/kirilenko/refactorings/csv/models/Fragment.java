@@ -2,6 +2,8 @@ package ru.hse.kirilenko.refactorings.csv.models;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import jdk.nashorn.internal.ir.Block;
@@ -12,6 +14,7 @@ import org.eclipse.jgit.lib.Repository;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.utils.calcers.*;
 import org.apache.commons.lang3.SerializationUtils;
+
 import javax.swing.plaf.nimbus.State;
 import java.util.*;
 
@@ -107,44 +110,59 @@ public class Fragment {
 
     }
 
+    private void removeComments() {
+        Comment javadoccomment = new JavadocComment("");
+        methodDeclaration.setComment(javadoccomment);
+
+    }
+
+    /**
+     * Splits fragment into sequences of statements of length
+     * greater than `threshold`, and processes each such
+     * sequence, generating a row to the specified file
+     */
     public void processFragment(int threshold) {
 //        System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
         BlockStmt block = methodDeclaration.getBody();
         List<Statement> statements = new ArrayList<>();
 //        System.out.printf("Body: -----------------\n%s\n", block);
-        for(Node node : block.getChildrenNodes()){
-            if(node instanceof Statement){
+        for (Node node : block.getChildrenNodes()) {
+            if (node instanceof Statement) {
 //                System.out.printf("Statement: ------------\n%s\n", node);
                 statements.add((Statement) node);    //Here may be a problem of *chunky* statements
             }
 //            System.out.printf("Sub-statements: ------------\n%s\n",node.getChildrenNodes());
         }
         List<Statement> statementSequence = new ArrayList<>();
-        if(statements.size() <= threshold){
+
+        // Don't analyze too short methods
+        if (statements.size() < threshold) {
             return;
         } else {
-            for(int seqLength = threshold; seqLength<= statements.size(); seqLength++){
-                System.out.printf("size %d, len %d \n", statements.size(), seqLength);
-                for(int shift = 0; shift < statements.size() - seqLength; shift++){
-
-                    for(int index = shift; index < seqLength + shift; index++) {
-                        statementSequence.add(statements.get(index));
-//                        System.out.printf("index %d, statement \n %s\n", index, statements.get(index));
-                    }
-                    //Shenanigans due to lack of copy-constructors and etc.
-
-                    //Change body to compute stuff
-                    BlockStmt newBlock = new BlockStmt(statementSequence);
-                    methodDeclaration.setBody(newBlock);
-                    System.out.printf("%d ---------------------\n%s\n", shift, methodDeclaration);
-                    statementSequence.clear();
+            int seqCount = 0;
+            BlockStmt newBlock;
+            for (int shift = 0; shift < statements.size() - threshold; shift++) {
+                for (int i = 0; i < threshold-1; i++) {
+                    statementSequence.add(statements.get(i + shift));
                 }
-            }
+                for (int j = threshold-1; j + shift < statements.size(); j++) {
+                    statementSequence.add(statements.get(j + shift));
+                    newBlock = new BlockStmt(statementSequence);
+                    methodDeclaration.setBody(newBlock); //Here should be a call to feature computation
+//                    this.computeFeatures();
+                    System.out.printf("%d ---------------------\n%s\n", seqCount, methodDeclaration);
+                    seqCount++;
+                }
 
-            //Shenanigans to restore original method.
+            }
+            //Shenanigans due to lack of copy-constructors and etc.
+
+            //Change body to compute stuff
+            exit(0);
+
+            //Shenanigans to restore the original method.
 //            methodDeclaration.setBody(block);
 //            System.out.printf("Orig: -------------------\n%s\n", methodDeclaration);
-            exit(0);
         }
 
     }

@@ -1,5 +1,6 @@
 package ru.hse.kirilenko.refactorings.utils.calcers;
 
+import com.sun.tools.jdeprscan.CSV;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -11,6 +12,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
 import ru.hse.kirilenko.refactorings.csv.models.Feature;
+import ru.hse.kirilenko.refactorings.csv.models.ICSVItem;
 
 import java.util.*;
 
@@ -63,10 +65,10 @@ public class GitBlameAnalyzer {
         }
     }
 
-    public static void extractFeaturesToMap(Repository repo,
+    public static void extractToList(Repository repo,
                                             int firstLine,
                                             int lastLine,
-                                            String filePath, Map<Feature, Double> features) throws GitAPIException {
+                                            String filePath, List<ICSVItem> features) throws GitAPIException {
         final BlameResult result = new Git(repo).blame().setFilePath(filePath)
                 .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
 
@@ -85,8 +87,8 @@ public class GitBlameAnalyzer {
             }
         }
 
-        features.put(Feature.TotalCommitsInFragment, (double) commits.size());
-        features.put(Feature.TotalAuthorsInFragment, (double) authors.size());
+        features.add(new CSVItem(Feature.TotalCommitsInFragment, (double) commits.size()));
+        features.add(new CSVItem(Feature.TotalAuthorsInFragment, (double) authors.size()));
 
         int minTime = Integer.MAX_VALUE;
         int maxTime = Integer.MIN_VALUE;
@@ -105,8 +107,8 @@ public class GitBlameAnalyzer {
             for (Integer time : creationDates) {
                 totalTime += time - minTime;
             }
-            features.put(Feature.LiveTimeOfFragment, (double) maxTime - minTime);
-            features.put(Feature.AverageLiveTimeOfLine, (double) totalTime / creationDates.size());
+            features.add(new CSVItem(Feature.LiveTimeOfFragment, (double) maxTime - minTime));
+            features.add(new CSVItem(Feature.AverageLiveTimeOfLine, (double) totalTime / creationDates.size()));
         }
     }
 

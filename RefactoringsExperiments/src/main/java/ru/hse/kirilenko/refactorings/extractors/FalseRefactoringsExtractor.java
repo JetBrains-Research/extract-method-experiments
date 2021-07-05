@@ -34,6 +34,11 @@ import static java.lang.System.exit;
 //import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;
 
 public class FalseRefactoringsExtractor {
+    FileWriter fw;
+
+    public FalseRefactoringsExtractor(FileWriter fw){
+        this.fw = fw;
+    }
 
     public void run(final String repoName, final String repoURL) throws Exception {
         GitService gitService = new GitServiceImpl();
@@ -100,14 +105,14 @@ public class FalseRefactoringsExtractor {
             }
             String fileContents = allFileBuilder.toString();
             InputStream targetStream = new ByteArrayInputStream(fileContents.getBytes());
-            handleMethods(targetStream, repo, filePath, commitId);
+            handleMethods(targetStream, repo, filePath, commitId, this.fw);
         }
     }
 
     /**Uses JavaParser to extract all methods from .java file
      * contained in contents as InputStream, makes a Fragment,
      * and computes its features*/
-    public static void handleMethods(InputStream contents, Repository repo, final String filePath, final String commitId) throws Exception {
+    public void handleMethods(InputStream contents, Repository repo, final String filePath, final String commitId, FileWriter fw) throws Exception {
 
         try {
             new VoidVisitorAdapter<Object>() {
@@ -116,7 +121,7 @@ public class FalseRefactoringsExtractor {
                     if(n.getBody() != null){
 //                        System.out.println(n.getBody().toString());
                         Fragment fragment = new Fragment(n, repo, filePath, commitId);
-                        fragment.processFragment(3);
+                        fragment.processFragment(3, fw);
                     }
                     super.visit(n, arg);
 

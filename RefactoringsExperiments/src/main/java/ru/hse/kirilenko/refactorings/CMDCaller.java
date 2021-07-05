@@ -38,7 +38,7 @@ public class CMDCaller {
                 FalseRefactoringsExtractorCaller.run(line.getOptionValue( "n" ));
             }
         }
-        catch(ParseException exp) {
+        catch(Exception exp) {
             System.out.println( "Unexpected exception:" + exp.getMessage() );
         }
     }

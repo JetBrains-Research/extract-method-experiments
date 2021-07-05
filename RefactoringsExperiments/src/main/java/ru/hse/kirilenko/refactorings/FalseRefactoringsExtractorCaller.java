@@ -1,28 +1,30 @@
 package ru.hse.kirilenko.refactorings;
 
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
+import ru.hse.kirilenko.refactorings.csv.models.Feature;
 import ru.hse.kirilenko.refactorings.extractors.ExtractionConfig;
 import ru.hse.kirilenko.refactorings.extractors.FalseRefactoringsExtractor;
 import ru.hse.kirilenko.refactorings.extractors.NegExtractionRunner;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FalseRefactoringsExtractorCaller {
-    public static void run(String path)  {
-        try {
-            SparseCSVBuilder.sharedInstance = new SparseCSVBuilder("false.csv", ExtractionConfig.nFeatures);
-        } catch (Exception e){
-            String errormsg = String.format("Couldn't make %s file\nExiting...", path);
-            System.out.println(errormsg);
-            System.exit(0);
+    static void makeFileHeader(FileWriter fw) throws IOException{
+        for (int i = 0; i < 117; i++)
+            fw.write(Feature.fromId(i).getName() + ';');
+        fw.write("label\n");
+    }
 
-        }
-        FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor();
+    public static void run(String path) throws IOException {
+        String outFilePath = "false.csv";
+
+        FileWriter fw = new FileWriter(outFilePath);
+        makeFileHeader(fw);
+
+        FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw);
 
         File file = new File(path);
 

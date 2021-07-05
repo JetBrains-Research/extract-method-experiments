@@ -9,11 +9,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtractionRunner {
+public class PosExtractionRunner {
     private List<String> repos = new ArrayList<>();
     private int current = 0;
     private int total = 0;
-    public ExtractionRunner(List<String> repos) {
+    public PosExtractionRunner(List<String> repos) {
         this.repos = repos;
     }
 

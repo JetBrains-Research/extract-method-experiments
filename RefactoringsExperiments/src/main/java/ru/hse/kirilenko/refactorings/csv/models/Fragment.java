@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static java.lang.System.exit;
 import static org.eclipse.jdt.core.dom.AST.JLS10;
@@ -43,12 +44,13 @@ public class Fragment {
     /**
      * commit from which the fragment was taken
      */
-
+    List<Statement> statements;
     public Fragment(Node mDec, Repository repo, String filePath, String commitId) {
         this.methodDeclaration = (MethodDeclaration) mDec;
         this.commitId = commitId;
         this.repo = repo;
         this.filePath = filePath;
+        this.statements = getSubStatements(methodDeclaration.getBody());
     }
 
     private class SubFragment {
@@ -203,41 +205,69 @@ public class Fragment {
      * greater than `threshold`, and processes each such
      * sequence, generating a row to the specified file
      */
-    public void processFragment(int threshold, FileWriter fw) {
-        BlockStmt block = methodDeclaration.getBody();
+
+    private boolean isValidStatement(Statement s){
+        String linearText = s.toString();
+        linearText = linearText.replace("\n", "").replace("\r", "");
+//        System.out.println(s.toString()+"\n-----------------------------------\n");
+        if(Pattern.matches(".*}", linearText) | Pattern.matches(".*;", linearText))
+            return true;
+        else
+            return false;
+    }
+
+    private List<Statement> getSubStatements(Statement s){
         List<Statement> statements = new ArrayList<>();
 //        System.out.printf("Body: -----------------\n%s\n", block);
-        for (Node node : block.getChildrenNodes()) {
+        for (Node node : s.getChildrenNodes()) {
             if (node instanceof Statement) {
 //                System.out.printf("Statement: ------------\n%s\n", node);
-                statements.add((Statement) node);    //Here may be a problem of *chunky* statements
+                if(isValidStatement((Statement) node))
+                    statements.add((Statement) node);    //Here may be a problem of *chunky* statements
+            }
+//            System.out.printf("Sub-statements: ------------\n%s\n",node.getChildrenNodes());
+        }
+        return statements;
+    }
+
+    public void processFragment(int threshold, FileWriter fw) {
+        processEmbedding(threshold, methodDeclaration.getBody(), this.statements, fw);
+        exit(0);
+    }
+    private void processEmbedding(int threshold, Statement embedding, List<Statement> context, FileWriter fw) {
+        // Cycle for parsing embeddings of statements
+        for (Statement s : context) {
+            if (!s.getChildrenNodes().isEmpty()) {
+//                System.out.printf("Found an embedding!:\n%s\n%s\n", s.toString(), s.getChildrenNodes().toString());
+                processEmbedding(threshold, s, getSubStatements(s), fw);
             }
 //            System.out.printf("Sub-statements: ------------\n%s\n",node.getChildrenNodes());
         }
         List<Statement> statementSequence = new ArrayList<>();
 
         // Don't analyze too short methods
-        if (statements.size() < threshold) {
+        if (context.size() < threshold) {
             return;
         } else {
 //            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
             int seqCount = 0;
             BlockStmt newBlock;
-            for (int shift = 0; shift < statements.size() - threshold; shift++) {
+            for (int shift = 0; shift <= context.size() - threshold; shift++) {
                 for (int i = 0; i < threshold - 1; i++) {
-                    statementSequence.add(statements.get(i + shift));
+                    statementSequence.add(context.get(i + shift));
                 }
-                for (int j = threshold - 1; j + shift < statements.size(); j++) {
-                    statementSequence.add(statements.get(j + shift));
+                for (int j = threshold - 1; j + shift < context.size(); j++) {
+
+                    statementSequence.add(context.get(j + shift));
                     newBlock = new BlockStmt(statementSequence);
-                    methodDeclaration.setBody(newBlock); //Here should be a call to feature computation
+                    methodDeclaration.setBody(newBlock);
                     SubFragment sf = new SubFragment(this);
-//                    System.out.printf("Row #%d----------------------------\n%s\n", seqCount, methodDeclaration.toString());
+                    System.out.printf("Row #%d----------------------------\n%s\n", seqCount, methodDeclaration.toString());
                     try {
-                        sf.process(fw);
+//                        sf.process(fw);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        System.err.println("Could not process subfragment.");
+                        System.err.printf("Could not process subfragment \n%s\n.", methodDeclaration.toString());
                     }
 
                     seqCount++;
@@ -252,7 +282,5 @@ public class Fragment {
 //            methodDeclaration.setBody(block);
 //            System.out.printf("Orig: -------------------\n%s\n", methodDeclaration);
         }
-
     }
-
 }

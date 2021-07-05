@@ -20,7 +20,7 @@ public class TrueRefactoringsExtractorCaller {
 
             SparseCSVBuilder.sharedInstance = new SparseCSVBuilder("true.csv", ExtractionConfig.nFeatures);
             PosExtractionRunner runner = new PosExtractionRunner(repos);
-            new Thread(runner::run).start();
+            runner.run();
 
         } catch (Exception e) {
             String errormsg = String.format("Warning, there is no such file: %s\nExiting...", path);

@@ -18,7 +18,6 @@ public class PosExtractionRunner {
     }
 
     public void run() {
-        total = 0;
         current = 0;
         total = Math.max(repos.size(), 1);
 
@@ -35,7 +34,7 @@ public class PosExtractionRunner {
             String outputFileName = "results/" + pathToResult + "_results.txt";
             tryCreateFile(outputFileName);
             try(FileWriter fileWriter = new FileWriter(outputFileName)) {
-                System.out.println("Run repo with URL: " + url);
+                System.out.printf("%d out of %d, running repo with URL:%s\n", current, total, url);
                 final PrintWriter printWriter = new PrintWriter(fileWriter);
                 MiningCaller extractor = new MiningCaller(printWriter, url, repo);
                 extractor.run();

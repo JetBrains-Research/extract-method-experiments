@@ -220,7 +220,7 @@ public class Fragment {
         if (statements.size() < threshold) {
             return;
         } else {
-            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
+//            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
             int seqCount = 0;
             BlockStmt newBlock;
             for (int shift = 0; shift < statements.size() - threshold; shift++) {

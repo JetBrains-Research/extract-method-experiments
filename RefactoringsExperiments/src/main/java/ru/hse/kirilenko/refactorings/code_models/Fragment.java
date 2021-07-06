@@ -35,6 +35,7 @@ public class Fragment {
      */
     List<Statement> statements;
     String initialMethodStr;
+
     public Fragment(Node mDec, Repository repo, String filePath, String commitId) {
         this.methodDeclaration = (MethodDeclaration) mDec;
         this.commitId = commitId;
@@ -44,7 +45,7 @@ public class Fragment {
         this.initialMethodStr = methodDeclaration.toString();
     }
 
-    private String clearCode(String code){
+    private String clearCode(String code) {
         return code.replaceAll("^[ \t{\n]+|[ \t}\n]+$", "");
     }
 
@@ -64,8 +65,88 @@ public class Fragment {
         int beginLine;
         int endLine;
         String complement;
+        double score;
 
-        private String makeComplement(){
+
+        protected class RankEvaluater {
+            private String candidate;
+            private String remainder;
+            private String method;
+            private double score;
+            private int methodDepth;
+            public RankEvaluater(SubFragment sf, double c_length, double max_length) {
+                this.candidate = sf.getBody();
+                this.method = sf.initialMethodStr;
+                this.remainder = sf.complement;
+                this.methodDepth = maxDepth(method);
+                this.sNestArea();
+                this.sLength(c_length, max_length);
+                this.sNestDepth();
+                this.sParam();
+                this.sCommentsAndBlanks();
+            }
+
+            int maxDepth(String S) {
+                int current_max = 0; // current count
+                int max = 0; // overall maximum count
+                int n = S.length();
+
+                // Traverse the input string
+                for (int i = 0; i < n; i++) {
+                    if (S.charAt(i) == '{') {
+                        current_max++;
+
+                        // update max if required
+                        if (current_max > max)
+                            max = current_max;
+                    } else if (S.charAt(i) == '}') {
+                        if (current_max > 0)
+                            current_max--;
+                        else
+                            return -1;
+                    }
+                }
+
+                // finally check for unbalanced string
+                if (current_max != 0)
+                    return -1;
+
+                return max;
+            }
+
+            void sLength(double c, double max) {
+                score += Math.min(c * Math.min(candidate.length(), remainder.length()), max);
+            }
+
+            void sNestDepth() {
+                int d_m = this.methodDepth;
+                int d_r = maxDepth(remainder);
+                int d_c = maxDepth(candidate);
+                score += Math.min(d_m - d_r, d_m - d_c);
+
+            }
+
+            void sNestArea() {
+                int a_m = analyzeDepth(method);
+                int a_r = analyzeDepth(remainder);
+                int a_c = analyzeDepth(candidate);
+                score += 2 * this.methodDepth / (double) a_m * Math.min(a_m - a_c, a_m - a_r);
+            }
+
+            void sParam() {
+                return;
+            }
+
+            void sCommentsAndBlanks() {
+                return;
+            }
+            double getScore(){
+                return this.score;
+            }
+        }
+
+
+        private String makeComplement() {
             int relativeSubFragmentBeginLine = this.getBeginLine() - methodDeclaration.getBeginLine();
             int relativeSubFragmentEndLine = this.getEndLine() - methodDeclaration.getBeginLine();
             int relativeMethodEndLine = methodDeclaration.getEndLine() - methodDeclaration.getBeginLine();
@@ -73,15 +154,15 @@ public class Fragment {
             List<String> complementLines = new ArrayList<>();
             boolean dummyCall = true;
             try {
-                for (int i = 0; i <= relativeMethodEndLine; i++) {
+                for (int i = 0; i < relativeMethodEndLine; i++) {
                     if ((relativeSubFragmentBeginLine > i) || (i > relativeSubFragmentEndLine))
                         complementLines.add(lines.get(i));
-                    else if(dummyCall){
+                    else if (dummyCall) {
                         complementLines.add("callToExtractedMethod();");
                         dummyCall = false;
                     }
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return String.join("\n", complementLines);
@@ -97,17 +178,20 @@ public class Fragment {
             this.beginLine = beginLine;
             this.endLine = endLine;
             this.complement = makeComplement();
-            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
-            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
+            this.score = 0;
+//            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
+//            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
 
         }
 
-        private int getBeginLine(){
+        private int getBeginLine() {
             return beginLine;
         }
-        private int getEndLine(){
+
+        private int getEndLine() {
             return endLine;
         }
+
         private void keywordFeaturesComputation() {
             try {
                 KeywordsCalculator.extractToList(this.getBody(), this.features, getBodyLineLength());
@@ -163,10 +247,15 @@ public class Fragment {
             features.add(new CSVItem(Feature.MethodDeclarationAverageSymbols, (double) getMethod().length() / getMethodLineLength()));
         }
 
-        private void lengthFeaturesComputation(){
+        private void lengthFeaturesComputation() {
             features.add(new CSVItem(Feature.TotalSymbolsInCodeFragment, getBody().length()));
-            features.add(new CSVItem(Feature.AverageSymbolsInCodeLine, (double)getBody().length() /getBodyLineLength()));
+            features.add(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) getBody().length() / getBodyLineLength()));
             features.add(new CSVItem(Feature.TotalLinesOfCode, getBodyLineLength()));
+        }
+
+        private void rankingScoreComputation(double c_length, double max_length) {
+            RankEvaluater ranker = new RankEvaluater(this, c_length, max_length);
+            this.score = ranker.getScore();
         }
 
         int analyzeDepth(String code) {
@@ -200,9 +289,10 @@ public class Fragment {
             return (StringUtils.countMatches(getMethod(), '\n') + 1);
         }
 
-        /** Returns body of the fragment (sequence of statements)
+        /**
+         * Returns body of the fragment (sequence of statements)
          * w/o leading and trailing curly braces, whitespaces, linebreaks
-         * */
+         */
         private String getBody() {
             return clearCode(this.methodDeclaration.getBody().toString());
         }
@@ -218,7 +308,9 @@ public class Fragment {
                 fw.append(String.valueOf(features.get(i).getValue()));
                 fw.append(';');
             }
-            fw.append("0\n");
+            fw.append(String.valueOf(this.score)); //Score with 4 decimal places
+            fw.append(";");
+            fw.append("-\n");
         }
 
         private void process(FileWriter fw) throws IOException {
@@ -227,31 +319,30 @@ public class Fragment {
             couplingFeaturesComputation();
             methodDeclarationFeaturesComputation();
             lengthFeaturesComputation();
-
-
+            rankingScoreComputation(0.1, 4);
 
             writeFeatures(fw);
         }
 
     }
 
-    private boolean isValidStatement(Statement s){
+    private boolean isValidStatement(Statement s) {
         String linearText = clearCode(s.toString());
         linearText = linearText.replace("\n", "").replace("\r", "");
 //        System.out.println(s.toString()+"\n-----------------------------------\n");
-        if(Pattern.matches(".*}", linearText) | Pattern.matches(".*;", linearText))
+        if (Pattern.matches(".*}", linearText) | Pattern.matches(".*;", linearText))
             return true;
         else
             return false;
     }
 
-    private List<Statement> getSubStatements(Statement s){
+    private List<Statement> getSubStatements(Statement s) {
         List<Statement> statements = new ArrayList<>();
 //        System.out.printf("Body: -----------------\n%s\n", block);
         for (Node node : s.getChildrenNodes()) {
             if (node instanceof Statement) {
 //                System.out.printf("Statement: ------------\n%s\n", node);
-                if(isValidStatement((Statement) node))
+                if (isValidStatement((Statement) node))
                     statements.add((Statement) node);    //Here may be a problem of *chunky* statements
             }
 //            System.out.printf("Sub-statements: ------------\n%s\n",node.getChildrenNodes());
@@ -261,8 +352,9 @@ public class Fragment {
 
     public void processFragment(int threshold, FileWriter fw) {
         processEmbedding(threshold, methodDeclaration.getBody(), this.statements, fw);
-        exit(0);
+//        exit(0);
     }
+
     /**
      * Splits fragment into sequences of statements of length
      * greater than `threshold`, and processes each such
@@ -283,7 +375,7 @@ public class Fragment {
         if (context.size() < threshold) {
             return;
         } else {
-            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
+//            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
 //            System.out.printf("begin %d, end %d\n", methodDeclaration.getBeginLine(), methodDeclaration.getEndLine());
             int seqCount = 0;
             BlockStmt newBlock;
@@ -303,8 +395,7 @@ public class Fragment {
 //                    System.out.printf("Row #%d----------------------------\n%s\n", seqCount, methodDeclaration.toString());
                     try {
                         sf.process(fw);
-//                        System.out.printf("begin %d, end %d\n", sf.methodDeclaration.getBeginLine(), sf.methodDeclaration.getEndLine());
-
+//                        System.out.printf("begin %d, end %d\n", sf.methodDeclaration.getBeginLine(), sf.methodDeclaration.getEndLine())
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.err.printf("Could not process subfragment \n%s\n.", methodDeclaration.toString());

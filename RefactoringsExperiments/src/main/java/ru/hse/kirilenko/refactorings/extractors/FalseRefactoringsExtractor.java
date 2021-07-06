@@ -1,17 +1,10 @@
 package ru.hse.kirilenko.refactorings.extractors;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
-import com.github.javaparser.ast.Node;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import jdk.internal.joptsimple.internal.Strings;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -20,17 +13,9 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;
-import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
-import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
-import ru.hse.kirilenko.refactorings.csv.models.Feature;
-import ru.hse.kirilenko.refactorings.csv.models.Fragment;
-import ru.hse.kirilenko.refactorings.utils.calcers.*;
+import ru.hse.kirilenko.refactorings.models.Fragment;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import static java.lang.System.exit;
 //import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;
 
 public class FalseRefactoringsExtractor {

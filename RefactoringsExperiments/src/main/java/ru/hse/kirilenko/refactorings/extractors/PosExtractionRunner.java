@@ -1,7 +1,5 @@
 package ru.hse.kirilenko.refactorings.extractors;
 
-import ru.hse.kirilenko.refactorings.MiningCaller;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,7 +35,7 @@ public class PosExtractionRunner {
             FileWriter fileWriter = new FileWriter(outputFileName);
             System.out.printf("%d out of %d, running repo with URL:%s\n", current, total, url);
             final PrintWriter printWriter = new PrintWriter(fileWriter);
-            MiningCaller extractor = new MiningCaller(printWriter, url, repo);
+            MiningInit extractor = new MiningInit(printWriter, url, repo);
             extractor.run();
 
         }

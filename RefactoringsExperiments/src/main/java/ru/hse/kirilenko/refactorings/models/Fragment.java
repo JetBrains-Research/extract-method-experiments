@@ -1,33 +1,22 @@
-package ru.hse.kirilenko.refactorings.csv.models;
+package ru.hse.kirilenko.refactorings.models;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.comments.Comment;
-import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import com.sun.tools.jdeprscan.CSV;
-import jdk.nashorn.internal.ir.Block;
-import jdk.nashorn.internal.ir.BlockStatement;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jgit.lib.Repository;
-import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
-import ru.hse.kirilenko.refactorings.extractors.ExtractionConfig;
+import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
+import ru.hse.kirilenko.refactorings.csv.models.Feature;
+import ru.hse.kirilenko.refactorings.csv.models.ICSVItem;
 import ru.hse.kirilenko.refactorings.utils.calcers.*;
-import org.apache.commons.lang3.SerializationUtils;
 
-import javax.swing.plaf.nimbus.State;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.lang.System.exit;
-import static org.eclipse.jdt.core.dom.AST.JLS10;
-import static org.eclipse.jdt.core.dom.AST.JLS11;
 
 public class Fragment {
     MethodDeclaration methodDeclaration;
@@ -81,7 +70,7 @@ public class Fragment {
                 KeywordsCalculator.extractToList(this.getBody(), this.features, getBodyLineLength());
             } catch (Exception e) {
                 System.err.println("Could not make keyword features' computation");
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 
@@ -90,7 +79,7 @@ public class Fragment {
                 GitBlameAnalyzer.extractToList(repo, methodDeclaration.getBody().getBeginLine(), methodDeclaration.getBody().getEndLine(), filePath, features);
             } catch (Exception e) {
                 System.err.println("Could not make historical features' computation");
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 

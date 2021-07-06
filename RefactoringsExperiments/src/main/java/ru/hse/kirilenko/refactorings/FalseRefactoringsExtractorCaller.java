@@ -10,6 +10,7 @@ public class FalseRefactoringsExtractorCaller {
     static void makeFileHeader(FileWriter fw) throws IOException{
         for (int i = 0; i < 117; i++)
             fw.write(Feature.fromId(i).getName() + ';');
+        fw.write("score;");
         fw.write("label\n");
     }
 

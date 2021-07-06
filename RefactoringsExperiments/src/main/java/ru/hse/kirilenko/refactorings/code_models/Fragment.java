@@ -1,4 +1,4 @@
-package ru.hse.kirilenko.refactorings.models;
+package ru.hse.kirilenko.refactorings.code_models;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -34,12 +34,18 @@ public class Fragment {
      * commit from which the fragment was taken
      */
     List<Statement> statements;
+    String initialMethodStr;
     public Fragment(Node mDec, Repository repo, String filePath, String commitId) {
         this.methodDeclaration = (MethodDeclaration) mDec;
         this.commitId = commitId;
         this.repo = repo;
         this.filePath = filePath;
         this.statements = getSubStatements(methodDeclaration.getBody());
+        this.initialMethodStr = methodDeclaration.toString();
+    }
+
+    private String clearCode(String code){
+        return code.replaceAll("^[ \t{\n]+|[ \t}\n]+$", "");
     }
 
     private class SubFragment {
@@ -54,17 +60,54 @@ public class Fragment {
          */
         String commitId;
         List<ICSVItem> features;
+        String initialMethodStr;
+        int beginLine;
+        int endLine;
+        String complement;
 
+        private String makeComplement(){
+            int relativeSubFragmentBeginLine = this.getBeginLine() - methodDeclaration.getBeginLine();
+            int relativeSubFragmentEndLine = this.getEndLine() - methodDeclaration.getBeginLine();
+            int relativeMethodEndLine = methodDeclaration.getEndLine() - methodDeclaration.getBeginLine();
+            List<String> lines = Arrays.asList(initialMethodStr.split("\n"));
+            List<String> complementLines = new ArrayList<>();
+            boolean dummyCall = true;
+            try {
+                for (int i = 0; i <= relativeMethodEndLine; i++) {
+                    if ((relativeSubFragmentBeginLine > i) || (i > relativeSubFragmentEndLine))
+                        complementLines.add(lines.get(i));
+                    else if(dummyCall){
+                        complementLines.add("callToExtractedMethod();");
+                        dummyCall = false;
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return String.join("\n", complementLines);
+        }
 
-        public SubFragment(Fragment fragment) {
+        public SubFragment(Fragment fragment, int beginLine, int endLine) {
             this.methodDeclaration = fragment.methodDeclaration;
             this.commitId = fragment.commitId;
             this.repo = fragment.repo;
             this.filePath = fragment.filePath;
             this.features = new ArrayList<>();
+            this.initialMethodStr = fragment.initialMethodStr;
+            this.beginLine = beginLine;
+            this.endLine = endLine;
+            this.complement = makeComplement();
+            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
+            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
 
         }
 
+        private int getBeginLine(){
+            return beginLine;
+        }
+        private int getEndLine(){
+            return endLine;
+        }
         private void keywordFeaturesComputation() {
             try {
                 KeywordsCalculator.extractToList(this.getBody(), this.features, getBodyLineLength());
@@ -76,7 +119,7 @@ public class Fragment {
 
         private void historicalFeaturesComputation() {
             try {
-                GitBlameAnalyzer.extractToList(repo, methodDeclaration.getBody().getBeginLine(), methodDeclaration.getBody().getEndLine(), filePath, features);
+                GitBlameAnalyzer.extractToList(repo, this.getBeginLine(), this.getEndLine(), filePath, features);
             } catch (Exception e) {
                 System.err.println("Could not make historical features' computation");
 //                e.printStackTrace();
@@ -157,9 +200,11 @@ public class Fragment {
             return (StringUtils.countMatches(getMethod(), '\n') + 1);
         }
 
-
+        /** Returns body of the fragment (sequence of statements)
+         * w/o leading and trailing curly braces, whitespaces, linebreaks
+         * */
         private String getBody() {
-            return this.methodDeclaration.getBody().toString();
+            return clearCode(this.methodDeclaration.getBody().toString());
         }
 
         private String getMethod() {
@@ -183,20 +228,15 @@ public class Fragment {
             methodDeclarationFeaturesComputation();
             lengthFeaturesComputation();
 
+
+
             writeFeatures(fw);
         }
 
     }
 
-
-    /**
-     * Splits fragment into sequences of statements of length
-     * greater than `threshold`, and processes each such
-     * sequence, generating a row to the specified file
-     */
-
     private boolean isValidStatement(Statement s){
-        String linearText = s.toString();
+        String linearText = clearCode(s.toString());
         linearText = linearText.replace("\n", "").replace("\r", "");
 //        System.out.println(s.toString()+"\n-----------------------------------\n");
         if(Pattern.matches(".*}", linearText) | Pattern.matches(".*;", linearText))
@@ -223,6 +263,11 @@ public class Fragment {
         processEmbedding(threshold, methodDeclaration.getBody(), this.statements, fw);
         exit(0);
     }
+    /**
+     * Splits fragment into sequences of statements of length
+     * greater than `threshold`, and processes each such
+     * sequence, generating a row to the specified file
+     */
     private void processEmbedding(int threshold, Statement embedding, List<Statement> context, FileWriter fw) {
         // Cycle for parsing embeddings of statements
         for (Statement s : context) {
@@ -238,22 +283,28 @@ public class Fragment {
         if (context.size() < threshold) {
             return;
         } else {
-//            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
+            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
+//            System.out.printf("begin %d, end %d\n", methodDeclaration.getBeginLine(), methodDeclaration.getEndLine());
             int seqCount = 0;
             BlockStmt newBlock;
             for (int shift = 0; shift <= context.size() - threshold; shift++) {
+                int beginLine = context.get(shift).getBeginLine();
                 for (int i = 0; i < threshold - 1; i++) {
                     statementSequence.add(context.get(i + shift));
                 }
                 for (int j = threshold - 1; j + shift < context.size(); j++) {
-
+                    int endLine = context.get(j + shift).getEndLine();
                     statementSequence.add(context.get(j + shift));
                     newBlock = new BlockStmt(statementSequence);
+
                     methodDeclaration.setBody(newBlock);
-                    SubFragment sf = new SubFragment(this);
-                    System.out.printf("Row #%d----------------------------\n%s\n", seqCount, methodDeclaration.toString());
+//                    System.out.printf("begin %d, end %d\n", beginLine, endLine);
+                    SubFragment sf = new SubFragment(this, beginLine, endLine);
+//                    System.out.printf("Row #%d----------------------------\n%s\n", seqCount, methodDeclaration.toString());
                     try {
-//                        sf.process(fw);
+                        sf.process(fw);
+//                        System.out.printf("begin %d, end %d\n", sf.methodDeclaration.getBeginLine(), sf.methodDeclaration.getEndLine());
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.err.printf("Could not process subfragment \n%s\n.", methodDeclaration.toString());

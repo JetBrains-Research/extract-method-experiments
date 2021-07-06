@@ -13,7 +13,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;
-import ru.hse.kirilenko.refactorings.models.Fragment;
+import ru.hse.kirilenko.refactorings.code_models.Fragment;
 
 import java.io.*;
 //import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;

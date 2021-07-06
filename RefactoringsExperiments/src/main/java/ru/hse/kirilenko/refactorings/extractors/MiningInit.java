@@ -1,4 +1,4 @@
-package ru.hse.kirilenko.refactorings;
+package ru.hse.kirilenko.refactorings.extractors;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -10,13 +10,13 @@ import ru.hse.kirilenko.refactorings.extractors.MetadataExtractor;
 
 import java.io.PrintWriter;
 
-public class MiningCaller {
+public class MiningInit {
     private PrintWriter out;
     private String repoURL;
     private String repoName;
     private int total = 1;
     private int current = 0;
-    public MiningCaller(PrintWriter out, String repoURL, String repoName) {
+    public MiningInit(PrintWriter out, String repoURL, String repoName) {
         this.out = out;
         this.repoURL = repoURL;
         this.repoName = repoName;

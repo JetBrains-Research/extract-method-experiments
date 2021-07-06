@@ -1,17 +1,10 @@
 package ru.hse.kirilenko.refactorings.extractors;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
-import com.github.javaparser.ast.Node;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import jdk.internal.joptsimple.internal.Strings;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -20,20 +13,17 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;
-import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
-import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
-import ru.hse.kirilenko.refactorings.csv.models.Feature;
-import ru.hse.kirilenko.refactorings.csv.models.Fragment;
-import ru.hse.kirilenko.refactorings.utils.calcers.*;
+import ru.hse.kirilenko.refactorings.code_models.Fragment;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import static java.lang.System.exit;
 //import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;
 
 public class FalseRefactoringsExtractor {
+    FileWriter fw;
+
+    public FalseRefactoringsExtractor(FileWriter fw){
+        this.fw = fw;
+    }
 
     public void run(final String repoName, final String repoURL) throws Exception {
         GitService gitService = new GitServiceImpl();
@@ -100,14 +90,14 @@ public class FalseRefactoringsExtractor {
             }
             String fileContents = allFileBuilder.toString();
             InputStream targetStream = new ByteArrayInputStream(fileContents.getBytes());
-            handleMethods(targetStream, repo, filePath, commitId);
+            handleMethods(targetStream, repo, filePath, commitId, this.fw);
         }
     }
 
     /**Uses JavaParser to extract all methods from .java file
      * contained in contents as InputStream, makes a Fragment,
      * and computes its features*/
-    public static void handleMethods(InputStream contents, Repository repo, final String filePath, final String commitId) throws Exception {
+    public void handleMethods(InputStream contents, Repository repo, final String filePath, final String commitId, FileWriter fw) throws Exception {
 
         try {
             new VoidVisitorAdapter<Object>() {
@@ -116,7 +106,7 @@ public class FalseRefactoringsExtractor {
                     if(n.getBody() != null){
 //                        System.out.println(n.getBody().toString());
                         Fragment fragment = new Fragment(n, repo, filePath, commitId);
-                        fragment.processFragment(3);
+                        fragment.processFragment(1, fw);
                     }
                     super.visit(n, arg);
 

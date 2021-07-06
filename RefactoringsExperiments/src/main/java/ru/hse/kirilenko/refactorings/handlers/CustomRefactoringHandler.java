@@ -11,7 +11,6 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
 import ru.hse.kirilenko.refactorings.extractors.ExtractionConfig;
-import ru.hse.kirilenko.refactorings.collectors.LocCollector;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
 import ru.hse.kirilenko.refactorings.csv.models.Feature;
@@ -113,7 +112,6 @@ public class CustomRefactoringHandler extends RefactoringHandler {
 
     private void handleRefactoring(String commitId, ExtractOperationRefactoring refactoring, PrintWriter pw) {
         LocationInfo locInfo = refactoring.getExtractedOperation().getLocationInfo();
-        LocCollector.accept(locInfo.getEndLine() - locInfo.getStartLine() + 1);
         String extractedOperationLocation = locInfo.getFilePath();
         if (ExtractionConfig.extractDirectly) {
             printLn("DIRECTLY EXTRACTED OPERATION:", pw);

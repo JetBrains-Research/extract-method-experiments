@@ -3,6 +3,7 @@ package ru.hse.kirilenko.refactorings.utils.calcers;
 import ru.hse.kirilenko.refactorings.csv.SparseCSVBuilder;
 import ru.hse.kirilenko.refactorings.csv.models.CSVItem;
 import ru.hse.kirilenko.refactorings.csv.models.Feature;
+import ru.hse.kirilenko.refactorings.csv.models.ICSVItem;
 import ru.hse.kirilenko.refactorings.utils.trie.Trie;
 
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class KeywordsCalculator {
         }
     }
 
-    public static void calculateToMap(String codeFragmentString, Map<Feature, Double> features, int fragLinesCount) {
+    public static void extractToList(String codeFragmentString, List<ICSVItem> features, int fragLinesCount) {
         HashMap<String, Integer> counts = KeywordsCalculator.keywordsTrie.calculate(codeFragmentString);
         int id = 6;
         for (String keyword: KeywordsCalculator.allKeywords) {
@@ -48,8 +49,8 @@ public class KeywordsCalculator {
                 count = 0;
             }
 
-            features.put(Feature.fromId(id++), (double) count);
-            features.put(Feature.fromId(id++), (double)count / fragLinesCount);
+            features.add(new CSVItem(Feature.fromId(id++), (double) count));
+            features.add(new CSVItem(Feature.fromId(id++), (double)count / fragLinesCount));
         }
     }
 

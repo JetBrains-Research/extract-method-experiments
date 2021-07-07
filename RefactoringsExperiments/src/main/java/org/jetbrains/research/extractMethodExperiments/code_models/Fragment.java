@@ -73,8 +73,8 @@ public class Fragment {
             this.endLine = endLine;
             this.complement = makeComplement();
             this.score = 0;
-
         }
+
         private String makeComplement() {
             int relativeSubFragmentBeginLine = this.getBeginLine() - methodDeclaration.getBeginLine();
             int relativeSubFragmentEndLine = this.getEndLine() - methodDeclaration.getBeginLine();
@@ -290,14 +290,18 @@ public class Fragment {
                 return max;
             }
 
-            /** Computation of Haas' nesting depth based score
-             *  `c` is a chosen coefficient, representing sensitivity of the score to length changes,
-             *  `max` is the upper bound on this part of the score */
+            /**
+             * Computation of Haas' nesting depth based score
+             * `c` is a chosen coefficient, representing sensitivity of the score to length changes,
+             * `max` is the upper bound on this part of the score
+             */
             void sLength(double c, double max) {
                 score += Math.min(c * Math.min(candidate.length(), remainder.length()), max);
             }
 
-            /** Computation of Haas' nesting depth based score */
+            /**
+             * Computation of Haas' nesting depth based score
+             */
             void sNestDepth() {
                 int depthMethod = this.methodDepth;
                 int depthRemainder = maxDepth(remainder);
@@ -306,8 +310,10 @@ public class Fragment {
 
             }
 
-            /** Computation of Haas' nesting area based score,
-             *  2 is stabilizing coefficient */
+            /**
+             * Computation of Haas' nesting area based score,
+             * 2 is stabilizing coefficient
+             */
             void sNestArea() {
                 int areaMethod = analyzeDepth(method);
                 int areaRemainder = analyzeDepth(remainder);

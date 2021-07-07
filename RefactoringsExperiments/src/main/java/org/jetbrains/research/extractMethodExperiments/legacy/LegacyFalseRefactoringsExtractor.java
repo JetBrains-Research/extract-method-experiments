@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.extractors;
+package org.jetbrains.research.extractMethodExperiments.legacy;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -54,7 +54,7 @@ public class LegacyFalseRefactoringsExtractor {
         }
     }
 
-    private void handleCommit(Repository repo, RevCommit commit) throws Exception{
+    private void handleCommit(Repository repo, RevCommit commit) throws Exception {
         String commitId = commit.getId().getName();
         System.out.printf("COMMIT ID: %s\n", commitId);
 
@@ -94,7 +94,7 @@ public class LegacyFalseRefactoringsExtractor {
         InputStream in = loader.openStream();
         StringBuilder allFileBuilder = new StringBuilder();
 
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
             while (br.ready()) {
                 allFileBuilder.append(br.readLine());
                 allFileBuilder.append('\n');
@@ -114,15 +114,15 @@ public class LegacyFalseRefactoringsExtractor {
 
     void traverse(Repository repo, String filePath, CompilationUnit root, Node cur) throws GitAPIException {
         if (cur instanceof MethodDeclaration) {
-            MethodDeclaration md = (MethodDeclaration)cur;
-            BlockStmt body =  md.getBody();
+            MethodDeclaration md = (MethodDeclaration) cur;
+            BlockStmt body = md.getBody();
             if (body == null) {
                 return;
             }
             traverseBlock(repo, filePath, root, md, body, 0, 1);
 
         } else {
-            for (Node n: cur.getChildrenNodes()) {
+            for (Node n : cur.getChildrenNodes()) {
                 traverse(repo, filePath, root, n);
             }
         }
@@ -137,19 +137,15 @@ public class LegacyFalseRefactoringsExtractor {
 
         List<Statement> next = new ArrayList<>();
         List<Statement> seqAll = new ArrayList<>();
-        for (Node n: blk.getChildrenNodes()) {
+        for (Node n : blk.getChildrenNodes()) {
             if (n instanceof Statement) {
                 Statement s = (Statement) n;
                 seqAll.add(s);
-//                System.out.println(seqAll.toString());
-//                System.out.println("--------------------------------");
+
 
                 int cnt2 = countStmts(s);
                 if (cnt2 <= 15 && cnt2 >= k && count - cnt2 >= k) {
                     analyzeBlock(repo, root, md, s, filePath);
-                    //System.out.println("BLK:");
-                    //System.out.println(n.toString());
-                    //System.out.println();
                 }
                 if (cnt2 >= 2 * k) {
                     next.add(s);
@@ -170,15 +166,11 @@ public class LegacyFalseRefactoringsExtractor {
                 int cnt2 = countStmtsSeq(seq);
                 if (cnt2 <= 10 && cnt2 >= k && count - cnt2 >= k) {
                     analyzeStatementsSeq(repo, root, md, seq, filePath);
-                    //System.out.println("SEQ:");
-                    //System.out.println(buildFragmentFromSeq(seq));
-                    //System.out.println();
-                    //System.out.println();
                 }
             }
         }
 
-        for (Statement statement: next) {
+        for (Statement statement : next) {
             traverseBlock(repo, filePath, root, md, statement, dep + 1, k);
         }
     }
@@ -186,16 +178,16 @@ public class LegacyFalseRefactoringsExtractor {
     private void addMd(MethodDeclaration md) {
         String fragment = md.toString();
         String linearFragment = fragment.replace('\n', ' ');
-        int fragLocs = StringUtils.countMatches(fragment, "\n")  + 1;
+        int fragLocs = StringUtils.countMatches(fragment, "\n") + 1;
 
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationSymbols, linearFragment.length()));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationAverageSymbols, (double)linearFragment.length() / fragLocs));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationAverageSymbols, (double) linearFragment.length() / fragLocs));
         analyzeDepth(fragment, fragLocs, false);
     }
 
     int countStmtsSeq(List<Statement> statement) {
         int res = 0;
-        for (Statement s: statement) {
+        for (Statement s : statement) {
             res += countStmts(s);
         }
 
@@ -207,7 +199,7 @@ public class LegacyFalseRefactoringsExtractor {
             return 1;
         } else {
             int res = 1;
-            for (Node s: statement.getChildrenNodes()) {
+            for (Node s : statement.getChildrenNodes()) {
                 if (s instanceof Statement) {
                     res += countStmts((Statement) s);
                 }
@@ -225,7 +217,7 @@ public class LegacyFalseRefactoringsExtractor {
         }
 
         int ans = 0;
-        for (Node n: l) {
+        for (Node n : l) {
             if (n instanceof Statement) {
                 ++ans;
             }
@@ -244,11 +236,11 @@ public class LegacyFalseRefactoringsExtractor {
 
         String fragment = buildFragmentFromSeq(seq);
         String linearFragment = fragment.replace('\n', ' ');
-        int fragLocs = StringUtils.countMatches(fragment, "\n")  + 1;
+        int fragLocs = StringUtils.countMatches(fragment, "\n") + 1;
         KeywordsCalculator.calculateCSV(linearFragment, fragLocs);
 
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalSymbolsInCodeFragment, linearFragment.length()));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double)linearFragment.length() / fragLocs));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) linearFragment.length() / fragLocs));
         analyzeDepth(fragment, fragLocs, true);
 
         GitBlameAnalyzer.extractLineAuthorAndCreationDate(repo, seq.get(0).getBeginLine(), seq.get(seq.size() - 1).getEndLine(), filePath);
@@ -262,11 +254,11 @@ public class LegacyFalseRefactoringsExtractor {
 
         String fragment = blk.toString();
         String linearFragment = fragment.replace('\n', ' ');
-        int fragLocs = StringUtils.countMatches(fragment, "\n")  + 1;
+        int fragLocs = StringUtils.countMatches(fragment, "\n") + 1;
         KeywordsCalculator.calculateCSV(linearFragment, fragLocs);
 
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalSymbolsInCodeFragment, linearFragment.length()));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double)linearFragment.length() / fragLocs));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) linearFragment.length() / fragLocs));
         analyzeDepth(fragment, fragLocs, true);
 
         GitBlameAnalyzer.extractLineAuthorAndCreationDate(repo, blk.getBeginLine(), blk.getEndLine(), filePath);
@@ -284,25 +276,25 @@ public class LegacyFalseRefactoringsExtractor {
         int fieldsConnectivity = CouplingCalculator.calcConnectivity(fragment, members.fields);
 
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivity, fieldsConnectivity));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivityPerLine, (double)fieldsConnectivity / fragmentLocs));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivityPerLine, (double) fieldsConnectivity / fragmentLocs));
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivity, totalConnectivity));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivityPerLine, (double)totalConnectivity / fragmentLocs));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivityPerLine, (double) totalConnectivity / fragmentLocs));
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivity, methodConnectivity));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivityPerLine, (double)methodConnectivity / fragmentLocs));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivityPerLine, (double) methodConnectivity / fragmentLocs));
     }
 
     void analyzeDepth(String code, int locCount, boolean isCodeFragment) {
         int dep = 0;
         int area = 0;
         int depInLine = 0;
-        for (Character ch: code.toCharArray()) {
+        for (Character ch : code.toCharArray()) {
             if (ch == '{') {
                 dep++;
                 depInLine++;
             } else if (ch == '}') {
                 dep--;
                 depInLine--;
-            } else if (ch == '\n'){
+            } else if (ch == '\n') {
                 int resDep = dep;
                 if (depInLine > 0) {
                     resDep--;
@@ -314,21 +306,20 @@ public class LegacyFalseRefactoringsExtractor {
 
         if (isCodeFragment) {
             SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalLinesDepth, area));
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageLinesDepth, (double)area / locCount));
+            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageLinesDepth, (double) area / locCount));
         } else {
             SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationDepth, area));
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationDepthPerLine, (double)area / locCount));
+            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationDepthPerLine, (double) area / locCount));
         }
 
     }
 
     private String buildFragmentFromSeq(List<Statement> statementsSeq) {
         StringBuilder fragmentBuilder = new StringBuilder();
-        for (Statement stmt: statementsSeq) {
+        for (Statement stmt : statementsSeq) {
             fragmentBuilder.append(stmt.toStringWithoutComments());
             fragmentBuilder.append('\n');
         }
-
         return fragmentBuilder.toString();
     }
 }

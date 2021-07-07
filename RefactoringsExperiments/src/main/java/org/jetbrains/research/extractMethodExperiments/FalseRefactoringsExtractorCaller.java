@@ -3,6 +3,7 @@ package org.jetbrains.research.extractMethodExperiments;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.extractors.FalseRefactoringsExtractor;
 import org.jetbrains.research.extractMethodExperiments.utils.RepoListParser;
+import org.jetbrains.research.extractMethodExperiments.extractors.ExtractionConfig;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class FalseRefactoringsExtractorCaller {
     static void makeFileHeader(FileWriter fw) throws IOException {
-        for (int i = 0; i < 117; i++)
+        for (int i = 0; i < ExtractionConfig.nFeatures; i++)
             fw.write(Feature.fromId(i).getName() + ';');
         fw.write("score;");
         fw.write("label\n");
@@ -32,7 +33,7 @@ public class FalseRefactoringsExtractorCaller {
             try {
                 falseRefactoringsExtractor.run(repoName, url);
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(); //make logger call
             }
         }
     }

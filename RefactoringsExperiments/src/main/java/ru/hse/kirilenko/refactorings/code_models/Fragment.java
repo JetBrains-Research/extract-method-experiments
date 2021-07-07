@@ -184,8 +184,8 @@ public class Fragment {
             this.endLine = endLine;
             this.complement = makeComplement();
             this.score = 0;
-            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
-            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
+//            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
+//            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
 
         }
 

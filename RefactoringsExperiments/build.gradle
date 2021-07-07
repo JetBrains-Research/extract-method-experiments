@@ -26,5 +26,5 @@ dependencies {
 }
 
 application {
-    mainClass = 'ru.hse.kirilenko.refactorings.CMDCaller'
+    mainClass = 'org.jetbrains.research.extractMethodExperiments'
 }

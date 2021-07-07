@@ -28,9 +28,8 @@ public class FalseRefactoringsExtractorCaller {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.lines().forEach(repos::add);
         } catch (Exception e) {
-            String errormsg = String.format("Warning, there is no such file: %s\nExiting...", path);
-            System.out.println(errormsg);
-            System.exit(0);
+            System.out.printf("Warning, there is no such file: %s\nExiting...\n", path);
+            System.exit(-1);
         }
         for (int i = 0; i < repos.size(); i++) {
             String repoName = repos.get(i);

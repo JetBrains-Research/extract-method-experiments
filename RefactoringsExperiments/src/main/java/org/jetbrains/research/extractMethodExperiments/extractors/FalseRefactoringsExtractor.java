@@ -53,9 +53,7 @@ public class FalseRefactoringsExtractor {
                 if (treeWalk.isSubtree()) {
                     treeWalk.enterSubtree();
                 } else {
-//                    System.out.printf("what is in treeWalk: %s\n", treeWalk.getPathString());
                     handleFile(repo, treeWalk.getPathString(), commitId);
-//                    exit(0);
                 }
             }
         }
@@ -104,8 +102,7 @@ public class FalseRefactoringsExtractor {
                 @Override
                 public void visit(MethodDeclaration n, Object arg) {
                     if(n.getBody() != null){
-//                        System.out.println(n.getBody().toString());
-                        Fragment fragment = new Fragment(n, repo, filePath, commitId);
+                        Fragment fragment = new Fragment(n, repo, filePath);
                         fragment.processFragment(1, fw);
                     }
                     super.visit(n, arg);

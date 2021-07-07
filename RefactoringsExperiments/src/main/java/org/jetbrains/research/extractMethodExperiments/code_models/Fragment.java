@@ -31,17 +31,13 @@ public class Fragment {
     /**
      * path to the file from which the fragment was taken
      */
-    private String commitId;
-    /**
-     * commit from which the fragment was taken
-     */
+
 
     private List<Statement> statements;
     private String initialMethodStr;
 
-    public Fragment(Node mDec, Repository repo, String filePath, String commitId) {
+    public Fragment(Node mDec, Repository repo, String filePath) {
         this.methodDeclaration = (MethodDeclaration) mDec;
-        this.commitId = commitId;
         this.repo = repo;
         this.filePath = filePath;
         this.statements = getSubStatements(methodDeclaration.getBody());
@@ -62,7 +58,6 @@ public class Fragment {
         /**
          * path to the file from which the fragment was taken
          */
-        private String commitId;
         private List<ICSVItem> features;
         private String initialMethodStr;
         private int beginLine;
@@ -72,7 +67,6 @@ public class Fragment {
 
         public SubFragment(Fragment fragment, int beginLine, int endLine) {
             this.methodDeclaration = fragment.methodDeclaration;
-            this.commitId = fragment.commitId;
             this.repo = fragment.repo;
             this.filePath = fragment.filePath;
             this.features = new ArrayList<>();
@@ -81,8 +75,6 @@ public class Fragment {
             this.endLine = endLine;
             this.complement = makeComplement();
             this.score = 0;
-//            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
-//            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
 
         }
         private String makeComplement() {
@@ -125,7 +117,6 @@ public class Fragment {
                 KeywordsCalculator.extractToList(this.getBody(), this.features, getBodyLineLength());
             } catch (Exception e) {
                 System.err.println("Could not make keyword features' computation");
-//                e.printStackTrace();
             }
         }
 
@@ -134,7 +125,6 @@ public class Fragment {
                 GitBlameAnalyzer.extractToList(repo, this.getBeginLine(), this.getEndLine(), filePath, features);
             } catch (Exception e) {
                 System.err.println("Could not make historical features' computation");
-//                e.printStackTrace();
             }
         }
 
@@ -181,8 +171,8 @@ public class Fragment {
             features.add(new CSVItem(Feature.TotalLinesOfCode, getBodyLineLength()));
         }
 
-        private void rankingScoreComputation(double c_length, double max_length) {
-            RankEvaluater ranker = new RankEvaluater(this, c_length, max_length);
+        private void rankingScoreComputation(double lengthSensitivity, double maxLengthScore) {
+            RankEvaluater ranker = new RankEvaluater(this, lengthSensitivity, maxLengthScore);
             this.score = ranker.getScore();
         }
 
@@ -247,7 +237,11 @@ public class Fragment {
             couplingFeaturesComputation();
             methodDeclarationFeaturesComputation();
             lengthFeaturesComputation();
-            rankingScoreComputation(0.1, 4);
+
+            double lengthScoreSensitivity = 0.1;
+            double maxLengthScore = 4;
+
+            rankingScoreComputation(lengthScoreSensitivity, maxLengthScore);
 
             writeFeatures(fw);
         }
@@ -304,18 +298,18 @@ public class Fragment {
             }
 
             void sNestDepth() {
-                int d_m = this.methodDepth;
-                int d_r = maxDepth(remainder);
-                int d_c = maxDepth(candidate);
-                score += Math.min(d_m - d_r, d_m - d_c);
+                int depthMethod = this.methodDepth;
+                int depthRemainder = maxDepth(remainder);
+                int depthCandidate = maxDepth(candidate);
+                score += Math.min(depthMethod - depthRemainder, depthMethod - depthCandidate);
 
             }
 
             void sNestArea() {
-                int a_m = analyzeDepth(method);
-                int a_r = analyzeDepth(remainder);
-                int a_c = analyzeDepth(candidate);
-                score += 2 * this.methodDepth / (double) a_m * Math.min(a_m - a_c, a_m - a_r);
+                int areaMethod = analyzeDepth(method);
+                int areaRemainder = analyzeDepth(remainder);
+                int areaCandidate = analyzeDepth(candidate);
+                score += 2 * this.methodDepth / (double) areaMethod * Math.min(areaMethod - areaCandidate, areaMethod - areaRemainder);
             }
 
             void sParam() {
@@ -341,14 +335,11 @@ public class Fragment {
 
     private List<Statement> getSubStatements(Statement s) {
         List<Statement> statements = new ArrayList<>();
-//        System.out.printf("Body: -----------------\n%s\n", block);
         for (Node node : s.getChildrenNodes()) {
             if (node instanceof Statement) {
-//                System.out.printf("Statement: ------------\n%s\n", node);
                 if (isValidStatement((Statement) node))
                     statements.add((Statement) node);    //Here may be a problem of *chunky* statements
             }
-//            System.out.printf("Sub-statements: ------------\n%s\n",node.getChildrenNodes());
         }
         return statements;
     }
@@ -366,10 +357,8 @@ public class Fragment {
         // Cycle for parsing embeddings of statements
         for (Statement s : context) {
             if (!s.getChildrenNodes().isEmpty()) {
-//                System.out.printf("Found an embedding!:\n%s\n%s\n", s.toString(), s.getChildrenNodes().toString());
                 processStatement(threshold, getSubStatements(s), fw);
             }
-//            System.out.printf("Sub-statements: ------------\n%s\n",node.getChildrenNodes());
         }
         List<Statement> statementSequence = new ArrayList<>();
 
@@ -377,9 +366,6 @@ public class Fragment {
         if (context.size() < threshold) {
             return;
         } else {
-//            System.out.printf("Method: ---------------\n%s\n", methodDeclaration.toString());
-//            System.out.printf("begin %d, end %d\n", methodDeclaration.getBeginLine(), methodDeclaration.getEndLine());
-            int seqCount = 0;
             BlockStmt newBlock;
             for (int shift = 0; shift <= context.size() - threshold; shift++) {
                 int beginLine = context.get(shift).getBeginLine();
@@ -392,28 +378,16 @@ public class Fragment {
                     newBlock = new BlockStmt(statementSequence);
 
                     methodDeclaration.setBody(newBlock);
-//                    System.out.printf("begin %d, end %d\n", beginLine, endLine);
                     SubFragment sf = new SubFragment(this, beginLine, endLine);
-//                    System.out.printf("Row #%d----------------------------\n%s\n", seqCount, methodDeclaration.toString());
                     try {
                         sf.process(fw);
-//                        System.out.printf("begin %d, end %d\n", sf.methodDeclaration.getBeginLine(), sf.methodDeclaration.getEndLine())
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.err.printf("Could not process subfragment \n%s\n.", methodDeclaration.toString());
                     }
-
-                    seqCount++;
                 }
                 statementSequence.clear();
             }
-            //Shenanigans due to lack of copy-constructors and etc.
-
-            //Change body to compute stuff
-
-            //Shenanigans to restore the original method.
-//            methodDeclaration.setBody(block);
-//            System.out.printf("Orig: -------------------\n%s\n", methodDeclaration);
         }
     }
 }

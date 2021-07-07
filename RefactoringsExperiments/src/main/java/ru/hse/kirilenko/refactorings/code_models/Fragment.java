@@ -149,12 +149,11 @@ public class Fragment {
         private String makeComplement() {
             int relativeSubFragmentBeginLine = this.getBeginLine() - methodDeclaration.getBeginLine();
             int relativeSubFragmentEndLine = this.getEndLine() - methodDeclaration.getBeginLine();
-            int relativeMethodEndLine = methodDeclaration.getEndLine() - methodDeclaration.getBeginLine();
             List<String> lines = Arrays.asList(initialMethodStr.split("\n"));
             List<String> complementLines = new ArrayList<>();
             boolean dummyCall = true;
             try {
-                for (int i = 0; i < relativeMethodEndLine; i++) {
+                for (int i = 0; i < lines.size(); i++) {
                     if ((relativeSubFragmentBeginLine > i) || (i > relativeSubFragmentEndLine))
                         complementLines.add(lines.get(i));
                     else if (dummyCall) {
@@ -163,7 +162,13 @@ public class Fragment {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.printf("Method-------------\n%s\n-------------\n\n" +
+                        "Fragment---------------\n%s\n---------------\n\n" +
+                        "FragmentLines---------------\n%s\n---------------\n\n" +
+                        "mBegin %d, mEnd %d, fBegin %d, fEnd %d", initialMethodStr,
+                        this.getBody(), lines, methodDeclaration.getBeginLine(), methodDeclaration.getEndLine(),
+                        this.getBeginLine(), this.getBeginLine());
+                exit(0);
             }
             return String.join("\n", complementLines);
         }
@@ -179,8 +184,8 @@ public class Fragment {
             this.endLine = endLine;
             this.complement = makeComplement();
             this.score = 0;
-//            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
-//            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
+            System.out.printf("subfragment ------------------\n%s\n-------------------\n", this.getBody());
+            System.out.printf("complement ------------------\n%s\n-------------------\n", complement);
 
         }
 

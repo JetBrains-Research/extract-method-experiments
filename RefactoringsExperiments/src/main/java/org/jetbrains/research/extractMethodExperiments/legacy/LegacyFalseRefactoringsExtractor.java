@@ -161,8 +161,6 @@ public class LegacyFalseRefactoringsExtractor {
                 for (int l = i; l <= j; ++l) {
                     seq.add(seqAll.get(l));
                 }
-                System.out.println(seq.toString());
-
                 int cnt2 = countStmtsSeq(seq);
                 if (cnt2 <= 10 && cnt2 >= k && count - cnt2 >= k) {
                     analyzeStatementsSeq(repo, root, md, seq, filePath);

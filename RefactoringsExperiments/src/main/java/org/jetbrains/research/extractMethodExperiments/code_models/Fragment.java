@@ -21,16 +21,12 @@ import java.util.regex.Pattern;
 
 public class Fragment {
     private MethodDeclaration methodDeclaration;
+
+    /** repo from which the fragment was taken */
     private Repository repo;
-    /**
-     * repo from which the fragment was taken
-     */
+
+    /** path to the file from which the fragment was taken */
     private String filePath;
-    /**
-     * path to the file from which the fragment was taken
-     */
-
-
     private List<Statement> statements;
     private String initialMethodStr;
 
@@ -48,14 +44,11 @@ public class Fragment {
 
     private class SubFragment {
         private MethodDeclaration methodDeclaration;
+        /** repo from which the fragment was taken */
         private Repository repo;
-        /**
-         * repo from which the fragment was taken
-         */
+
+        /** path to the file from which the fragment was taken */
         private String filePath;
-        /**
-         * path to the file from which the fragment was taken
-         */
         private List<ICSVItem> features;
         private String initialMethodStr;
         private int beginLine;

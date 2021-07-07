@@ -32,10 +32,10 @@ public class Fragment {
      * path to the file from which the fragment was taken
      */
     private String commitId;
-
     /**
      * commit from which the fragment was taken
      */
+
     private List<Statement> statements;
     private String initialMethodStr;
 

@@ -7,12 +7,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PosExtractionRunner {
+public class PositiveExtractionRunner {
     private List<String> repos = new ArrayList<>();
     private int current = 0;
     private int total = 0;
 
-    public PosExtractionRunner(List<String> repos) {
+    public PositiveExtractionRunner(List<String> repos) {
         this.repos = repos;
     }
 

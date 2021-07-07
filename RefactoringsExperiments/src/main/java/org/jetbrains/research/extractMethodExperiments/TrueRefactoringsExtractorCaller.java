@@ -2,7 +2,7 @@ package org.jetbrains.research.extractMethodExperiments;
 
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.jetbrains.research.extractMethodExperiments.extractors.ExtractionConfig;
-import org.jetbrains.research.extractMethodExperiments.extractors.PosExtractionRunner;
+import org.jetbrains.research.extractMethodExperiments.extractors.PositiveExtractionRunner;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,7 +23,7 @@ public class TrueRefactoringsExtractorCaller {
             System.exit(0);
         }
         SparseCSVBuilder.sharedInstance = new SparseCSVBuilder("true.csv", ExtractionConfig.nFeatures);
-        PosExtractionRunner runner = new PosExtractionRunner(repos);
+        PositiveExtractionRunner runner = new PositiveExtractionRunner(repos);
         runner.run();
     }
 }

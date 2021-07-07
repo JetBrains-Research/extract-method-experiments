@@ -17,7 +17,6 @@ import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;
 
 import java.io.*;
-//import static ru.hse.kirilenko.refactorings.utils.trie.NodeUtils.locsString;
 
 public class FalseRefactoringsExtractor {
     FileWriter fw;

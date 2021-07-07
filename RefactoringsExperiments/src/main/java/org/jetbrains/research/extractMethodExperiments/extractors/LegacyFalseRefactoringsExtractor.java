@@ -129,9 +129,9 @@ public class LegacyFalseRefactoringsExtractor {
     }
 
     void traverseBlock(Repository repo, String filePath, CompilationUnit root, MethodDeclaration md, Statement blk, int dep, int k) throws GitAPIException {
-       /* if (!canExtract(blk, dep)) {
+        if (!canExtract(blk, dep)) {
             return;
-        }*/
+        }
 
         int count = countStmts(blk);
 

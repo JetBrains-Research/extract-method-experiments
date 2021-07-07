@@ -41,7 +41,7 @@ public class MiningInit {
         }
 
 
-        miner.detectAll(repo, "master", new CustomRefactoringHandler(out, repoURL, repoName, me, total/*, bar, repoL, totalRefactoringsCount*/));
+        miner.detectAll(repo, "master", new CustomRefactoringHandler(out, repoURL, repoName, me, total));
         out.close();
     }
 }

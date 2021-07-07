@@ -26,22 +26,21 @@ public class KeywordsCalculator {
     public static void calculateCSV(String codeFragmentString, int fragLinesCount) {
         HashMap<String, Integer> counts = KeywordsCalculator.keywordsTrie.calculate(codeFragmentString);
 
-        int id = 6;
+        int id = 6; // initialized with 6 to account for shift in KeywordFeatures begin id.
         for (String keyword: KeywordsCalculator.allKeywords) {
             Integer count = counts.get(keyword);
             if (count == null) {
                 count = 0;
             }
 
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.fromId(id), count));
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.fromId(id + 1), (double)count / fragLinesCount));
-            id += 2;
+            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.fromId(id++), count));
+            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.fromId(id++), (double)count / fragLinesCount));
         }
     }
 
     public static void extractToList(String codeFragmentString, List<ICSVItem> features, int fragLinesCount) {
         HashMap<String, Integer> counts = KeywordsCalculator.keywordsTrie.calculate(codeFragmentString);
-        int id = 6;
+        int id = 6; // initialized with 6 to account for shift in KeywordFeatures begin id.
         for (String keyword: KeywordsCalculator.allKeywords) {
             Integer count = counts.get(keyword);
             if (count == null) {

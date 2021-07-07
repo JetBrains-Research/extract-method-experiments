@@ -2,9 +2,10 @@ package org.jetbrains.research.extractMethodExperiments;
 
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.extractors.FalseRefactoringsExtractor;
+import org.jetbrains.research.extractMethodExperiments.utils.RepoListParser;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public class FalseRefactoringsExtractorCaller {
@@ -22,18 +23,11 @@ public class FalseRefactoringsExtractorCaller {
         makeFileHeader(fw);
 
         FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw);
-
-        File file = new File(path);
-        List<String> repos = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            br.lines().forEach(repos::add);
-        } catch (Exception e) {
-            System.out.printf("Warning, there is no such file: %s\nExiting...\n", path);
-            System.exit(-1);
-        }
-        for (int i = 0; i < repos.size(); i++) {
-            String repoName = repos.get(i);
-            System.out.printf("%d/%d, at %s", i + 1, repos.size(), repoName);
+        RepoListParser repoParser = new RepoListParser(path);
+        List<String> repositories = repoParser.getRepositories();
+        for (int i = 0; i < repositories.size(); i++) {
+            String repoName = repositories.get(i);
+            System.out.printf("%d/%d, at %s", i + 1, repositories.size(), repoName);
             String url = "https://github.com/" + repoName + ".git";
             try {
                 falseRefactoringsExtractor.run(repoName, url);
@@ -42,4 +36,5 @@ public class FalseRefactoringsExtractorCaller {
             }
         }
     }
+
 }

@@ -19,8 +19,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static java.lang.System.exit;
-
 public class Fragment {
     private MethodDeclaration methodDeclaration;
     private Repository repo;
@@ -99,7 +97,6 @@ public class Fragment {
                                 "mBegin %d, mEnd %d, fBegin %d, fEnd %d", initialMethodStr,
                         this.getBody(), lines, methodDeclaration.getBeginLine(), methodDeclaration.getEndLine(),
                         this.getBeginLine(), this.getBeginLine());
-                exit(0);
             }
             return String.join("\n", complementLines);
         }
@@ -293,10 +290,14 @@ public class Fragment {
                 return max;
             }
 
+            /** Computation of Haas' nesting depth based score
+             *  `c` is a chosen coefficient, representing sensitivity of the score to length changes,
+             *  `max` is the upper bound on this part of the score */
             void sLength(double c, double max) {
                 score += Math.min(c * Math.min(candidate.length(), remainder.length()), max);
             }
 
+            /** Computation of Haas' nesting depth based score */
             void sNestDepth() {
                 int depthMethod = this.methodDepth;
                 int depthRemainder = maxDepth(remainder);
@@ -305,6 +306,8 @@ public class Fragment {
 
             }
 
+            /** Computation of Haas' nesting area based score,
+             *  2 is stabilizing coefficient */
             void sNestArea() {
                 int areaMethod = analyzeDepth(method);
                 int areaRemainder = analyzeDepth(remainder);
@@ -312,11 +315,11 @@ public class Fragment {
                 score += 2 * this.methodDepth / (double) areaMethod * Math.min(areaMethod - areaCandidate, areaMethod - areaRemainder);
             }
 
-            void sParam() {
+            void sParam() { //Placeholder for possible implementation of Haas' parameter-based score
                 return;
             }
 
-            void sCommentsAndBlanks() {
+            void sCommentsAndBlanks() { //Placeholder for possible implementation of Haas' comments-based score
                 return;
             }
 
@@ -345,7 +348,7 @@ public class Fragment {
     }
 
     public void processFragment(int threshold, FileWriter fw) {
-        processStatement(threshold, this.statements, fw);
+        processStatements(threshold, this.statements, fw);
     }
 
     /**
@@ -353,19 +356,17 @@ public class Fragment {
      * greater than `threshold`, and processes each such
      * sequence, generating a row to the specified file
      */
-    private void processStatement(int threshold, List<Statement> context, FileWriter fw) {
-        // Cycle for parsing embeddings of statements
+    private void processStatements(int threshold, List<Statement> context, FileWriter fw) {
+        // Cycle for parsing embedded statements
         for (Statement s : context) {
             if (!s.getChildrenNodes().isEmpty()) {
-                processStatement(threshold, getSubStatements(s), fw);
+                processStatements(threshold, getSubStatements(s), fw);
             }
         }
         List<Statement> statementSequence = new ArrayList<>();
 
         // Don't analyze too short methods
-        if (context.size() < threshold) {
-            return;
-        } else {
+        if (context.size() >= threshold) {
             BlockStmt newBlock;
             for (int shift = 0; shift <= context.size() - threshold; shift++) {
                 int beginLine = context.get(shift).getBeginLine();

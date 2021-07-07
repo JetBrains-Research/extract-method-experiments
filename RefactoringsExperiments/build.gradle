@@ -25,5 +25,5 @@ dependencies {
 }
 
 application {
-    mainClass = 'org.jetbrains.research.extractMethodExperiments'
+    mainClass = 'org.jetbrains.research.extractMethodExperiments.CMDCaller'
 }

@@ -12,9 +12,9 @@ The `Refactoring Experiments` directory contains the tools that were used to gat
 Open `Refactoring Experiments` directory and execute the following command
 
 ```
-./gradlew run --args="-p=a.txt -n=b.txt" 
+./gradlew run --args="-p=star_top100.txt -n=apache_repos.txt" 
 ```
-It will start the extraction of positive-labeled cases from repositories specified in `a.txt` file, and negative-labeled cases from `b.txt`. 
+It will start the extraction of positive-labeled cases from repositories specified in `star_top100.txt` file, and negative-labeled cases from `apache_repos.txt`. These files can be changed to any other pair of files for any reason.
 
 If you want to collect only one type of cases, just use `--args="-p=a.txt"` for positives, and `--args="-n=b.txt"` for negatives. 
 

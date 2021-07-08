@@ -96,14 +96,14 @@ public class FalseRefactoringsExtractor {
             }
             String fileContents = allFileBuilder.toString();
             InputStream targetStream = new ByteArrayInputStream(fileContents.getBytes());
-            handleMethods(targetStream, repo, filePath, commitId, this.fw);
+            handleMethods(targetStream, repo, filePath);
         }
     }
 
     /**Uses JavaParser to extract all methods from .java file
      * contained in contents as InputStream, makes a Fragment,
      * and computes its features*/
-    public void handleMethods(InputStream contents, Repository repo, final String filePath, final String commitId, FileWriter fw) throws Exception {
+    public void handleMethods(InputStream contents, Repository repo, final String filePath) {
 
         try {
             new VoidVisitorAdapter<Object>() {

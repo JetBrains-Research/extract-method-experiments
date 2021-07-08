@@ -132,8 +132,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                 }
 
             } catch (Exception e) {
-                System.err.println("Cannot extract refactoring in commit: " + commitId);
-                e.printStackTrace();
+                logger.log(Level.ERROR, "Cannot extract refactoring in commit: " + commitId);
             }
         }
 

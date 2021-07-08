@@ -1,7 +1,6 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import org.apache.logging.log4j.Level;

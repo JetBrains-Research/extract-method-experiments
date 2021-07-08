@@ -1,13 +1,12 @@
 package org.jetbrains.research.extractMethodExperiments;
 
-import jdk.internal.net.http.common.Log;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
+import org.jetbrains.research.extractMethodExperiments.extractors.ExtractionConfig;
 import org.jetbrains.research.extractMethodExperiments.extractors.FalseRefactoringsExtractor;
 import org.jetbrains.research.extractMethodExperiments.utils.RepoListParser;
-import org.jetbrains.research.extractMethodExperiments.extractors.ExtractionConfig;
 
 import java.io.FileWriter;
 import java.io.IOException;

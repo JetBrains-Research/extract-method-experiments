@@ -122,7 +122,7 @@ public class Fragment {
                     newBlock = new BlockStmt(statementSequence);
 
                     methodDeclaration.setBody(newBlock);
-                    SubFragment sf = new SubFragment(this, beginLine, endLine, methodDepth, methodArea);
+                    SubFragment sf = new SubFragment(this, beginLine, endLine);
                     try {
                         sf.process(fw);
                     } catch (Exception e) {
@@ -145,15 +145,15 @@ public class Fragment {
         private Logger logger;
         private MethodDeclaration methodDeclaration;
 
-        public SubFragment(Fragment fragment, int beginLine, int endLine, int methodDepth, int methodArea) {
+        public SubFragment(Fragment fragment, int beginLine, int endLine) {
             this.features = new ArrayList<>();
             this.beginLine = beginLine;
             this.endLine = endLine;
-            this.remainder = setRemainder();
             this.score = 0;
             this.parentFragment = fragment;
             this.methodDeclaration = fragment.methodDeclaration;
             this.logger = fragment.logger;
+            this.remainder = setRemainder();
         }
 
         public final int getBeginLine() {

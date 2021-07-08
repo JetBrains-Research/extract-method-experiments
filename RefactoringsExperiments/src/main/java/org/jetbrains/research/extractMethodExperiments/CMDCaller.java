@@ -57,15 +57,6 @@ public class CMDCaller {
         // Get a reference for logger
         Logger logger = context.getLogger("cmd");
 
-        // LogEvent of DEBUG message
-        logger.log(Level.FATAL, "Logger Name :: "+logger.getName()+" :: Passed Message ::");
-
-        // LogEvent of Error message for Logger configured as FATAL
-        logger.log(Level.ERROR, "Logger Name :: "+logger.getName()+" :: Not Passed Message ::");
-
-        // LogEvent of ERROR message that would be handled by Root
-        logger.getParent().log(Level.ERROR, "Root Logger :: Passed Message As Root Is Configured For ERROR Level messages");
-
         CommandLineParser parser = new DefaultParser();
 
         Options options = new Options();

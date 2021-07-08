@@ -21,7 +21,7 @@ public class FalseRefactoringsExtractorCaller {
     }
 
     public static void run(String path, LoggerContext context) throws Exception {
-        String outFilePath = "false.csv";
+        String outFilePath = "output/false.csv";
 
         FileWriter fw = new FileWriter(outFilePath);
         makeFileHeader(fw);

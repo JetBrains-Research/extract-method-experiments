@@ -119,7 +119,7 @@ public class FalseRefactoringsExtractor {
                 }
             }.visit(JavaParser.parse(contents, "UTF-8", false), null);
         } catch (Exception e) {
-            logger.log(Level.WARN, "Could not parse a java file " + filePath);
+            logger.log(Level.ERROR, "Could not parse a java file " + filePath);
         }
     }
 }

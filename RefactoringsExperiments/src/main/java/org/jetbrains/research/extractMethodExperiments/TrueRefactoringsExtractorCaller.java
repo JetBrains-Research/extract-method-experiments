@@ -9,8 +9,8 @@ import org.jetbrains.research.extractMethodExperiments.utils.RepoListParser;
 public class TrueRefactoringsExtractorCaller {
     public static void run(String path, LoggerContext context) throws Exception {
         RepoListParser repoParser = new RepoListParser(path);
-        SparseCSVBuilder.sharedInstance = new SparseCSVBuilder("true.csv", ExtractionConfig.nFeatures);
-        PositiveExtractionRunner runner = new PositiveExtractionRunner(repoParser.getRepositories());
+        SparseCSVBuilder.sharedInstance = new SparseCSVBuilder("output/true.csv", ExtractionConfig.nFeatures);
+        PositiveExtractionRunner runner = new PositiveExtractionRunner(repoParser.getRepositories(), context);
         runner.run();
     }
 }

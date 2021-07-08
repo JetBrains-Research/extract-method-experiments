@@ -1,19 +1,24 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PositiveExtractionRunner {
-    private List<String> repos = new ArrayList<>();
+    private List<String> repos;
     private int current = 0;
     private int total = 0;
+    private Logger logger;
 
-    public PositiveExtractionRunner(List<String> repos) {
+    public PositiveExtractionRunner(List<String> repos, LoggerContext context) {
         this.repos = repos;
+        this.logger = context.getLogger("true-extractor");
     }
 
     public void run() throws Exception {
@@ -21,7 +26,6 @@ public class PositiveExtractionRunner {
         total = Math.max(repos.size(), 1);
 
         for (String repo : repos) {
-            current++;
             String url = "https://github.com/" + repo + ".git";
             String pathToResult = repo;
             if (ExtractionConfig.noSubfolders) {
@@ -33,9 +37,10 @@ public class PositiveExtractionRunner {
             String outputFileName = "results/" + pathToResult + "_results.txt";
             tryCreateFile(outputFileName);
             FileWriter fileWriter = new FileWriter(outputFileName);
-            System.out.printf("%d out of %d, running repo with URL:%s\n", current, total, url);
+            logger.log(Level.INFO, String.format("Stepped into %s repository, processed %d out of %d", repo, current, total));
+            current++;
             final PrintWriter printWriter = new PrintWriter(fileWriter);
-            MiningInit extractor = new MiningInit(printWriter, url, repo);
+            MiningInit extractor = new MiningInit(printWriter, url, repo, logger);
             extractor.run();
 
         }
@@ -48,7 +53,7 @@ public class PositiveExtractionRunner {
             file.getParentFile().mkdirs();
             file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.ERROR, "Could not make file "+ name);
         }
     }
 }

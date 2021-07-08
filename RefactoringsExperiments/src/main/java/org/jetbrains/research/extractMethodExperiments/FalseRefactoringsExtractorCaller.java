@@ -35,7 +35,7 @@ public class FalseRefactoringsExtractorCaller {
         List<String> repositories = repoParser.getRepositories();
         for (int i = 0; i < repositories.size(); i++) {
             String repoName = repositories.get(i);
-            System.out.printf("%d/%d, at %s", i + 1, repositories.size(), repoName);
+            logger.log(Level.INFO, String.format("Stepped into %s repository, processed %d out of %d", repoName, i, repositories.size()));
             String url = "https://github.com/" + repoName + ".git";
 
             falseRefactoringsExtractor.run(repoName, url);

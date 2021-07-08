@@ -25,10 +25,11 @@ import java.io.*;
 public class FalseRefactoringsExtractor {
     private FileWriter fw;
     private Logger logger;
-
+    private int fileCount;
     public FalseRefactoringsExtractor(FileWriter fw,  LoggerContext context){
         this.fw = fw;
         this.logger = context.getLogger("false-extractor");
+        this.fileCount = 0;
     }
 
     public void run(final String repoName, final String repoURL) throws Exception {
@@ -68,6 +69,9 @@ public class FalseRefactoringsExtractor {
         if (!filePath.endsWith(".java")) {
             return;
         }
+        fileCount++;
+        if(fileCount%20==0) logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
+
 
         RevWalk revWalk = new RevWalk(repo);
         ObjectId objectId = repo.resolve(commitId);

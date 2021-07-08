@@ -1,5 +1,9 @@
 package org.jetbrains.research.extractMethodExperiments;
 
+import jdk.internal.net.http.common.Log;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.extractors.FalseRefactoringsExtractor;
 import org.jetbrains.research.extractMethodExperiments.utils.RepoListParser;
@@ -17,24 +21,25 @@ public class FalseRefactoringsExtractorCaller {
         fw.write("label\n");
     }
 
-    public static void run(String path) throws IOException {
+    public static void run(String path, LoggerContext context) throws Exception {
         String outFilePath = "false.csv";
 
         FileWriter fw = new FileWriter(outFilePath);
         makeFileHeader(fw);
 
-        FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw);
+        Logger logger = context.getLogger("extract-call");
+        logger.log(Level.INFO, "Made header for file "+outFilePath);
+
+        FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw, context);
         RepoListParser repoParser = new RepoListParser(path);
         List<String> repositories = repoParser.getRepositories();
         for (int i = 0; i < repositories.size(); i++) {
             String repoName = repositories.get(i);
             System.out.printf("%d/%d, at %s", i + 1, repositories.size(), repoName);
             String url = "https://github.com/" + repoName + ".git";
-            try {
-                falseRefactoringsExtractor.run(repoName, url);
-            } catch (Exception e) {
-                e.printStackTrace(); //make logger call
-            }
+
+            falseRefactoringsExtractor.run(repoName, url);
+
         }
     }
 

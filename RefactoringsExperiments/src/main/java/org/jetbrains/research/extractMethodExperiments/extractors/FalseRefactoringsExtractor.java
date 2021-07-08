@@ -1,8 +1,12 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -19,31 +23,31 @@ import org.refactoringminer.util.GitServiceImpl;
 import java.io.*;
 
 public class FalseRefactoringsExtractor {
-    FileWriter fw;
+    private FileWriter fw;
+    private Logger logger;
 
-    public FalseRefactoringsExtractor(FileWriter fw){
+    public FalseRefactoringsExtractor(FileWriter fw,  LoggerContext context){
         this.fw = fw;
+        this.logger = context.getLogger("false-extractor");
     }
 
     public void run(final String repoName, final String repoURL) throws Exception {
         GitService gitService = new GitServiceImpl();
 
         Repository repo = gitService.cloneIfNotExists(repoName, repoURL);
-        System.out.printf("git repo: %s\n", repoName);
-
-        try (Git git = new Git(repo)) {
+        logger.log(Level.INFO, "Processing repo at "+ repoURL);
+        Git git = new Git(repo);
+        try {
             Iterable<RevCommit> commits = git.log().all().call();
             RevCommit latestCommit = commits.iterator().next(); //Access first item in commits, which are stored in reverse-chrono order.
             handleCommit(repo, latestCommit);
         } catch (Exception e){
-            System.err.printf("Could not parse repository %s\n", repoURL);
-            e.printStackTrace();
+            throw new Exception("Could not parse repository"+repoName);
         }
     }
 
     private void handleCommit(Repository repo, RevCommit commit) throws Exception {
         String commitId = commit.getId().getName();
-        System.out.printf("COMMIT ID: %s\n", commitId);
 
         RevTree tree = commit.getTree();
 
@@ -102,17 +106,14 @@ public class FalseRefactoringsExtractor {
                 @Override
                 public void visit(MethodDeclaration n, Object arg) {
                     if(n.getBody() != null){
-                        Fragment fragment = new Fragment(n, repo, filePath);
+                        Fragment fragment = new Fragment(n, repo, filePath, logger);
                         fragment.processFragment(1, fw);
                     }
                     super.visit(n, arg);
-
-
                 }
             }.visit(JavaParser.parse(contents,"UTF-8",false), null);
         } catch (Exception e) {
-            System.err.println("Could not parse a java file");
-            e.printStackTrace();
+            logger.log(Level.WARN, "Could not parse a java file "+filePath);
         }
     }
 }

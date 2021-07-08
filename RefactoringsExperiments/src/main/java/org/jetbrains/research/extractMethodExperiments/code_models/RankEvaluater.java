@@ -28,7 +28,7 @@ public class RankEvaluater {
         this.setScore();
     }
 
-    private void setScore(){
+    private void setScore() {
         score = sLength() + sNestArea() + sNestDepth() + sParam() + sCommentsAndBlanks();
     }
 

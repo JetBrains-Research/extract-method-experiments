@@ -23,8 +23,8 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final String repoURL;
     private final String repoName;
     private final MetadataExtractor metadataExtractor;
-    private int current = 0;
     private final int total;
+    private int current = 0;
 
     public CustomRefactoringHandler(final PrintWriter out,
                                     final String repoURL,

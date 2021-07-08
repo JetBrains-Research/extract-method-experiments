@@ -27,7 +27,7 @@ public class DatasetPostprocessor {
             total++;
         }
 
-        System.out.println("UNIQUE LINES: " + (double)diffsSet.size() / total);
+        System.out.println("UNIQUE LINES: " + (double) diffsSet.size() / total);
     }
 
     public static void smartPostprocess() throws FileNotFoundException {
@@ -41,9 +41,9 @@ public class DatasetPostprocessor {
         }
 
 
-        try(FileWriter fileWriter = new FileWriter("csvResults_Unique.csv")) {
+        try (FileWriter fileWriter = new FileWriter("csvResults_Unique.csv")) {
             final PrintWriter printWriter = new PrintWriter(fileWriter);
-            for (Map.Entry<String, Integer> entry: diffsSet.entrySet()) {
+            for (Map.Entry<String, Integer> entry : diffsSet.entrySet()) {
                 String old = entry.getKey();
                 //old += entry.getValue();
                 printWriter.println(old);
@@ -85,14 +85,14 @@ public class DatasetPostprocessor {
             }
         }
 
-        try(FileWriter fileWriter = new FileWriter("ress.csv")) {
+        try (FileWriter fileWriter = new FileWriter("ress.csv")) {
             final PrintWriter printWriter = new PrintWriter(fileWriter);
             printWriter.println(head);
-            for (Map.Entry<String, Integer> entry: diffsSet.entrySet()) {
+            for (Map.Entry<String, Integer> entry : diffsSet.entrySet()) {
                 String old = entry.getKey();
                 //old += entry.getValue();
                 //if (r.nextDouble() < prob) {
-                    printWriter.println(old);
+                printWriter.println(old);
                 //}
 
             }

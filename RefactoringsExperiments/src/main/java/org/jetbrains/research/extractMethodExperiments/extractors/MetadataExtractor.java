@@ -39,12 +39,12 @@ public class MetadataExtractor {
     }
 
     public MethodDeclaration extractFragment(final String commitId,
-                                final String filePath,
-                                int firstLine,
-                                int lastLine,
-                                int firstCol,
-                                int lastCol,
-                                boolean applyLineConstraints) throws Exception {
+                                             final String filePath,
+                                             int firstLine,
+                                             int lastLine,
+                                             int firstCol,
+                                             int lastCol,
+                                             boolean applyLineConstraints) throws Exception {
         RevWalk revWalk = new RevWalk(repo);
         ObjectId objectId = repo.resolve(commitId);
         RevCommit commit = revWalk.parseCommit(objectId);
@@ -62,7 +62,7 @@ public class MetadataExtractor {
         InputStream in = loader.openStream();
         StringBuilder allFileBuilder = new StringBuilder();
 
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
             int skipLines = 0;
             while (skipLines++ < firstLine) {
                 allFileBuilder.append(br.readLine());
@@ -120,9 +120,9 @@ public class MetadataExtractor {
             KeywordsCalculator.calculateCSV(codeFragmentString, fragLinesCount);
 
             OutputUtils.printLn("FRAGMENT LENGTH: " + codeFragmentString.length(), out);
-            OutputUtils.printLn("FRAGMENT LINE AVG SIZE: " + (double)codeFragmentString.length() / fragLinesCount, out);
+            OutputUtils.printLn("FRAGMENT LINE AVG SIZE: " + (double) codeFragmentString.length() / fragLinesCount, out);
             SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalSymbolsInCodeFragment, codeFragmentString.length()));
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double)codeFragmentString.length() / fragLinesCount));
+            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) codeFragmentString.length() / fragLinesCount));
             analyzeDepth(allFileBuilder.toString(), firstLine, lastLine);
             return md;
         } catch (Exception ex) {
@@ -138,7 +138,7 @@ public class MetadataExtractor {
             String fragment = cur.toString();
 
             if (cur instanceof MethodDeclaration) {
-                MethodDeclaration md = (MethodDeclaration)cur;
+                MethodDeclaration md = (MethodDeclaration) cur;
                 MethodDataExtractor.extractParamsCount(md, out);
                 MethodDataExtractor.isVoidMethod(md, out);
                 int totalConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.total);
@@ -146,18 +146,18 @@ public class MetadataExtractor {
                 int fieldsConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.fields);
 
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivity, totalConnectivity));
-                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivityPerLine, (double)totalConnectivity / (er - fr + 1)));
+                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivityPerLine, (double) totalConnectivity / (er - fr + 1)));
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivity, fieldsConnectivity));
-                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivityPerLine, (double)fieldsConnectivity / (er - fr + 1)));
+                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivityPerLine, (double) fieldsConnectivity / (er - fr + 1)));
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivity, methodConnectivity));
-                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivityPerLine, (double)methodConnectivity / (er - fr + 1)));
+                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivityPerLine, (double) methodConnectivity / (er - fr + 1)));
 
                 return md;
             }
 
             return null;
         } else {
-            for (Node n: cur.getChildrenNodes()) {
+            for (Node n : cur.getChildrenNodes()) {
                 MethodDeclaration md = traverse(n, fc, fr, ec, er, instanceMembers);
                 if (md != null) {
                     return md;
@@ -177,14 +177,14 @@ public class MetadataExtractor {
         OutputUtils.printLn("DEPTHS:", out);
         StringBuilder depsBuilder = new StringBuilder();
         int depInLine = 0;
-        for (Character ch: code.toCharArray()) {
+        for (Character ch : code.toCharArray()) {
             if (ch == '{') {
                 dep++;
                 depInLine++;
             } else if (ch == '}') {
                 dep--;
                 depInLine--;
-            } else if (ch == '\n'){
+            } else if (ch == '\n') {
                 if (line >= firstLine && line <= lastLine) {
                     int resDep = dep;
                     if (depInLine > 0) {
@@ -201,9 +201,9 @@ public class MetadataExtractor {
 
         out.println();
         OutputUtils.printLn("AREA: " + area, out);
-        OutputUtils.printLn("AVG DEPTH: " + (double)area/(lastLine - firstLine + 1), out);
+        OutputUtils.printLn("AVG DEPTH: " + (double) area / (lastLine - firstLine + 1), out);
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalLinesDepth, area));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageLinesDepth, (double)area/(lastLine - firstLine + 1)));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageLinesDepth, (double) area / (lastLine - firstLine + 1)));
     }
 
     String extractLineFragment(int firstCol, int lastCol, String line) {

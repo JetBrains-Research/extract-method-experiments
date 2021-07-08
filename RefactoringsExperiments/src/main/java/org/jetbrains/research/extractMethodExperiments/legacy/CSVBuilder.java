@@ -15,9 +15,9 @@ public class CSVBuilder {
         }
     }
 
+    public int locs = 0;
     private PrintWriter pw;
     private boolean isFirst = true;
-    public int locs = 0;
 
     public CSVBuilder(String fileName) throws IOException {
         FileWriter fileWriter = new FileWriter(fileName);

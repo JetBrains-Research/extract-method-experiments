@@ -16,7 +16,7 @@ public class Tmp {
 
     public static void main(String[] args) {
         int id = 6;
-        for (String str: allKeywords) {
+        for (String str : allKeywords) {
             String capFL = str.substring(0, 1).toUpperCase() + str.substring(1);
             String name = "Keyword" + capFL + "TotalCount";
             System.out.println(name + "(\"" + name + "\", " + id + "),");

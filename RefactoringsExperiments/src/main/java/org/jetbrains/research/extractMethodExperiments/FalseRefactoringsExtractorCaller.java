@@ -27,7 +27,7 @@ public class FalseRefactoringsExtractorCaller {
         makeFileHeader(fw);
 
         Logger logger = context.getLogger("extract-call");
-        logger.log(Level.INFO, "Made header for file "+outFilePath);
+        logger.log(Level.INFO, "Made header for file " + outFilePath);
 
         FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw, context);
         RepoListParser repoParser = new RepoListParser(path);

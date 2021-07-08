@@ -10,19 +10,19 @@ public final class OutputUtils {
     public static void printCompositeStatement(CompositeStatementObject statementObject, int offset, PrintWriter pw) {
         String statement = statementObject.toString();
         boolean shouldCloseBracket = false;
-        if(statement.equals("{")) shouldCloseBracket = true;
+        if (statement.equals("{")) shouldCloseBracket = true;
 
-        if(statement.equals("{")) {
+        if (statement.equals("{")) {
             printLn(pushSpaces(statement, offset + 2), pw);
         } else {
             printLn(pushSpaces(statement, statementObject.getLocationInfo().getStartColumn()), pw);
         }
 
-        for (AbstractStatement as: statementObject.getStatements()) {
+        for (AbstractStatement as : statementObject.getStatements()) {
             if (as instanceof CompositeStatementObject) {
-                printCompositeStatement((CompositeStatementObject)as, as.getLocationInfo().getStartColumn() + 2, pw);
+                printCompositeStatement((CompositeStatementObject) as, as.getLocationInfo().getStartColumn() + 2, pw);
             } else if (as instanceof StatementObject) {
-                printLn(pushSpaces(((StatementObject)as).toString(), as.getLocationInfo().getStartColumn()), pw);
+                printLn(pushSpaces(((StatementObject) as).toString(), as.getLocationInfo().getStartColumn()), pw);
             } else {
                 printLn(pushSpaces("ERROR STATEMENT\n", as.getLocationInfo().getStartColumn()), pw);
             }

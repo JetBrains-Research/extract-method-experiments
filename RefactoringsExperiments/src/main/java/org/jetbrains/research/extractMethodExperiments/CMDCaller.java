@@ -17,11 +17,11 @@ import java.io.FileInputStream;
 public class CMDCaller {
     /**
      * Calls for `TrueRefactoringsExtractorCaller` and
-     *           `FalseRefactoringsExtractorCaller` from command-line
+     * `FalseRefactoringsExtractorCaller` from command-line
      */
     public static void main(String[] args) throws Exception {
 
-        ConfigurationFactory factory =  XmlConfigurationFactory.getInstance();
+        ConfigurationFactory factory = XmlConfigurationFactory.getInstance();
 
         // Locate the source of this configuration, this located file is dummy file contains just an empty configuration Tag
         ConfigurationSource configurationSource = new ConfigurationSource(new FileInputStream("log4j2.xml"));
@@ -37,10 +37,10 @@ public class CMDCaller {
         configuration.addAppender(appender);
 
         // Create loggerConfig
-        LoggerConfig loggerConfig = new LoggerConfig("com", Level.FATAL,false);
+        LoggerConfig loggerConfig = new LoggerConfig("com", Level.FATAL, false);
 
         // Add appender
-        loggerConfig.addAppender(appender,null,null);
+        loggerConfig.addAppender(appender, null, null);
 
         // Add logger and associate it with loggerConfig instance
         configuration.addLogger("cmd", loggerConfig);
@@ -64,19 +64,19 @@ public class CMDCaller {
         negative.setRequired(false);
         options.addOption(negative);
 
-            // parse the command line arguments
+        // parse the command line arguments
         CommandLine line = parser.parse(options, args);
 
 
         // choosing what to run
-            if (line.hasOption("p")) {
-                logger.log(Level.INFO, "Collecting true refactorings at "+line.getOptionValue("p"));
-                TrueRefactoringsExtractorCaller.run(line.getOptionValue("p"), context);
-            }
-            if (line.hasOption("n")) {
-                logger.log(Level.INFO, "Collecting false refactorings at "+line.getOptionValue("n"));
-                FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
-            }
+        if (line.hasOption("p")) {
+            logger.log(Level.INFO, "Collecting true refactorings at " + line.getOptionValue("p"));
+            TrueRefactoringsExtractorCaller.run(line.getOptionValue("p"), context);
+        }
+        if (line.hasOption("n")) {
+            logger.log(Level.INFO, "Collecting false refactorings at " + line.getOptionValue("n"));
+            FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
+        }
 
     }
 }

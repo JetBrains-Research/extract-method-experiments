@@ -49,23 +49,78 @@ public class Fragment {
         this.methodDepth = getNestingDepth(methodDeclaration.toString());
     }
 
-    public final String getInitialMethod(){
+    public static int getNestingArea(String code) {
+        int dep = 0;
+        int area = 0;
+        int depInLine = 0;
+        for (Character ch : code.toCharArray()) {
+            if (ch == '{') {
+                dep++;
+                depInLine++;
+            } else if (ch == '}') {
+                dep--;
+                depInLine--;
+            } else if (ch == '\n') {
+                int resDep = dep;
+                if (depInLine > 0) {
+                    resDep--;
+                }
+                depInLine = 0;
+                area += resDep;
+            }
+        }
+        return area;
+    }
+
+    public static int getNestingDepth(String str) {
+        int current_max = 0; // current count
+        int max = 0; // overall maximum count
+        int n = str.length();
+
+        // Traverse the input string
+        for (int i = 0; i < n; i++) {
+            if (str.charAt(i) == '{') {
+                current_max++;
+
+                // update max if required
+                if (current_max > max)
+                    max = current_max;
+            } else if (str.charAt(i) == '}') {
+                if (current_max > 0)
+                    current_max--;
+                else
+                    return -1;
+            }
+        }
+
+        // finally check for unbalanced string
+        if (current_max != 0)
+            return -1;
+
+        return max;
+    }
+
+    public static String clearCode(String code) {
+        return code.replaceAll("^[ \t{\n]+|[ \t}\n]+$", "");
+    }
+
+    public final String getInitialMethod() {
         return initialMethod;
     }
 
-    public final int getMethodDepth(){
+    public final int getMethodDepth() {
         return methodDepth;
     }
 
-    public final int getMethodArea(){
+    public final int getMethodArea() {
         return methodArea;
     }
 
-    public final Repository getRepository(){
+    public final Repository getRepository() {
         return repo;
     }
 
-    public final String getFilePath(){
+    public final String getFilePath() {
         return filePath;
     }
 
@@ -164,13 +219,13 @@ public class Fragment {
             return endLine;
         }
 
-        public final String getRemainder(){
+        public final String getRemainder() {
             return remainder;
         }
 
         /**
          * computes remainder (method \ fragment) for a given subfragment and sets corresponding field
-         * */
+         */
         private String setRemainder() {
             int relativeSubFragmentBeginLine = this.getBeginLine() - this.methodDeclaration.getBeginLine();
             int relativeSubFragmentEndLine = this.getEndLine() - this.methodDeclaration.getBeginLine();
@@ -206,7 +261,7 @@ public class Fragment {
             try {
                 GitBlameAnalyzer.extractToList(parentFragment.getRepository(), this.getBeginLine(), this.getEndLine(), parentFragment.getFilePath(), features);
             } catch (Exception e) {
-                logger.log(Level.ERROR,"Could not make historical features' computation");
+                logger.log(Level.ERROR, "Could not make historical features' computation");
             }
         }
 
@@ -229,7 +284,7 @@ public class Fragment {
                 features.add(new CSVItem(Feature.MethodConnectivityPerLine, (double) methodConnectivity / lines));
 
             } catch (Exception e) {
-                logger.log(Level.ERROR,"Could not make coupling features' computation");
+                logger.log(Level.ERROR, "Could not make coupling features' computation");
             }
         }
 
@@ -300,61 +355,6 @@ public class Fragment {
 
             writeFeatures(fw);
         }
-    }
-
-    public static int getNestingArea(String code) {
-        int dep = 0;
-        int area = 0;
-        int depInLine = 0;
-        for (Character ch : code.toCharArray()) {
-            if (ch == '{') {
-                dep++;
-                depInLine++;
-            } else if (ch == '}') {
-                dep--;
-                depInLine--;
-            } else if (ch == '\n') {
-                int resDep = dep;
-                if (depInLine > 0) {
-                    resDep--;
-                }
-                depInLine = 0;
-                area += resDep;
-            }
-        }
-        return area;
-    }
-
-    public static int getNestingDepth(String str) {
-        int current_max = 0; // current count
-        int max = 0; // overall maximum count
-        int n = str.length();
-
-        // Traverse the input string
-        for (int i = 0; i < n; i++) {
-            if (str.charAt(i) == '{') {
-                current_max++;
-
-                // update max if required
-                if (current_max > max)
-                    max = current_max;
-            } else if (str.charAt(i) == '}') {
-                if (current_max > 0)
-                    current_max--;
-                else
-                    return -1;
-            }
-        }
-
-        // finally check for unbalanced string
-        if (current_max != 0)
-            return -1;
-
-        return max;
-    }
-
-    public static String clearCode(String code) {
-        return code.replaceAll("^[ \t{\n]+|[ \t}\n]+$", "");
     }
 
 }

@@ -29,7 +29,7 @@ public class SparseCSVBuilder {
 
     public void writeVector(boolean label) {
         if (items.isEmpty()) {
-            for (Feature feature: Feature.values()) {
+            for (Feature feature : Feature.values()) {
                 pw.print(feature.getName() + ";");
             }
 

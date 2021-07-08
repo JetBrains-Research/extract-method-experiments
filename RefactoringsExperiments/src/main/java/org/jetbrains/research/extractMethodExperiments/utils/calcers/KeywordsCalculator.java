@@ -27,28 +27,28 @@ public class KeywordsCalculator {
         HashMap<String, Integer> counts = KeywordsCalculator.keywordsTrie.calculate(codeFragmentString);
 
         int id = 6; // initialized with 6 to account for shift in KeywordFeatures begin id.
-        for (String keyword: KeywordsCalculator.allKeywords) {
+        for (String keyword : KeywordsCalculator.allKeywords) {
             Integer count = counts.get(keyword);
             if (count == null) {
                 count = 0;
             }
 
             SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.fromId(id++), count));
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.fromId(id++), (double)count / fragLinesCount));
+            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.fromId(id++), (double) count / fragLinesCount));
         }
     }
 
     public static void extractToList(String codeFragmentString, List<ICSVItem> features, int fragLinesCount) {
         HashMap<String, Integer> counts = KeywordsCalculator.keywordsTrie.calculate(codeFragmentString);
         int id = 6; // initialized with 6 to account for shift in KeywordFeatures begin id.
-        for (String keyword: KeywordsCalculator.allKeywords) {
+        for (String keyword : KeywordsCalculator.allKeywords) {
             Integer count = counts.get(keyword);
             if (count == null) {
                 count = 0;
             }
 
             features.add(new CSVItem(Feature.fromId(id++), (double) count));
-            features.add(new CSVItem(Feature.fromId(id++), (double)count / fragLinesCount));
+            features.add(new CSVItem(Feature.fromId(id++), (double) count / fragLinesCount));
         }
     }
 

@@ -13,14 +13,14 @@ public class MemberSetsGenerator {
         MembersSets result = new MembersSets();
 
         if (cur instanceof ClassOrInterfaceDeclaration) {
-            ClassOrInterfaceDeclaration decl = (ClassOrInterfaceDeclaration)cur;
+            ClassOrInterfaceDeclaration decl = (ClassOrInterfaceDeclaration) cur;
 
             result.total.add(decl.getName());
 
         }
 
         if (cur instanceof MethodDeclaration) {
-            MethodDeclaration decl = (MethodDeclaration)cur;
+            MethodDeclaration decl = (MethodDeclaration) cur;
 
             result.methods.add(decl.getName());
             result.total.add(decl.getName());
@@ -28,10 +28,10 @@ public class MemberSetsGenerator {
         }
 
         if (cur instanceof FieldDeclaration) {
-            FieldDeclaration decl = (FieldDeclaration)cur;
+            FieldDeclaration decl = (FieldDeclaration) cur;
             List<VariableDeclarator> vars = decl.getVariables();
             if (vars != null) {
-                for (VariableDeclarator vd :vars) {
+                for (VariableDeclarator vd : vars) {
                     if (vd.getId() != null) {
                         result.total.add(vd.getId().getName());
                         result.fields.add(vd.getId().getName());
@@ -43,7 +43,7 @@ public class MemberSetsGenerator {
             return result;
         }
 
-        for (Node n: cur.getChildrenNodes()) {
+        for (Node n : cur.getChildrenNodes()) {
             MembersSets subres = instanceMembers(n);
             result.total.addAll(subres.total);
             result.fields.addAll(subres.fields);

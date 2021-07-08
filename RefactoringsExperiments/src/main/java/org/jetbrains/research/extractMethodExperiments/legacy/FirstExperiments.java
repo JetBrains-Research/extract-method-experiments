@@ -62,14 +62,14 @@ public class FirstExperiments {
                 shouldPrintCommitId = true;
                 printLn("§§§§§§§§§§§§§§§", pw);
                 printLn(ref.toString(), pw);
-                ExtractOperationRefactoring refactoring = (ExtractOperationRefactoring)ref;
+                ExtractOperationRefactoring refactoring = (ExtractOperationRefactoring) ref;
                 UMLOperationBodyMapper mapper = refactoring.getBodyMapper();
-                for(AbstractCodeMapping mapping : mapper.getMappings()) {
+                for (AbstractCodeMapping mapping : mapper.getMappings()) {
                     AbstractCodeFragment fragment1 = mapping.getFragment1();
                     printLn(fragment1.toString(), pw);
                 }
                 printLn("", pw);
-                for(AbstractCodeMapping mapping : mapper.getMappings()) {
+                for (AbstractCodeMapping mapping : mapper.getMappings()) {
                     AbstractCodeFragment fragment2 = mapping.getFragment2();
                     printLn(fragment2.toString(), pw);
                 }
@@ -90,16 +90,16 @@ public class FirstExperiments {
                 shouldPrintCommitId = true;
                 printLn("§§§§§§§§§§§§§§§", pw);
                 printLn(ref.toString(), pw);
-                ExtractOperationRefactoring refactoring = (ExtractOperationRefactoring)ref;
+                ExtractOperationRefactoring refactoring = (ExtractOperationRefactoring) ref;
                 Set<AbstractCodeFragment> s = refactoring.getExtractedCodeFragmentsFromSourceOperation();
-                for (AbstractCodeFragment fr: s) {
-                    printLn(fr.getString(),pw);
+                for (AbstractCodeFragment fr : s) {
+                    printLn(fr.getString(), pw);
                 }
                 /*printLn(refactoring.getSourceOperationBeforeExtraction().getBody().getCompositeStatement().toString() , pw);
                 printLn(refactoring.getSourceOperationAfterExtraction().getBody().getCompositeStatement().codeRange().getCodeElement(), pw);
                 printLn(refactoring.getSourceOperationAfterExtraction().getBody().getCompositeStatement().codeRange().getDescription(), pw);
                 printLn(refactoring.getSourceOperationAfterExtraction().getBody().getCompositeStatement().codeRange().getFilePath(), pw);*/
-                printCompositeStatement(refactoring.getSourceOperationBeforeExtraction().getBody().getCompositeStatement(),  0);
+                printCompositeStatement(refactoring.getSourceOperationBeforeExtraction().getBody().getCompositeStatement(), 0);
                 UMLOperationBodyMapper mapper = refactoring.getBodyMapper();
                 /*for(AbstractCodeMapping mapping : mapper.getMappings()) {
                     AbstractCodeFragment fragment1 = mapping.getFragment1();
@@ -135,14 +135,14 @@ public class FirstExperiments {
     private static void printCompositeStatement(CompositeStatementObject statementObject, int offset) {
         String statement = statementObject.toString();
         boolean shouldCloseBracket = false;
-        if(statement.equals("{")) shouldCloseBracket = true;
+        if (statement.equals("{")) shouldCloseBracket = true;
 
         printWithOneEndl(pushSpaces(statement, statementObject.getLocationInfo().getStartColumn()));
-        for (AbstractStatement as: statementObject.getStatements()) {
+        for (AbstractStatement as : statementObject.getStatements()) {
             if (as instanceof CompositeStatementObject) {
-                printCompositeStatement((CompositeStatementObject)as, as.getLocationInfo().getStartColumn());
+                printCompositeStatement((CompositeStatementObject) as, as.getLocationInfo().getStartColumn());
             } else if (as instanceof StatementObject) {
-                printWithOneEndl(pushSpaces(((StatementObject)as).toString(), as.getLocationInfo().getStartColumn()));
+                printWithOneEndl(pushSpaces(((StatementObject) as).toString(), as.getLocationInfo().getStartColumn()));
             } else {
                 printWithOneEndl(pushSpaces("ERROR STATEMENT\n", as.getLocationInfo().getStartColumn()));
             }
@@ -158,6 +158,7 @@ public class FirstExperiments {
             System.out.println(s);
         }
     }
+
     private static String pushSpaces(String to, int count) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < count; ++i) {

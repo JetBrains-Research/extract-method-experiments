@@ -25,7 +25,8 @@ public class FalseRefactoringsExtractor {
     private FileWriter fw;
     private Logger logger;
     private int fileCount;
-    public FalseRefactoringsExtractor(FileWriter fw,  LoggerContext context){
+
+    public FalseRefactoringsExtractor(FileWriter fw, LoggerContext context) {
         this.fw = fw;
         this.logger = context.getLogger("false-extractor");
         this.fileCount = 0;
@@ -35,14 +36,14 @@ public class FalseRefactoringsExtractor {
         GitService gitService = new GitServiceImpl();
 
         Repository repo = gitService.cloneIfNotExists(repoName, repoURL);
-        logger.log(Level.INFO, "Processing repo at "+ repoURL);
+        logger.log(Level.INFO, "Processing repo at " + repoURL);
         Git git = new Git(repo);
         try {
             Iterable<RevCommit> commits = git.log().all().call();
             RevCommit latestCommit = commits.iterator().next(); //Access first item in commits, which are stored in reverse-chrono order.
             handleCommit(repo, latestCommit);
-        } catch (Exception e){
-            throw new Exception("Could not parse repository"+repoName);
+        } catch (Exception e) {
+            throw new Exception("Could not parse repository" + repoName);
         }
     }
 
@@ -69,7 +70,7 @@ public class FalseRefactoringsExtractor {
             return;
         }
         fileCount++;
-        if(fileCount%20==0) logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
+        if (fileCount % 20 == 0) logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
 
 
         RevWalk revWalk = new RevWalk(repo);
@@ -99,24 +100,26 @@ public class FalseRefactoringsExtractor {
         }
     }
 
-    /**Uses JavaParser to extract all methods from .java file
+    /**
+     * Uses JavaParser to extract all methods from .java file
      * contained in contents as InputStream, makes a Fragment,
-     * and computes its features*/
+     * and computes its features
+     */
     public void handleMethods(InputStream contents, Repository repo, final String filePath) {
 
         try {
             new VoidVisitorAdapter<Object>() {
                 @Override
                 public void visit(MethodDeclaration n, Object arg) {
-                    if(n.getBody() != null){
+                    if (n.getBody() != null) {
                         Fragment fragment = new Fragment(n, repo, filePath, logger);
                         fragment.processFragment(1, fw);
                     }
                     super.visit(n, arg);
                 }
-            }.visit(JavaParser.parse(contents,"UTF-8",false), null);
+            }.visit(JavaParser.parse(contents, "UTF-8", false), null);
         } catch (Exception e) {
-            logger.log(Level.WARN, "Could not parse a java file "+filePath);
+            logger.log(Level.WARN, "Could not parse a java file " + filePath);
         }
     }
 }

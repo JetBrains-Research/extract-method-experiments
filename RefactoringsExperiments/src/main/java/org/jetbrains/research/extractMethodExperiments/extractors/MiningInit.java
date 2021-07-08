@@ -17,6 +17,7 @@ public class MiningInit {
     private String repoName;
     private int total = 1;
     private int current = 0;
+
     public MiningInit(PrintWriter out, String repoURL, String repoName) {
         this.out = out;
         this.repoURL = repoURL;

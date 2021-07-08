@@ -119,9 +119,16 @@ public enum Feature {
     MethodDeclarationDepth("MethodDeclarationDepth", 115),
     MethodDeclarationDepthPerLine("MethodDeclarationDepthPerLine", 116);
 
+    private String name;
+    private int id;
+
     Feature(String name, int id) {
         this.name = name;
         this.id = id;
+    }
+
+    public static Feature fromId(int id) {
+        return Feature.values()[id];
     }
 
     public String getName() {
@@ -130,12 +137,5 @@ public enum Feature {
 
     public int getId() {
         return id;
-    }
-
-    private String name;
-    private int id;
-
-    public static Feature fromId(int id) {
-        return Feature.values()[id];
     }
 }

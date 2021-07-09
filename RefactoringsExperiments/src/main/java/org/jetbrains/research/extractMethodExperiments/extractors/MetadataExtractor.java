@@ -86,8 +86,9 @@ public class MetadataExtractor {
             allFileBuilder.append(line);
             allFileBuilder.append('\n');
             if (line != null) {
-                String extractedLineFragment = extractLineFragment((applyLineConstraints && firstLine == procLines) ? firstCol : 0,
-                        (applyLineConstraints && lastLine == procLines) ? lastCol : line.length() - 1, line);
+                int arg1 = (applyLineConstraints && firstLine == procLines) ? firstCol : 0;
+                int arg2 = (applyLineConstraints && lastLine == procLines) ? lastCol : line.length() - 1;
+                String extractedLineFragment = extractLineFragment(arg1, arg2, line);
                 codeFragmentBuilder.append(extractedLineFragment);
                 codeFragmentBuilder.append(' ');
                 OutputUtils.printLn(extractedLineFragment, out);
@@ -112,7 +113,6 @@ public class MetadataExtractor {
             }
         }
 
-
         String codeFragmentString = codeFragmentBuilder.toString();
         int fragLinesCount = lastLine - firstLine + 1;
         KeywordsCalculator.calculateCSV(codeFragmentString, fragLinesCount);
@@ -125,9 +125,11 @@ public class MetadataExtractor {
         return md;
     }
 
-    MethodDeclaration traverse(Node cur, int fc, int fr, int ec, int er, MembersSets instanceMembers) {
+    MethodDeclaration traverse(Node cur, int firstColumn, int firstRow, int lastColumn, int lastRow, MembersSets instanceMembers) {
         // node inside fragment
-        if (isBefore(fc, fr, cur.getBeginColumn(), cur.getBeginLine()) && isBefore(cur.getEndColumn(), cur.getEndLine(), ec, er)) {
+        boolean isAfterFirst = isBefore(firstColumn, firstRow, cur.getBeginColumn(), cur.getBeginLine());
+        boolean isBeforeLast = isBefore(cur.getEndColumn(), cur.getEndLine(), lastColumn, lastRow);
+        if (isAfterFirst && isBeforeLast) {
             String fragment = cur.toString();
 
             if (cur instanceof MethodDeclaration) {
@@ -139,11 +141,11 @@ public class MetadataExtractor {
                 int fieldsConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.fields);
 
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivity, totalConnectivity));
-                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivityPerLine, (double) totalConnectivity / (er - fr + 1)));
+                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalConnectivityPerLine, (double) totalConnectivity / (lastRow - firstRow + 1)));
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivity, fieldsConnectivity));
-                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivityPerLine, (double) fieldsConnectivity / (er - fr + 1)));
+                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.FieldConnectivityPerLine, (double) fieldsConnectivity / (lastRow - firstRow + 1)));
                 SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivity, methodConnectivity));
-                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivityPerLine, (double) methodConnectivity / (er - fr + 1)));
+                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodConnectivityPerLine, (double) methodConnectivity / (lastRow - firstRow + 1)));
 
                 return md;
             }
@@ -151,7 +153,7 @@ public class MetadataExtractor {
             return null;
         } else {
             for (Node n : cur.getChildrenNodes()) {
-                MethodDeclaration md = traverse(n, fc, fr, ec, er, instanceMembers);
+                MethodDeclaration md = traverse(n, firstColumn, firstRow, lastColumn, lastRow, instanceMembers);
                 if (md != null) {
                     return md;
                 }
@@ -208,7 +210,7 @@ public class MetadataExtractor {
         return result.toString();
     }
 
-    private boolean isBefore(int c1, int r1, int c2, int r2) {
-        return (r1 < r2) || (r1 == r2 && c1 <= c2);
+    private boolean isBefore(int firstColumn, int firstRow, int secondColumn, int secondRow) {
+        return (firstRow < secondRow) || (firstRow == secondRow && firstColumn <= secondColumn);
     }
 }

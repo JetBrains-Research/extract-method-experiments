@@ -48,7 +48,6 @@ public class FalseRefactoringsExtractor {
 
     private void handleCommit(Repository repo, RevCommit commit) throws Exception {
         String commitId = commit.getId().getName();
-
         RevTree tree = commit.getTree();
 
         try (TreeWalk treeWalk = new TreeWalk(repo)) {
@@ -63,15 +62,16 @@ public class FalseRefactoringsExtractor {
         }
     }
 
-
     private void handleFile(Repository repo, final String filePath, final String commitId) throws Exception {
         if (!filePath.endsWith(".java")) {
             return;
         }
 
-        if (fileCount % 20 == 0) logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
+        //Logging after each new 20 processed files.
+        if (fileCount % 20 == 0){
+            logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
+        }
         fileCount++;
-        //20 is the period of logging for processed files.
 
         RevWalk revWalk = new RevWalk(repo);
         ObjectId objectId = repo.resolve(commitId);
@@ -106,7 +106,6 @@ public class FalseRefactoringsExtractor {
      * and computes its features
      */
     public void handleMethods(InputStream contents, Repository repo, final String filePath) {
-
         try {
             new VoidVisitorAdapter<Object>() {
                 @Override

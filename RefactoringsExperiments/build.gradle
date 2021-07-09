@@ -10,7 +10,11 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
+test {
+    useJUnitPlatform()
+}
+
+sourceCompatibility = 11
 
 dependencies {
     implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.0.0'
@@ -23,8 +27,11 @@ dependencies {
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
-    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
+
+
 
 application {
     mainClass = 'org.jetbrains.research.extractMethodExperiments.CMDCaller'

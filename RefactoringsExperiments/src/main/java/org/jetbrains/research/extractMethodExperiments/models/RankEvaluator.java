@@ -10,15 +10,13 @@ public class RankEvaluator {
     private final double maxLengthScore = 3;
     private String candidate;
     private String remainder;
-    private String method;
     private double score;
     private int methodDepth;
     private int methodArea;
 
-    public RankEvaluator(Fragment.SubFragment sf, String initialMethod, int methodArea, int methodDepth) {
-        this.candidate = sf.getBody();
-        this.method = initialMethod;
-        this.remainder = sf.getRemainder();
+    public RankEvaluator(String candidate, String remainder, int methodDepth, int methodArea) {
+        this.candidate = candidate;
+        this.remainder = remainder;
         this.methodDepth = methodDepth;
         this.methodArea = methodArea;
 

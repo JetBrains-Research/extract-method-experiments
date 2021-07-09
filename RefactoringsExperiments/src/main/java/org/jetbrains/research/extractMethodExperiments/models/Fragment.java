@@ -100,7 +100,19 @@ public class Fragment {
     }
 
     public static String clearCode(String code) {
-        return code.replaceAll("^[ \t{\n]+|[ \t}\n]+$", "");
+        String cleared = code.replaceAll("^[{]+", "");
+        int trailingBracesToRemove = code.length() - cleared.length();
+        char[] charArray = cleared.toCharArray();
+        int index = charArray.length-1;
+        while(trailingBracesToRemove > 0){
+            if(charArray[index] == '}'){
+                charArray[index] = ' ';
+                trailingBracesToRemove--;
+            }
+            index--;
+        }
+        cleared = String.valueOf(charArray);
+        return cleared.replaceAll("^[ \t\n]+|[ \t\n]+$", "");
     }
 
     public final String getInitialMethod() {
@@ -307,7 +319,7 @@ public class Fragment {
         }
 
         private void rankingScoreComputation() {
-            RankEvaluator ranker = new RankEvaluator(this, parentFragment.getInitialMethod(), parentFragment.getMethodArea(), parentFragment.getMethodDepth());
+            RankEvaluator ranker = new RankEvaluator(this.getBody(), this.remainder, parentFragment.getMethodArea(), parentFragment.getMethodDepth());
             this.score = ranker.getScore();
         }
 

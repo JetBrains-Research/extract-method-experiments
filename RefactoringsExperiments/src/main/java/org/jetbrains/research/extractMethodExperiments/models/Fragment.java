@@ -49,61 +49,59 @@ public class Fragment {
         this.methodDepth = getNestingDepth(methodDeclaration.toString());
     }
 
-    public static int getNestingArea(String code) {
-        int dep = 0;
-        int area = 0;
-        int depInLine = 0;
-        for (int i = 0; i < code.length(); i++) {
-            if (code.charAt(i) == '{') {
-                dep++;
-                depInLine++;
-            } else if (code.charAt(i) == '}') {
-                dep--;
-                depInLine--;
-            } else if (code.charAt(i) == '\n') {
-                int resDep = dep;
-                if (depInLine > 0) {
-                    resDep--;
+
+    public static int[] getNestingDepths(String code) {
+        String[] lines = code.split("\n");
+        int depthInLine[] = new int[lines.length];
+        int currentDepth = 0; // current count
+
+        // Traverse the input strings
+        for (int i = 0; i < lines.length; i++) {
+            for (int j = 0; j < lines[i].length(); j++) {
+                if (lines[i].charAt(j) == '{') break;
+
+                if (lines[i].charAt(j) == '}') {
+                    currentDepth--;
                 }
-                depInLine = 0;
-                area += resDep;
+            }
+            depthInLine[i] = currentDepth;
+            for (int j = 0; j < lines[i].length(); j++) {
+                if (lines[i].charAt(j) == '{') currentDepth++;
             }
         }
+        return depthInLine;
+    }
+
+    public static int getNestingArea(String code) {
+        int area = 0;
+        for (int value : getNestingDepths(code)) area += value;
         return area;
     }
 
     public static int getNestingDepth(String code) {
-        int currentMaxDepth = 0; // current count
-        int maxDepth = 0; // overall maximum count
-
-        // Traverse the input string
-        for (int i = 0; i < code.length(); i++) {
-            if (code.charAt(i) == '{') {
-                currentMaxDepth++;
-
-                // update max if required
-                if (currentMaxDepth > maxDepth)
-                    maxDepth = currentMaxDepth;
-            } else if (code.charAt(i) == '}') {
-                if (currentMaxDepth > 0)
-                    currentMaxDepth--;
-                else
-                    return -1;
-            }
-        }
-
-        // finally check for unbalanced string
-        if (currentMaxDepth != 0)
-            return -1;
-
-        return maxDepth;
+        int depth = 0;
+        for (int value : getNestingDepths(code)) depth = Math.max(value, depth);
+        return depth;
     }
 
+
+    public static boolean isUselessChar(char c) {
+        return (c == ' ' || c == '\t' || c == '\n');
+    }
+
+    /**
+     * Clears the passed code from redundant curly braces and trims end-lines, tabs and whitespaces.
+     */
     public static String clearCode(String code) {
-        String cleared = code.replaceAll("^[{]+", "");
-        int trailingBracesToRemove = code.length() - cleared.length();
-        char[] charArray = cleared.toCharArray();
-        int index = charArray.length - 1;
+        int trailingBracesToRemove = 0;
+        char[] charArray = code.toCharArray();
+        int index = 0;
+        while (isUselessChar(charArray[index]) || charArray[index] == '{') {
+            if (charArray[index] == '{') trailingBracesToRemove++;
+            charArray[index] = ' ';
+            index++;
+        }
+        index = charArray.length - 1;
         while (trailingBracesToRemove > 0) {
             if (charArray[index] == '}') {
                 charArray[index] = ' ';
@@ -111,8 +109,7 @@ public class Fragment {
             }
             index--;
         }
-        cleared = String.valueOf(charArray);
-        return cleared.replaceAll("^[ \t\n]+|[ \t\n]+$", "");
+        return String.valueOf(charArray).replaceAll("^[ \t\n]+|[ \t\n]+$", "");
     }
 
     public final String getInitialMethod() {

@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-group 'ru.hse.kirilenko.RefactoringsExperiments'
+group 'org.jetbrains.research.extractMethodExperiments'
 version '1.0-SNAPSHOT'
 
 repositories {

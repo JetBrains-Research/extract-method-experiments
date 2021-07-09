@@ -26,6 +26,30 @@ public class CMDCaller {
         LoggerContext context = configureLogger();
         Logger logger = context.getLogger("cmd");
 
+        // parse the command line arguments
+        CommandLine line = parseCMD(args);
+
+
+        // choosing what to run
+        try {
+            if (line.hasOption("p")) {
+                logger.log(Level.INFO, "Collecting true refactorings at " + line.getOptionValue("p"));
+                TrueRefactoringsExtractorCaller.run(line.getOptionValue("p"), context);
+            }
+        } catch (Exception e) {
+            logger.log(Level.ERROR, "Failed on true refactoring, details: "+e.getMessage());
+        }
+        try {
+            if (line.hasOption("n")) {
+                logger.log(Level.INFO, "Collecting false refactorings at " + line.getOptionValue("n"));
+                FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
+            }
+        } catch (Exception e) {
+            logger.log(Level.ERROR, "Failed on false refactoring, details: "+e.getMessage());
+        }
+    }
+
+    private static CommandLine parseCMD(String[] args) throws ParseException {
         CommandLineParser parser = new DefaultParser();
 
         Options options = new Options();
@@ -39,18 +63,7 @@ public class CMDCaller {
         options.addOption(negative);
 
         // parse the command line arguments
-        CommandLine line = parser.parse(options, args);
-
-
-        // choosing what to run
-        if (line.hasOption("p")) {
-            logger.log(Level.INFO, "Collecting true refactorings at " + line.getOptionValue("p"));
-            TrueRefactoringsExtractorCaller.run(line.getOptionValue("p"), context);
-        }
-        if (line.hasOption("n")) {
-            logger.log(Level.INFO, "Collecting false refactorings at " + line.getOptionValue("n"));
-            FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
-        }
+        return parser.parse(options, args);
     }
 
     private static LoggerContext configureLogger() throws IOException {
@@ -80,7 +93,6 @@ public class CMDCaller {
         configuration.addLogger("extract-call", loggerConfig);
         configuration.addLogger("false-extractor", loggerConfig);
         configuration.addLogger("true-extractor", loggerConfig);
-
 
         // Start logging system
         context.start(configuration);

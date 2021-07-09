@@ -20,6 +20,8 @@ import org.refactoringminer.api.RefactoringType;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingArea;
+
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final PrintWriter out;
     private final String repoURL;
@@ -164,26 +166,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     void analyzeDepth(String code, int locCount) {
-        int dep = 0;
-        int area = 0;
-        int depInLine = 0;
-        for (Character ch : code.toCharArray()) {
-            if (ch == '{') {
-                dep++;
-                depInLine++;
-            } else if (ch == '}') {
-                dep--;
-                depInLine--;
-            } else if (ch == '\n') {
-                int resDep = dep;
-                if (depInLine > 0) {
-                    resDep--;
-                }
-                depInLine = 0;
-                area += resDep;
-            }
-        }
-
+        int area = getNestingArea(code);
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationDepth, area));
         SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationDepthPerLine, (double) area / locCount));
     }

@@ -67,9 +67,9 @@ public class FalseRefactoringsExtractor {
             return;
         }
 
-        //Logging after each new 5 processed files.
+        //Logging after each new 20 processed files.
         if (fileCount % 20 == 0){
-            logger.log(Level.INFO, String.format("Processed %d .java files"), fileCount);
+            logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
         }
         fileCount++;
 

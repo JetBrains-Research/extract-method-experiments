@@ -2,6 +2,8 @@ package org.jetbrains.research.extractMethodExperiments.models;
 
 import org.junit.jupiter.api.Test;
 
+import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingArea;
+import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingDepth;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -26,13 +28,13 @@ class FragmentTest {
 
     @Test
     void getNestingDepthTest() {
-        assertEquals(2, Fragment.getNestingDepth(codeToTest2), "simple nesting depth should be properly calculated");
-        assertEquals(2, Fragment.getNestingDepth(codeToTest1), "more difficult nesting depth should be properly calculated");
+        assertEquals(2, getNestingDepth(codeToTest2), "simple nesting depth should be properly calculated");
+        assertEquals(2, getNestingDepth(codeToTest1), "more difficult nesting depth should be properly calculated");
     }
 
     @Test
     void getNestingAreaTest() {
-        assertEquals(7, Fragment.getNestingArea(codeToTest1), "simple nesting area should be properly calculated");
+        assertEquals(7, getNestingArea(codeToTest1), "simple nesting area should be properly calculated");
     }
 
 }

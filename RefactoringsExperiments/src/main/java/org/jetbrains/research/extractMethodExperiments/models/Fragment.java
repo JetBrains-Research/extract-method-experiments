@@ -103,9 +103,9 @@ public class Fragment {
         String cleared = code.replaceAll("^[{]+", "");
         int trailingBracesToRemove = code.length() - cleared.length();
         char[] charArray = cleared.toCharArray();
-        int index = charArray.length-1;
-        while(trailingBracesToRemove > 0){
-            if(charArray[index] == '}'){
+        int index = charArray.length - 1;
+        while (trailingBracesToRemove > 0) {
+            if (charArray[index] == '}') {
                 charArray[index] = ' ';
                 trailingBracesToRemove--;
             }

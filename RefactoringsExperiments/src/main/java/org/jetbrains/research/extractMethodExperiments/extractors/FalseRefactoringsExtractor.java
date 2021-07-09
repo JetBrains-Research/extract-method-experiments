@@ -42,7 +42,7 @@ public class FalseRefactoringsExtractor {
             RevCommit latestCommit = commits.iterator().next(); //Access first item in commits, which are stored in reverse-chrono order.
             handleCommit(repo, latestCommit);
         } catch (Exception e) {
-            throw new Exception("Could not parse repository" + repoName);
+            logger.log(Level.ERROR, "Could not parse repository " + repoName);
         }
     }
 
@@ -68,9 +68,10 @@ public class FalseRefactoringsExtractor {
         if (!filePath.endsWith(".java")) {
             return;
         }
-        fileCount++;
-        if (fileCount % 20 == 0) logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
 
+        if (fileCount % 20 == 0) logger.log(Level.INFO, String.format("Processed %d .java files", fileCount));
+        fileCount++;
+        //20 is the period of logging for processed files.
 
         RevWalk revWalk = new RevWalk(repo);
         ObjectId objectId = repo.resolve(commitId);

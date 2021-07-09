@@ -13,7 +13,6 @@ import java.util.List;
  * Utility class for tidy parsing of repository lists in the provided file
  */
 public class RepoListParser {
-
     private String path;
     private Logger logger;
 

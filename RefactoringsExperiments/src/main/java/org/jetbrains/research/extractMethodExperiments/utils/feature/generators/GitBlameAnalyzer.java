@@ -18,6 +18,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class for analyzing historical features of snippets of code via GitBlame
+ */
 public class GitBlameAnalyzer {
 
     public static void extractLineAuthorAndCreationDate(Repository repo,

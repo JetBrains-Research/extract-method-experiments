@@ -80,13 +80,13 @@ public class CustomRefactoringHandler extends RefactoringHandler {
             OutputUtils.printLn("URL: " + commonURL, pw);
         }
 
-        boolean hasEMRefactorings = false;
+        boolean hasExtractMethodRefactorings = false;
 
         for (Refactoring ref : refactorings) {
 
             if (ref.getRefactoringType() == RefactoringType.EXTRACT_OPERATION) {
-                if (!hasEMRefactorings) {
-                    hasEMRefactorings = true;
+                if (!hasExtractMethodRefactorings) {
+                    hasExtractMethodRefactorings = true;
                 }
 
                 SparseCSVBuilder.sharedInstance.writeVector(true);
@@ -99,7 +99,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
             }
 
         }
-        if (hasEMRefactorings) {
+        if (hasExtractMethodRefactorings) {
             OutputUtils.printLn("-----REFACTORINGS_END-----", pw);
         }
     }

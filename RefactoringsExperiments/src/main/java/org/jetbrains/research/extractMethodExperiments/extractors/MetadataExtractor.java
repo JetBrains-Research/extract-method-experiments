@@ -18,7 +18,7 @@ import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.utils.OutputUtils;
-import org.jetbrains.research.extractMethodExperiments.utils.MethodDataExtractor;
+import org.jetbrains.research.extractMethodExperiments.utils.MethodDataPrinter;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.CouplingCalculator;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.KeywordsCalculator;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.MemberSetsGenerator;
@@ -112,7 +112,7 @@ public class MetadataExtractor {
                 logger.log(Level.ERROR, "Could not parse .java file " + filePath);
             }
         }
-
+        
         String codeFragmentString = codeFragmentBuilder.toString();
         int fragLinesCount = lastLine - firstLine + 1;
         KeywordsCalculator.calculateCSV(codeFragmentString, fragLinesCount);
@@ -134,8 +134,8 @@ public class MetadataExtractor {
 
             if (cur instanceof MethodDeclaration) {
                 MethodDeclaration md = (MethodDeclaration) cur;
-                MethodDataExtractor.extractParamsCount(md, out);
-                MethodDataExtractor.isVoidMethod(md, out);
+                MethodDataPrinter.extractParamsCount(md, out);
+                MethodDataPrinter.isVoidMethod(md, out);
                 int totalConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.total);
                 int methodConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.methods);
                 int fieldsConnectivity = CouplingCalculator.calcConnectivity(fragment, instanceMembers.fields);

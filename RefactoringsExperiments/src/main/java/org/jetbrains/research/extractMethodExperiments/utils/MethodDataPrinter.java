@@ -7,7 +7,7 @@ import com.github.javaparser.ast.type.VoidType;
 import java.io.PrintWriter;
 import java.util.List;
 
-public class MethodDataExtractor {
+public class MethodDataPrinter {
     public static void extractParamsCount(MethodDeclaration md, PrintWriter out) {
         List<Parameter> params = md.getParameters();
         if (params != null) {

@@ -26,9 +26,9 @@ public class FalseRefactoringsExtractor {
     private Logger logger;
     private int fileCount;
 
-    public FalseRefactoringsExtractor(FileWriter fw, LoggerContext context) {
+    public FalseRefactoringsExtractor(FileWriter fw, Logger logger) {
         this.fw = fw;
-        this.logger = context.getLogger("false-extractor");
+        this.logger = logger;
         this.fileCount = 0;
     }
 
@@ -119,7 +119,7 @@ public class FalseRefactoringsExtractor {
                 }
             }.visit(JavaParser.parse(contents, "UTF-8", false), null);
         } catch (Exception e) {
-            logger.log(Level.WARN, "Could not parse a java file " + filePath);
+            logger.log(Level.ERROR, "Could not parse a java file " + filePath);
         }
     }
 }

@@ -4,6 +4,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Logger;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
@@ -21,21 +23,22 @@ import java.util.List;
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final PrintWriter out;
     private final String repoURL;
-    private final String repoName;
     private final MetadataExtractor metadataExtractor;
     private final int total;
     private int current = 0;
+    private int count = 0;
+    private Logger logger;
 
     public CustomRefactoringHandler(final PrintWriter out,
                                     final String repoURL,
-                                    final String repoName,
                                     final MetadataExtractor metadataExtractor,
-                                    int total) {
+                                    int total,
+                                    Logger logger) {
         this.out = out;
         this.repoURL = repoURL;
-        this.repoName = repoName;
         this.metadataExtractor = metadataExtractor;
         this.total = total;
+        this.logger = logger;
     }
 
     @Override
@@ -49,8 +52,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     public void handleException(String commitId, Exception e) {
-        System.err.println("Cannot handle commit with ID: " + commitId);
-        //e.printStackTrace();
+        logger.log(Level.ERROR, "Cannot handle commit with ID: " + commitId);
     }
 
     public void onFinish(int refactoringsCount, int commitsCount, int errorCommitsCount) {
@@ -70,7 +72,10 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         String blobURL = substring + "/blob/" + commitId;
 
         if (hasExtractMethod) {
-            System.out.printf("%d/%d, COMMIT ID: %s\n", this.current, this.total, commitId);
+            if (count % 100 == 0) {
+                logger.log(Level.INFO, String.format("%d/%d, COMMIT ID: %s\n", this.current, this.total, commitId));
+                count++;
+            }
             OutputUtils.printLn("COMMIT ID: " + commitId, pw);
             OutputUtils.printLn("URL: " + commonURL, pw);
         }
@@ -127,8 +132,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                 }
 
             } catch (Exception e) {
-                System.err.println("Cannot extract refactoring in commit: " + commitId);
-                e.printStackTrace();
+                logger.log(Level.ERROR, "Cannot extract refactoring in commit: " + commitId);
             }
         }
 

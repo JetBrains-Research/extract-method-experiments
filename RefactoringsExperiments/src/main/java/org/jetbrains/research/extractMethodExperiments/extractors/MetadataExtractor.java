@@ -4,6 +4,8 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Logger;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Repository;
@@ -28,10 +30,12 @@ import java.nio.charset.StandardCharsets;
 public class MetadataExtractor {
     private Repository repo;
     private PrintWriter out;
+    private Logger logger;
 
-    public MetadataExtractor(final Repository repo, final PrintWriter out) {
+    public MetadataExtractor(final Repository repo, final PrintWriter out, Logger logger) {
         this.repo = repo;
         this.out = out;
+        this.logger = logger;
     }
 
     public Repository getRepo() {
@@ -48,7 +52,7 @@ public class MetadataExtractor {
         RevWalk revWalk = new RevWalk(repo);
         ObjectId objectId = repo.resolve(commitId);
         RevCommit commit = revWalk.parseCommit(objectId);
-        //repo.exactRef("").getStorage().
+
         RevTree tree = commit.getTree();
         TreeWalk treeWalk = new TreeWalk(repo);
         treeWalk.addTree(tree);
@@ -62,74 +66,63 @@ public class MetadataExtractor {
         InputStream in = loader.openStream();
         StringBuilder allFileBuilder = new StringBuilder();
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-            int skipLines = 0;
-            while (skipLines++ < firstLine) {
-                allFileBuilder.append(br.readLine());
-                allFileBuilder.append('\n');
-            }
-
-            if (firstLine == lastLine) {
-                String line = br.readLine();
-                allFileBuilder.append(line);
-                allFileBuilder.append('\n');
-                if (line != null) {
-                    for (int pos = firstCol; pos <= lastCol; ++pos) {
-                        System.err.print(line.charAt(pos));
-                    }
-                }
-            }
-
-            StringBuilder codeFragmentBuilder = new StringBuilder();
-            int procLines = firstLine;
-            while (procLines <= lastLine) {
-                String line = br.readLine();
-                allFileBuilder.append(line);
-                allFileBuilder.append('\n');
-                if (line != null) {
-                    String extractedLineFragment = extractLineFragment((applyLineConstraints && firstLine == procLines) ? firstCol : 0,
-                            (applyLineConstraints && lastLine == procLines) ? lastCol : line.length() - 1, line);
-                    codeFragmentBuilder.append(extractedLineFragment);
-                    codeFragmentBuilder.append(' ');
-                    OutputUtils.printLn(extractedLineFragment, out);
-
-                }
-                procLines++;
-            }
-
-            while (br.ready()) {
-                allFileBuilder.append(br.readLine());
-                allFileBuilder.append('\n');
-            }
-
-            MethodDeclaration md = null;
-            if (ExtractionConfig.parseJava) {
-                try {
-                    InputStream stream = new ByteArrayInputStream(allFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
-                    CompilationUnit root = JavaParser.parse(stream);
-                    MembersSets members = new MemberSetsGenerator().instanceMembers(root);
-                    md = traverse(root, firstCol, firstLine, lastCol, lastLine, members);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-
-            String codeFragmentString = codeFragmentBuilder.toString();
-            int fragLinesCount = lastLine - firstLine + 1;
-            KeywordsCalculator.calculateCSV(codeFragmentString, fragLinesCount);
-
-            OutputUtils.printLn("FRAGMENT LENGTH: " + codeFragmentString.length(), out);
-            OutputUtils.printLn("FRAGMENT LINE AVG SIZE: " + (double) codeFragmentString.length() / fragLinesCount, out);
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalSymbolsInCodeFragment, codeFragmentString.length()));
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) codeFragmentString.length() / fragLinesCount));
-            analyzeDepth(allFileBuilder.toString(), firstLine, lastLine);
-            return md;
-        } catch (Exception ex) {
-            System.err.println("Cannot extract fragment from file");
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        int skipLines = 0;
+        while (skipLines++ < firstLine) {
+            allFileBuilder.append(br.readLine());
+            allFileBuilder.append('\n');
         }
 
-        return null;
+        if (firstLine == lastLine) {
+            String line = br.readLine();
+            allFileBuilder.append(line);
+            allFileBuilder.append('\n');
+        }
+
+        StringBuilder codeFragmentBuilder = new StringBuilder();
+        int procLines = firstLine;
+        while (procLines <= lastLine) {
+            String line = br.readLine();
+            allFileBuilder.append(line);
+            allFileBuilder.append('\n');
+            if (line != null) {
+                String extractedLineFragment = extractLineFragment((applyLineConstraints && firstLine == procLines) ? firstCol : 0,
+                        (applyLineConstraints && lastLine == procLines) ? lastCol : line.length() - 1, line);
+                codeFragmentBuilder.append(extractedLineFragment);
+                codeFragmentBuilder.append(' ');
+                OutputUtils.printLn(extractedLineFragment, out);
+            }
+            procLines++;
+        }
+
+        while (br.ready()) {
+            allFileBuilder.append(br.readLine());
+            allFileBuilder.append('\n');
+        }
+
+        MethodDeclaration md = null;
+        if (ExtractionConfig.parseJava) {
+            try {
+                InputStream stream = new ByteArrayInputStream(allFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+                CompilationUnit root = JavaParser.parse(stream);
+                MembersSets members = new MemberSetsGenerator().instanceMembers(root);
+                md = traverse(root, firstCol, firstLine, lastCol, lastLine, members);
+            } catch (Exception ex) {
+                logger.log(Level.ERROR, "Could not parse .java file " + filePath);
+            }
+        }
+
+
+        String codeFragmentString = codeFragmentBuilder.toString();
+        int fragLinesCount = lastLine - firstLine + 1;
+        KeywordsCalculator.calculateCSV(codeFragmentString, fragLinesCount);
+
+        OutputUtils.printLn("FRAGMENT LENGTH: " + codeFragmentString.length(), out);
+        OutputUtils.printLn("FRAGMENT LINE AVG SIZE: " + (double) codeFragmentString.length() / fragLinesCount, out);
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalSymbolsInCodeFragment, codeFragmentString.length()));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) codeFragmentString.length() / fragLinesCount));
+        analyzeDepth(allFileBuilder.toString(), firstLine, lastLine);
+        return md;
     }
 
     MethodDeclaration traverse(Node cur, int fc, int fr, int ec, int er, MembersSets instanceMembers) {
@@ -164,7 +157,6 @@ public class MetadataExtractor {
                 }
             }
         }
-
         return null;
     }
 

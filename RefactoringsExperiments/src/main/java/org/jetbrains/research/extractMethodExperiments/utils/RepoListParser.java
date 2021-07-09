@@ -1,5 +1,8 @@
 package org.jetbrains.research.extractMethodExperiments.utils;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,9 +15,10 @@ import java.util.List;
 public class RepoListParser {
 
     private String path;
+    private Logger logger;
 
-    public RepoListParser(String path) {
-        this.path = path;
+    public RepoListParser(String path, Logger logger) {
+        this.path = path; this.logger = logger;
     }
 
     public List<String> getRepositories() {
@@ -23,7 +27,7 @@ public class RepoListParser {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.lines().forEach(repos::add);
         } catch (Exception e) {
-            System.out.printf("There is no such file: %s\n", path);
+            logger.log(Level.ERROR, "There is no such file: " + path);
         }
         return repos;
     }

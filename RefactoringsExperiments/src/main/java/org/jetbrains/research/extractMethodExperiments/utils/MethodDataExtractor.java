@@ -3,7 +3,6 @@ package org.jetbrains.research.extractMethodExperiments.utils;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.type.VoidType;
-import org.jetbrains.research.extractMethodExperiments.legacy.OutputUtils;
 
 import java.io.PrintWriter;
 import java.util.List;

@@ -17,7 +17,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
-import org.jetbrains.research.extractMethodExperiments.legacy.OutputUtils;
+import org.jetbrains.research.extractMethodExperiments.utils.OutputUtils;
 import org.jetbrains.research.extractMethodExperiments.utils.MethodDataExtractor;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.CouplingCalculator;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.KeywordsCalculator;

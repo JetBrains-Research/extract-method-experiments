@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.legacy;
+package org.jetbrains.research.extractMethodExperiments.utils;
 
 import gr.uom.java.xmi.decomposition.AbstractStatement;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
@@ -9,8 +9,7 @@ import java.io.PrintWriter;
 public final class OutputUtils {
     public static void printCompositeStatement(CompositeStatementObject statementObject, int offset, PrintWriter pw) {
         String statement = statementObject.toString();
-        boolean shouldCloseBracket = false;
-        if (statement.equals("{")) shouldCloseBracket = true;
+        boolean shouldCloseBracket = statement.equals("{");
 
         if (statement.equals("{")) {
             printLn(pushSpaces(statement, offset + 2), pw);
@@ -22,7 +21,7 @@ public final class OutputUtils {
             if (as instanceof CompositeStatementObject) {
                 printCompositeStatement((CompositeStatementObject) as, as.getLocationInfo().getStartColumn() + 2, pw);
             } else if (as instanceof StatementObject) {
-                printLn(pushSpaces(((StatementObject) as).toString(), as.getLocationInfo().getStartColumn()), pw);
+                printLn(pushSpaces(as.toString(), as.getLocationInfo().getStartColumn()), pw);
             } else {
                 printLn(pushSpaces("ERROR STATEMENT\n", as.getLocationInfo().getStartColumn()), pw);
             }

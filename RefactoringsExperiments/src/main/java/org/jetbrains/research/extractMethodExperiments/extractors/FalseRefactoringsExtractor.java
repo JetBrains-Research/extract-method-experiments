@@ -26,9 +26,9 @@ public class FalseRefactoringsExtractor {
     private Logger logger;
     private int fileCount;
 
-    public FalseRefactoringsExtractor(FileWriter fw, LoggerContext context) {
+    public FalseRefactoringsExtractor(FileWriter fw, Logger logger) {
         this.fw = fw;
-        this.logger = context.getLogger("false-extractor");
+        this.logger = logger;
         this.fileCount = 0;
     }
 

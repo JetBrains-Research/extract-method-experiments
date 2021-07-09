@@ -13,6 +13,8 @@ import org.apache.logging.log4j.core.config.xml.XmlConfigurationFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class CMDCaller {
     /**
@@ -21,35 +23,8 @@ public class CMDCaller {
      */
     public static void main(String[] args) throws Exception {
 
-        ConfigurationFactory factory = XmlConfigurationFactory.getInstance();
-
-        // Locate the source of this configuration, this located file is dummy file contains just an empty configuration Tag
-        ConfigurationSource configurationSource = new ConfigurationSource(new FileInputStream("log4j2.xml"));
-
-        // Get a reference from configuration
-        LoggerContext context = new LoggerContext("JournalDevLoggerContext");
-        Configuration configuration = factory.getConfiguration(context, configurationSource);
-
-        // Create default console appender
-        ConsoleAppender appender = ConsoleAppender.createDefaultAppenderForLayout(PatternLayout.createDefaultLayout());
-        context.start();
-        // Add console appender into configuration
-        configuration.addAppender(appender);
-
-        // Create loggerConfig
-        LoggerConfig loggerConfig = new LoggerConfig("com", Level.FATAL, false);
-
-        // Add appender
-        loggerConfig.addAppender(appender, null, null);
-
-        // Add logger and associate it with loggerConfig instance
-        configuration.addLogger("cmd", loggerConfig);
-
-
-        // Start logging system
-        context.start(configuration);
-
         // Get a reference for logger
+        LoggerContext context = configureLogger();
         Logger logger = context.getLogger("cmd");
 
         CommandLineParser parser = new DefaultParser();
@@ -77,6 +52,40 @@ public class CMDCaller {
             logger.log(Level.INFO, "Collecting false refactorings at " + line.getOptionValue("n"));
             FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
         }
+    }
 
+    private static LoggerContext configureLogger() throws IOException {
+        ConfigurationFactory factory = XmlConfigurationFactory.getInstance();
+
+        // Locate the source of this configuration
+        ConfigurationSource configurationSource = new ConfigurationSource(new FileInputStream("log4j2.xml"));
+
+        // Get a reference from configuration
+        LoggerContext context = new LoggerContext("JournalDevLoggerContext");
+        Configuration configuration = factory.getConfiguration(context, configurationSource);
+
+        // Create default console appender
+        ConsoleAppender appender = ConsoleAppender.createDefaultAppenderForLayout(PatternLayout.createDefaultLayout());
+        context.start();
+        // Add console appender into configuration
+        configuration.addAppender(appender);
+
+        // Create loggerConfig
+        LoggerConfig loggerConfig = new LoggerConfig("com", Level.FATAL, false);
+
+        // Add appender
+        loggerConfig.addAppender(appender, null, null);
+
+        // Add loggers and associate them with loggerConfig instance
+        configuration.addLogger("cmd", loggerConfig);
+        configuration.addLogger("extract-call", loggerConfig);
+        configuration.addLogger("false-extractor", loggerConfig);
+        configuration.addLogger("true-extractor", loggerConfig);
+
+
+        // Start logging system
+        context.start(configuration);
+
+        return context;
     }
 }

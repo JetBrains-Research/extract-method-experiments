@@ -1,7 +1,7 @@
 package org.jetbrains.research.extractMethodExperiments;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.extractors.ExtractionConfig;
@@ -29,8 +29,8 @@ public class FalseRefactoringsExtractorCaller {
         Logger logger = context.getLogger("extract-call");
         logger.log(Level.INFO, "Made header for file " + outFilePath);
 
-        FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw, context);
-        RepoListParser repoParser = new RepoListParser(path);
+        FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw, context.getLogger("false-extractor"));
+        RepoListParser repoParser = new RepoListParser(path, logger);
         List<String> repositories = repoParser.getRepositories();
         for (int i = 0; i < repositories.size(); i++) {
             String repoName = repositories.get(i);

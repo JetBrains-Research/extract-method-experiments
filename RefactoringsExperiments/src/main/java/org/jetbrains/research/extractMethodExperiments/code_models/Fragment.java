@@ -53,14 +53,14 @@ public class Fragment {
         int dep = 0;
         int area = 0;
         int depInLine = 0;
-        for (Character ch : code.toCharArray()) {
-            if (ch == '{') {
+        for (int i = 0; i < code.length(); i++) {
+            if (code.charAt(i) == '{') {
                 dep++;
                 depInLine++;
-            } else if (ch == '}') {
+            } else if (code.charAt(i) == '}') {
                 dep--;
                 depInLine--;
-            } else if (ch == '\n') {
+            } else if (code.charAt(i) == '\n') {
                 int resDep = dep;
                 if (depInLine > 0) {
                     resDep--;
@@ -72,32 +72,31 @@ public class Fragment {
         return area;
     }
 
-    public static int getNestingDepth(String str) {
-        int current_max = 0; // current count
-        int max = 0; // overall maximum count
-        int n = str.length();
+    public static int getNestingDepth(String code) {
+        int currentMaxDepth = 0; // current count
+        int maxDepth = 0; // overall maximum count
 
         // Traverse the input string
-        for (int i = 0; i < n; i++) {
-            if (str.charAt(i) == '{') {
-                current_max++;
+        for (int i = 0; i < code.length(); i++) {
+            if (code.charAt(i) == '{') {
+                currentMaxDepth++;
 
                 // update max if required
-                if (current_max > max)
-                    max = current_max;
-            } else if (str.charAt(i) == '}') {
-                if (current_max > 0)
-                    current_max--;
+                if (currentMaxDepth > maxDepth)
+                    maxDepth = currentMaxDepth;
+            } else if (code.charAt(i) == '}') {
+                if (currentMaxDepth > 0)
+                    currentMaxDepth--;
                 else
                     return -1;
             }
         }
 
         // finally check for unbalanced string
-        if (current_max != 0)
+        if (currentMaxDepth != 0)
             return -1;
 
-        return max;
+        return maxDepth;
     }
 
     public static String clearCode(String code) {
@@ -308,7 +307,7 @@ public class Fragment {
         }
 
         private void rankingScoreComputation() {
-            RankEvaluater ranker = new RankEvaluater(this, parentFragment.getInitialMethod(), parentFragment.getMethodArea(), parentFragment.getMethodDepth());
+            RankEvaluator ranker = new RankEvaluator(this, parentFragment.getInitialMethod(), parentFragment.getMethodArea(), parentFragment.getMethodDepth());
             this.score = ranker.getScore();
         }
 

@@ -5,25 +5,22 @@ import org.apache.commons.lang3.StringUtils;
 import static org.jetbrains.research.extractMethodExperiments.code_models.Fragment.getNestingArea;
 import static org.jetbrains.research.extractMethodExperiments.code_models.Fragment.getNestingDepth;
 
-public class RankEvaluater {
+public class RankEvaluator {
     private String candidate;
     private String remainder;
     private String method;
     private double score;
     private int methodDepth;
     private int methodArea;
-    private double lengthScoreSensitivity;
-    private double maxLengthScore;
+    private final double lengthScoreSensitivity = 0.1;
+    private final double maxLengthScore = 3;
 
-    public RankEvaluater(Fragment.SubFragment sf, String initialMethod, int methodArea, int methodDepth) {
+    public RankEvaluator(Fragment.SubFragment sf, String initialMethod, int methodArea, int methodDepth) {
         this.candidate = sf.getBody();
         this.method = initialMethod;
         this.remainder = sf.getRemainder();
         this.methodDepth = methodDepth;
         this.methodArea = methodArea;
-
-        this.lengthScoreSensitivity = 0.1;
-        this.maxLengthScore = 3;
 
         this.setScore();
     }

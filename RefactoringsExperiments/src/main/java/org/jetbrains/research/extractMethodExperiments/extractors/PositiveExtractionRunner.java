@@ -16,9 +16,9 @@ public class PositiveExtractionRunner {
     private int total = 0;
     private Logger logger;
 
-    public PositiveExtractionRunner(List<String> repos, LoggerContext context) {
+    public PositiveExtractionRunner(List<String> repos, Logger logger) {
         this.repos = repos;
-        this.logger = context.getLogger("true-extractor");
+        this.logger = logger;
     }
 
     public void run() throws Exception {

@@ -89,8 +89,8 @@ public class GitBlameAnalyzer {
             }
         }
 
-        features.add(new CSVItem(Feature.TotalCommitsInFragment, (double) commits.size()));
-        features.add(new CSVItem(Feature.TotalAuthorsInFragment, (double) authors.size()));
+        features.add(new CSVItem(Feature.TotalCommitsInFragment, commits.size()));
+        features.add(new CSVItem(Feature.TotalAuthorsInFragment, authors.size()));
 
         int minTime = Integer.MAX_VALUE;
         int maxTime = Integer.MIN_VALUE;

@@ -6,14 +6,14 @@ import static org.jetbrains.research.extractMethodExperiments.models.Fragment.ge
 import static org.jetbrains.research.extractMethodExperiments.models.Fragment.getNestingDepth;
 
 public class RankEvaluator {
+    private final double lengthScoreSensitivity = 0.1;
+    private final double maxLengthScore = 3;
     private String candidate;
     private String remainder;
     private String method;
     private double score;
     private int methodDepth;
     private int methodArea;
-    private final double lengthScoreSensitivity = 0.1;
-    private final double maxLengthScore = 3;
 
     public RankEvaluator(Fragment.SubFragment sf, String initialMethod, int methodArea, int methodDepth) {
         this.candidate = sf.getBody();

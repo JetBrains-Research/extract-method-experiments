@@ -20,7 +20,6 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
-import org.jetbrains.research.extractMethodExperiments.utils.calcers.*;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.*;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;

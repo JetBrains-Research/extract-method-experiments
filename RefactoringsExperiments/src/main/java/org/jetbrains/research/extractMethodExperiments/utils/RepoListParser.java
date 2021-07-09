@@ -18,7 +18,8 @@ public class RepoListParser {
     private Logger logger;
 
     public RepoListParser(String path, Logger logger) {
-        this.path = path; this.logger = logger;
+        this.path = path;
+        this.logger = logger;
     }
 
     public List<String> getRepositories() {

@@ -2,7 +2,6 @@ package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -53,7 +52,7 @@ public class PositiveExtractionRunner {
             file.getParentFile().mkdirs();
             file.createNewFile();
         } catch (IOException e) {
-            logger.log(Level.ERROR, "Could not make file "+ name);
+            logger.log(Level.ERROR, "Could not make file " + name);
         }
     }
 }

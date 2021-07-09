@@ -11,7 +11,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.csv.models.ICSVItem;
-import org.jetbrains.research.extractMethodExperiments.utils.calcers.*;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.*;
 
 import java.io.FileWriter;

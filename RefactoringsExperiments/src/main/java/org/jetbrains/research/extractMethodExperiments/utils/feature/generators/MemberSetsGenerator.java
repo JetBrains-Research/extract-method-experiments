@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.utils.calcers;
+package org.jetbrains.research.extractMethodExperiments.utils.feature.generators;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;

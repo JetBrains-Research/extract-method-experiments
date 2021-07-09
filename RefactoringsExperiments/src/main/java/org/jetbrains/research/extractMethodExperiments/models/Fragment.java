@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.code_models;
+package org.jetbrains.research.extractMethodExperiments.models;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -12,6 +12,7 @@ import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.csv.models.ICSVItem;
 import org.jetbrains.research.extractMethodExperiments.utils.calcers.*;
+import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.*;
 
 import java.io.FileWriter;
 import java.io.IOException;

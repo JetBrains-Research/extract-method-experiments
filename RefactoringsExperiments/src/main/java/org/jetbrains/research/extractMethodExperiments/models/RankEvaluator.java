@@ -1,9 +1,9 @@
-package org.jetbrains.research.extractMethodExperiments.code_models;
+package org.jetbrains.research.extractMethodExperiments.models;
 
 import org.apache.commons.lang3.StringUtils;
 
-import static org.jetbrains.research.extractMethodExperiments.code_models.Fragment.getNestingArea;
-import static org.jetbrains.research.extractMethodExperiments.code_models.Fragment.getNestingDepth;
+import static org.jetbrains.research.extractMethodExperiments.models.Fragment.getNestingArea;
+import static org.jetbrains.research.extractMethodExperiments.models.Fragment.getNestingDepth;
 
 public class RankEvaluator {
     private String candidate;

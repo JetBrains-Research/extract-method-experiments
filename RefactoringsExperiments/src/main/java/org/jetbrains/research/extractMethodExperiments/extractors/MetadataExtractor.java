@@ -19,10 +19,10 @@ import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.legacy.OutputUtils;
 import org.jetbrains.research.extractMethodExperiments.utils.MethodDataExtractor;
-import org.jetbrains.research.extractMethodExperiments.utils.calcers.CouplingCalculator;
-import org.jetbrains.research.extractMethodExperiments.utils.calcers.KeywordsCalculator;
-import org.jetbrains.research.extractMethodExperiments.utils.calcers.MemberSetsGenerator;
-import org.jetbrains.research.extractMethodExperiments.utils.calcers.MembersSets;
+import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.CouplingCalculator;
+import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.KeywordsCalculator;
+import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.MemberSetsGenerator;
+import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.MembersSets;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

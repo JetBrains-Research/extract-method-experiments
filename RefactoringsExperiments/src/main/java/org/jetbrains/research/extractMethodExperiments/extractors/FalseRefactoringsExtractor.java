@@ -5,7 +5,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -15,7 +14,7 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-import org.jetbrains.research.extractMethodExperiments.code_models.Fragment;
+import org.jetbrains.research.extractMethodExperiments.models.Fragment;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;
 

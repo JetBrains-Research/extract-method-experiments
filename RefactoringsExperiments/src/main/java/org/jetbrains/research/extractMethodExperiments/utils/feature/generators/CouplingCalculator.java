@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.utils.calcers;
+package org.jetbrains.research.extractMethodExperiments.utils.feature.generators;
 
 import java.util.Set;
 

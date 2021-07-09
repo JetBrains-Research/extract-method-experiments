@@ -12,7 +12,7 @@ import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
 import org.jetbrains.research.extractMethodExperiments.extractors.ExtractionConfig;
 import org.jetbrains.research.extractMethodExperiments.extractors.MetadataExtractor;
 import org.jetbrains.research.extractMethodExperiments.legacy.OutputUtils;
-import org.jetbrains.research.extractMethodExperiments.utils.calcers.GitBlameAnalyzer;
+import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.GitBlameAnalyzer;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;

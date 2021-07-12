@@ -219,7 +219,7 @@ public class Fragment {
                 }
             } catch (Exception e) {
                 String errMsg = String.format("Could not make a complement, details:\nMethod-------------\n%s\n-------------\n\n" +
-                        "Statements---------------\n%s\n---------------\n\n", this.parentFragment.getInitialMethod(), this.getBody());
+                        "Statements---------------\n%s\n---------------\n\n", this.getMethod(), this.getBody());
                 logger.log(Level.ERROR, errMsg);
             }
             return String.join("\n", complementLines);
@@ -265,12 +265,12 @@ public class Fragment {
         }
 
         private void methodDeclarationFeaturesComputation() {
-            int methodDepth = getNestingArea(this.getMethod());
+            int methodDepth = parentFragment.getMethodDepth();
             int sequenceDepth = getNestingArea(this.getBody());
 
-            features.add(new CSVItem(Feature.TotalLinesDepth, (double) sequenceDepth));
+            features.add(new CSVItem(Feature.TotalLinesDepth, sequenceDepth));
             features.add(new CSVItem(Feature.AverageLinesDepth, (double) sequenceDepth / getBodyLineLength()));
-            features.add(new CSVItem(Feature.MethodDeclarationDepth, (double) methodDepth));
+            features.add(new CSVItem(Feature.MethodDeclarationDepth, methodDepth));
             features.add(new CSVItem(Feature.MethodDeclarationDepthPerLine, (double) methodDepth / getMethodLineLength()));
 
             features.add(new CSVItem(Feature.MethodDeclarationSymbols, getMethod().length()));
@@ -284,7 +284,7 @@ public class Fragment {
         }
 
         private void rankingScoreComputation() {
-            RankEvaluator ranker = new RankEvaluator(this.getBody(), this.remainder, parentFragment.getMethodArea(), parentFragment.getMethodDepth());
+            RankEvaluator ranker = new RankEvaluator(this.getBody(), this.remainder, parentFragment.getMethodDepth(), parentFragment.getMethodArea());
             this.score = ranker.getScore();
         }
 
@@ -304,8 +304,11 @@ public class Fragment {
             return clearCode(methodDeclaration.getBody().toString());
         }
 
-        private String getMethod() {
-            return this.methodDeclaration.toString();
+        /**
+         * Returns string representation of the enclosing method
+         * */
+        public String getMethod() {
+            return this.parentFragment.initialMethod;
         }
 
         private void writeFeatures(FileWriter fw) throws IOException {

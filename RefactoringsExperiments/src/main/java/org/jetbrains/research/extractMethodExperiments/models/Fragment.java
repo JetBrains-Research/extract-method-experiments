@@ -30,7 +30,7 @@ public class Fragment {
      * repo from which the fragment was taken
      */
     private Repository repo;
-
+    private String repoName;
     /**
      * path to the file from which the fragment was taken
      */
@@ -41,9 +41,10 @@ public class Fragment {
     private int methodDepth;
     private int methodArea;
 
-    public Fragment(Node mDec, Repository repo, String filePath, Logger logger) {
+    public Fragment(Node mDec, Repository repo, String repoName, String filePath, Logger logger) {
         this.methodDeclaration = (MethodDeclaration) mDec;
         this.repo = repo;
+        this.repoName = repoName;
         this.filePath = filePath;
         this.statements = getSubStatements(methodDeclaration.getBody());
         this.initialMethod = methodDeclaration.toString();
@@ -229,7 +230,7 @@ public class Fragment {
             try {
                 KeywordsCalculator.extractToList(this.getBody(), this.features, getBodyLineLength());
             } catch (Exception e) {
-                logger.log(Level.ERROR, "Could not make keyword features' computation");
+                logger.log(Level.ERROR, "Could not make keyword features' computation, repo: "+repoName);
             }
         }
 
@@ -237,7 +238,7 @@ public class Fragment {
             try {
                 GitBlameAnalyzer.extractToList(parentFragment.getRepository(), this.getBeginLine(), this.getEndLine(), parentFragment.getFilePath(), features);
             } catch (Exception e) {
-                logger.log(Level.ERROR, "Could not make historical features' computation");
+                logger.log(Level.ERROR, "Could not make historical features' computation, repo: "+repoName);
             }
         }
 
@@ -260,7 +261,7 @@ public class Fragment {
                 features.add(new CSVItem(Feature.MethodConnectivityPerLine, (double) methodConnectivity / lines));
 
             } catch (Exception e) {
-                logger.log(Level.ERROR, "Could not make coupling features' computation");
+                logger.log(Level.ERROR, "Could not make coupling features' computation, repo: "+repoName);
             }
         }
 

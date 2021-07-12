@@ -40,13 +40,13 @@ public class FalseRefactoringsExtractor {
         try {
             Iterable<RevCommit> commits = git.log().all().call();
             RevCommit latestCommit = commits.iterator().next(); //Access first item in commits, which are stored in reverse-chrono order.
-            handleCommit(repo, latestCommit);
+            handleCommit(repo, repoName, latestCommit);
         } catch (Exception e) {
             logger.log(Level.ERROR, "Could not parse repository " + repoName);
         }
     }
 
-    private void handleCommit(Repository repo, RevCommit commit) throws Exception {
+    private void handleCommit(Repository repo, String repoName, RevCommit commit) throws Exception {
         String commitId = commit.getId().getName();
         RevTree tree = commit.getTree();
 
@@ -56,13 +56,13 @@ public class FalseRefactoringsExtractor {
                 if (treeWalk.isSubtree()) {
                     treeWalk.enterSubtree();
                 } else {
-                    handleFile(repo, treeWalk.getPathString(), commitId);
+                    handleFile(repo, repoName, treeWalk.getPathString(), commitId);
                 }
             }
         }
     }
 
-    private void handleFile(Repository repo, final String filePath, final String commitId) throws Exception {
+    private void handleFile(Repository repo, String repoName, final String filePath, final String commitId) throws Exception {
         if (!filePath.endsWith(".java")) {
             return;
         }
@@ -96,7 +96,7 @@ public class FalseRefactoringsExtractor {
             }
             String fileContents = allFileBuilder.toString();
             InputStream targetStream = new ByteArrayInputStream(fileContents.getBytes());
-            handleMethods(targetStream, repo, filePath);
+            handleMethods(targetStream, repo, repoName, filePath);
         }
     }
 
@@ -105,13 +105,13 @@ public class FalseRefactoringsExtractor {
      * contained in contents as InputStream, makes a Fragment,
      * and computes its features
      */
-    public void handleMethods(InputStream contents, Repository repo, final String filePath) {
+    public void handleMethods(InputStream contents, Repository repo, String repoName, final String filePath) {
         try {
             new VoidVisitorAdapter<Object>() {
                 @Override
                 public void visit(MethodDeclaration n, Object arg) {
                     if (n.getBody() != null) {
-                        Fragment fragment = new Fragment(n, repo, filePath, logger);
+                        Fragment fragment = new Fragment(n, repo, repoName, filePath, logger);
                         fragment.processFragment(1, fw);
                     }
                     super.visit(n, arg);

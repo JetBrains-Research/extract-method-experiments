@@ -2,8 +2,9 @@ package org.jetbrains.research.extractMethodExperiments.models;
 
 import org.junit.jupiter.api.Test;
 
-import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingArea;
-import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingDepth;
+import java.util.Arrays;
+
+import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -19,6 +20,16 @@ class FragmentTest {
 
     String codeToTest2 = "\n\n{{return i;}}   \n\n   ";
 
+    String codeToTest3 =  "public static int countSmth(int a, int b) {\n" + //0
+            "    for(int i = 0; i < 100; i++) {\n" + //1
+            "         if(a>b){\n" + // 2
+            "              i++;\n" + // 3
+            "         } else {\n" + // 2
+            "              j++;\n" + // 3
+            "         }\n" + // 2
+            "    }\n" + // 1
+            "}"; // 0
+
 
     @Test
     void clearCodeTest() {
@@ -30,11 +41,13 @@ class FragmentTest {
     void getNestingDepthTest() {
         assertEquals(2, getNestingDepth(codeToTest2), "simple nesting depth should be properly calculated");
         assertEquals(2, getNestingDepth(codeToTest1), "more difficult nesting depth should be properly calculated");
+        assertEquals(3, getNestingDepth(codeToTest3), "full method's nesting depth should be properly calculated");
     }
 
     @Test
     void getNestingAreaTest() {
         assertEquals(7, getNestingArea(codeToTest1), "simple nesting area should be properly calculated");
+        assertEquals(14, getNestingArea(codeToTest3), "full method's nesting area should be properly calculated");
     }
 
 }

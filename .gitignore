@@ -1,1 +1,7 @@
 .idea
+*apache/
+*.gradle/
+*/build/
+results/
+*.csv
+*.ipynb

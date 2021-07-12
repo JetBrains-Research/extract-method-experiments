@@ -12,16 +12,23 @@ The `Refactoring Experiments` directory contains the tools that were used to gat
 Open `Refactoring Experiments` directory and execute the following command
 
 ```
-./gradlew run --args="-p=a.txt -n=b.txt" 
+./gradlew run --args="-p=data/star_top100.txt -n=data/apache_repos.txt" 
 ```
-It will start the extraction of positive-labeled cases from repositories specified in `a.txt` file, and negative-labeled cases from `b.txt`. 
+It will start the extraction of positive-labeled cases from repositories specified in `data/star_top100.txt` file, and negative-labeled cases from `data/apache_repos.txt`. These files can be changed to any other pair of files for any reason.
 
-If you want to collect only one type of cases, just use `--args="-p=a.txt"` for positives, and `--args="-n=b.txt"` for negatives. 
+If you want to collect only one type of cases, just use `--args="-p=data/a.txt"` for positives, and `--args="-n=data/b.txt"` for negatives. 
 
 #### Windows systems
 
 The procedure is identical with one key difference, use command `gradlew.bat` instead of `./gradlew`
 
+### Data directory
+
+The `data/` directory is used for storing text files with lists of repositories for processing, for instance, file `apache_repos.txt` consists of small list of Apache repositories, and `star_top100.txt` includes list of 100 most starred java repositories on GitHub. 
+
+### Output directory
+
+The `output/` directory holds the `true.csv` and `false.csv`, obtained by running the extraction.
 
 ## Training the model
 

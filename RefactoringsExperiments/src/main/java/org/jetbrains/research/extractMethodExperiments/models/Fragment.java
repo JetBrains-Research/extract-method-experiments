@@ -300,11 +300,6 @@ public class Fragment {
         private void rankingScoreComputation() {
             RankEvaluator ranker = new RankEvaluator(this.getBody(), this.remainder, parentFragment.getMethodDepth(), parentFragment.getMethodArea());
             this.score = ranker.getScore();
-//            if (ranker.sNestArea() < 0) {
-                System.out.println(this.getBody());
-                System.out.println(this.remainder);
-                System.out.println(this.getMethod());
-//            }
         }
 
         public int getBodyLineLength() {

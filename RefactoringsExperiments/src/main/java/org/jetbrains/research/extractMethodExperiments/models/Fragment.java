@@ -145,6 +145,7 @@ public class Fragment {
             BlockStmt newBlock;
             for (int shift = 0; shift <= context.size() - threshold; shift++) {
                 int beginLine = context.get(shift).getBeginLine();
+
                 for (int i = 0; i < threshold - 1; i++) {
                     statementSequence.add(context.get(i + shift));
                 }
@@ -179,13 +180,25 @@ public class Fragment {
 
         public SubFragment(Fragment fragment, int beginLine, int endLine) {
             this.features = new ArrayList<>();
-            this.beginLine = beginLine;
-            this.endLine = endLine;
             this.score = 0;
             this.parentFragment = fragment;
             this.methodDeclaration = fragment.methodDeclaration;
+            int tmp = setLineBias();
+            this.beginLine = beginLine + tmp - 1;
+            this.endLine = endLine - tmp - 1;
             this.logger = fragment.logger;
             this.remainder = setRemainder();
+        }
+
+        private final int setLineBias() {
+            String unclearedCode = this.methodDeclaration.getBody().toString();
+            int i = 0;
+            int res = 0;
+            while (unclearedCode.charAt(i) == '{' || unclearedCode.charAt(i) == ' ' || unclearedCode.charAt(i) == '\t' || unclearedCode.charAt(i) == '\n') {
+                if (unclearedCode.charAt(i) == '{') res++;
+                i++;
+            }
+            return res - 1;
         }
 
         public final int getBeginLine() {
@@ -206,7 +219,7 @@ public class Fragment {
         private String setRemainder() {
             int relativeSubFragmentBeginLine = this.getBeginLine() - this.methodDeclaration.getBeginLine();
             int relativeSubFragmentEndLine = this.getEndLine() - this.methodDeclaration.getBeginLine();
-            List<String> lines = Arrays.asList(this.parentFragment.getInitialMethod().split("\n"));
+            List<String> lines = Arrays.asList(this.parentFragment.methodDeclaration.getBody().toString().split("\n"));
             List<String> complementLines = new ArrayList<>();
             boolean dummyCall = true;
             try {
@@ -230,7 +243,7 @@ public class Fragment {
             try {
                 KeywordsCalculator.extractToList(this.getBody(), this.features, getBodyLineLength());
             } catch (Exception e) {
-                logger.log(Level.ERROR, "Could not make keyword features' computation, repo: "+repoName);
+                logger.log(Level.ERROR, "Could not make keyword features' computation, repo: " + repoName);
             }
         }
 
@@ -238,7 +251,7 @@ public class Fragment {
             try {
                 GitBlameAnalyzer.extractToList(parentFragment.getRepository(), this.getBeginLine(), this.getEndLine(), parentFragment.getFilePath(), features);
             } catch (Exception e) {
-                logger.log(Level.ERROR, "Could not make historical features' computation, repo: "+repoName);
+                logger.log(Level.ERROR, "Could not make historical features' computation, repo: " + repoName);
             }
         }
 
@@ -261,7 +274,7 @@ public class Fragment {
                 features.add(new CSVItem(Feature.MethodConnectivityPerLine, (double) methodConnectivity / lines));
 
             } catch (Exception e) {
-                logger.log(Level.ERROR, "Could not make coupling features' computation, repo: "+repoName);
+                logger.log(Level.ERROR, "Could not make coupling features' computation, repo: " + repoName);
             }
         }
 
@@ -287,6 +300,8 @@ public class Fragment {
         private void rankingScoreComputation() {
             RankEvaluator ranker = new RankEvaluator(this.getBody(), this.remainder, parentFragment.getMethodDepth(), parentFragment.getMethodArea());
             this.score = ranker.getScore();
+            if (!(this.score >= 0))
+                logger.log(Level.ERROR, "Unexpected score!");
         }
 
         public int getBodyLineLength() {
@@ -307,7 +322,7 @@ public class Fragment {
 
         /**
          * Returns string representation of the enclosing method
-         * */
+         */
         public String getMethod() {
             return this.parentFragment.initialMethod;
         }
@@ -319,7 +334,7 @@ public class Fragment {
                 fw.append(String.valueOf(features.get(i).getValue()));
                 fw.append(';');
             }
-            fw.append(String.valueOf(this.score)); //Score with 4 decimal places
+            fw.append(String.valueOf(this.score));
             fw.append(";");
             fw.append("-\n");
         }

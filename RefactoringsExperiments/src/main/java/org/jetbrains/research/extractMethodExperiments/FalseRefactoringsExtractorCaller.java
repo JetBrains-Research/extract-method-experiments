@@ -8,6 +8,7 @@ import org.jetbrains.research.extractMethodExperiments.extractors.ExtractionConf
 import org.jetbrains.research.extractMethodExperiments.extractors.FalseRefactoringsExtractor;
 import org.jetbrains.research.extractMethodExperiments.utils.RepoListParser;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -21,12 +22,14 @@ public class FalseRefactoringsExtractorCaller {
     }
 
     public static void run(String path, LoggerContext context) throws Exception {
+        Logger logger = context.getLogger("extract-call");
+        if (!new File("output/").mkdir()) {
+            logger.log(Level.ERROR, "Failed to make output directory");
+        }
         String outFilePath = "output/false.csv";
-
         FileWriter fw = new FileWriter(outFilePath);
         makeFileHeader(fw);
 
-        Logger logger = context.getLogger("extract-call");
         logger.log(Level.INFO, "Made header for file " + outFilePath);
 
         FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(fw, context.getLogger("false-extractor"));

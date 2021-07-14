@@ -29,7 +29,7 @@ public class CodeFormattingUtils {
             }
             index--;
         }
-        return String.valueOf(charArray).replaceAll("((/\\*)[^/]+(\\*/))|(//.*)", "").strip();
+        return String.valueOf(charArray).replaceAll("((/\\*)[^/]+(\\*/))|(//.*)", "").replaceAll("(?m)^[ \t]*\r?\n", "").strip();
     }
 
     public static int countLines(String code) {

@@ -5,7 +5,6 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Logger;
 import org.eclipse.jgit.lib.Repository;
@@ -23,8 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.clearCode;
-import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.isUselessChar;
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.*;
 import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingArea;
 import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingDepth;
 
@@ -39,28 +37,41 @@ public class Method {
      * path to the file from which the fragment was taken
      */
     private final String filePath;
-    private final List<Statement> statements;
+    private List<Statement> statements;
     private final String initialMethod;
     private final Logger logger;
     private final int methodDepth;
     private final int methodArea;
-    private final int methodBodyBeginLine;
-    private final int methodBodyEndLine;
+    private final int methodBeginLine;
+    private final int methodEndLine;
 
     public Method(Node mDec, Repository repo, String repoName, String filePath, Logger logger) {
         this.methodDeclaration = (MethodDeclaration) mDec;
         this.repo = repo;
         this.repoName = repoName;
         this.filePath = filePath;
-        this.statements = getSubStatements((methodDeclaration.getBody().get()));
-        this.initialMethod = methodDeclaration.getBody().get().toString();
+        if(methodDeclaration.getBody().isPresent())
+            this.statements = getSubStatements((methodDeclaration.getBody().get()));
+        this.methodBeginLine = mDec.getBegin().get().line;
+        this.methodEndLine = mDec.getEnd().get().line;
+        this.initialMethod = getCodeByLines(methodBeginLine, methodEndLine);
         this.logger = logger;
-        this.methodArea = getNestingArea(methodDeclaration.toString());
-        this.methodDepth = getNestingDepth(methodDeclaration.toString());
-        this.methodBodyBeginLine = mDec.getBegin().get().line;
-        this.methodBodyEndLine = mDec.getEnd().get().line;
+        this.methodArea = getNestingArea(initialMethod);
+        this.methodDepth = getNestingDepth(initialMethod);
     }
 
+    private String getCodeByLines(int beginLine, int endLine){
+        List<String> methodLines = new ArrayList<>();
+        try {
+            List<String> lineStream = Files.readAllLines(Paths.get(repoName + "/" + filePath));
+            for (int i = beginLine; i <= endLine; i++) {
+                methodLines.add(lineStream.get(i - 1));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return clearCode(String.join("\n", methodLines));
+    }
 
     public final String getInitialMethod() {
         return initialMethod;
@@ -103,7 +114,8 @@ public class Method {
     }
 
     public void processFragment(int threshold, FileWriter fw) {
-        processStatements(threshold, this.statements, fw);
+        if(this.statements != null)
+            processStatements(threshold, this.statements, fw);
     }
 
     /**
@@ -113,6 +125,7 @@ public class Method {
      */
     private void processStatements(int threshold, List<Statement> context, FileWriter fw) {
         // Cycle for parsing embedded statements
+
         for (Statement s : context) {
             if (!s.getChildNodes().isEmpty()) {
                 processStatements(threshold, getSubStatements(s), fw);
@@ -152,6 +165,7 @@ public class Method {
         private final int beginLine;
         private final int endLine;
         private final String remainder;
+        private final String candidate;
         private final Method parentMethod;
         private final Logger logger;
         private final MethodDeclaration methodDeclaration;
@@ -163,10 +177,12 @@ public class Method {
             this.parentMethod = method;
             this.methodDeclaration = method.methodDeclaration;
             int tmp = setLineBias();
+
+            this.candidate = getCodeByLines(beginLine, endLine);
             this.beginLine = beginLine + tmp;
             this.endLine = endLine - tmp;
             this.logger = method.logger;
-            this.remainder = remainderFromFile(methodBodyBeginLine, methodBodyEndLine, this.beginLine, this.endLine);
+            this.remainder = remainderFromFile(methodBeginLine, methodEndLine, this.beginLine, this.endLine);
         }
 
         private final int setLineBias() {
@@ -205,18 +221,18 @@ public class Method {
                         remainderLines.add(lineStream.get(i - 1));
                     } else if (dummyCall) {
                         dummyCall = false;
-                        remainderLines.add("\tcallToExtractedMethod");
+                        remainderLines.add("\tcallToExtractedMethod();");
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return String.join("\n", remainderLines);
+            return clearCode(String.join("\n", remainderLines));
         }
 
         private void keywordFeaturesComputation() {
             try {
-                KeywordsCalculator.extractToList(this.getBody(), this.features, getBodyLineLength());
+                KeywordsCalculator.extractToList(this.getCandidate(), this.features, countLines(this.candidate));
             } catch (Exception e) {
                 logger.log(Level.ERROR, "Could not make keyword features' computation, repo: " + repoName);
             }
@@ -237,10 +253,10 @@ public class Method {
                     node = node.getParentNode().get();
                 Node root = node;
                 MembersSets members = new MemberSetsGenerator().instanceMembers(root);
-                int totalConnectivity = CouplingCalculator.calcConnectivity(getBody(), members.total);
-                int methodConnectivity = CouplingCalculator.calcConnectivity(getBody(), members.methods);
-                int fieldsConnectivity = CouplingCalculator.calcConnectivity(getBody(), members.fields);
-                int lines = getBodyLineLength();
+                int totalConnectivity = CouplingCalculator.calcConnectivity(getCandidate(), members.total);
+                int methodConnectivity = CouplingCalculator.calcConnectivity(getCandidate(), members.methods);
+                int fieldsConnectivity = CouplingCalculator.calcConnectivity(getCandidate(), members.fields);
+                int lines = countLines(this.candidate);
                 features.add(new CSVItem(Feature.FieldConnectivity, fieldsConnectivity));
                 features.add(new CSVItem(Feature.FieldConnectivityPerLine, (double) fieldsConnectivity / lines));
                 features.add(new CSVItem(Feature.TotalConnectivity, totalConnectivity));
@@ -255,44 +271,36 @@ public class Method {
 
         private void methodDeclarationFeaturesComputation() {
             int methodDepth = parentMethod.getMethodDepth();
-            int sequenceDepth = getNestingArea(this.getBody());
+            int sequenceDepth = getNestingArea(this.getCandidate());
 
             features.add(new CSVItem(Feature.TotalLinesDepth, sequenceDepth));
-            features.add(new CSVItem(Feature.AverageLinesDepth, (double) sequenceDepth / getBodyLineLength()));
+            features.add(new CSVItem(Feature.AverageLinesDepth, (double) sequenceDepth / countLines(this.candidate)));
             features.add(new CSVItem(Feature.MethodDeclarationDepth, methodDepth));
-            features.add(new CSVItem(Feature.MethodDeclarationDepthPerLine, (double) methodDepth / getMethodLineLength()));
+            features.add(new CSVItem(Feature.MethodDeclarationDepthPerLine, (double) methodDepth / countLines(this.getMethod())));
 
             features.add(new CSVItem(Feature.MethodDeclarationSymbols, getMethod().length()));
-            features.add(new CSVItem(Feature.MethodDeclarationAverageSymbols, (double) getMethod().length() / getMethodLineLength()));
+            features.add(new CSVItem(Feature.MethodDeclarationAverageSymbols, (double) getMethod().length() /countLines(this.getMethod())));
         }
 
         private void lengthFeaturesComputation() {
-            features.add(new CSVItem(Feature.TotalSymbolsInCodeFragment, getBody().length()));
-            features.add(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) getBody().length() / getBodyLineLength()));
-            features.add(new CSVItem(Feature.TotalLinesOfCode, getBodyLineLength()));
+            features.add(new CSVItem(Feature.TotalSymbolsInCodeFragment, getCandidate().length()));
+            features.add(new CSVItem(Feature.AverageSymbolsInCodeLine, (double) getCandidate().length() / countLines(this.candidate)));
+            features.add(new CSVItem(Feature.TotalLinesOfCode, countLines(this.candidate)));
         }
 
         private void rankingScoreComputation() {
-            RankEvaluator ranker = new RankEvaluator(this.getBody(), this.getRemainder(), parentMethod.getMethodDepth(), parentMethod.getMethodArea());
+            RankEvaluator ranker = new RankEvaluator(this.getCandidate(), this.getRemainder(), parentMethod.getMethodDepth(), parentMethod.getMethodArea());
             this.score = ranker.getScore();
             if ((this.score < 0))
                 logger.log(Level.ERROR, "Unexpected score!");
-        }
-
-        public int getBodyLineLength() {
-            return (StringUtils.countMatches(getBody(), '\n') + 1);
-        }
-
-        public int getMethodLineLength() {
-            return (StringUtils.countMatches(getMethod(), '\n') + 1);
         }
 
         /**
          * Returns body of the fragment (sequence of statements)
          * w/o leading and trailing curly braces, whitespaces, linebreaks
          */
-        public String getBody() {
-            return clearCode(methodDeclaration.getBody().get().toString());
+        public String getCandidate() {
+            return this.candidate;
         }
 
         /**

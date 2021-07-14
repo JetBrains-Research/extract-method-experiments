@@ -14,7 +14,7 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-import org.jetbrains.research.extractMethodExperiments.models.Fragment;
+import org.jetbrains.research.extractMethodExperiments.models.Method;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.util.GitServiceImpl;
 
@@ -111,14 +111,14 @@ public class FalseRefactoringsExtractor {
                 @Override
                 public void visit(MethodDeclaration n, Object arg) {
                     if (n.getBody() != null) {
-                        Fragment fragment = new Fragment(n, repo, repoName, filePath, logger);
-                        fragment.processFragment(1, fw);
+                        Method method = new Method(n, repo, repoName, filePath, logger);
+                        method.processFragment(1, fw);
                     }
                     super.visit(n, arg);
                 }
-            }.visit(JavaParser.parse(contents, "UTF-8", false), null);
+            }.visit(JavaParser.parse(contents), null);
         } catch (Exception e) {
-            logger.log(Level.ERROR, "Could not parse a java file " + filePath);
+            logger.log(Level.ERROR, "Could not parse a java file " + e.getMessage());
         }
     }
 }

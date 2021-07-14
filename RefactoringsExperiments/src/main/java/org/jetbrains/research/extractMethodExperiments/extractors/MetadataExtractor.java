@@ -127,8 +127,8 @@ public class MetadataExtractor {
 
     MethodDeclaration traverse(Node cur, int firstColumn, int firstRow, int lastColumn, int lastRow, MembersSets instanceMembers) {
         // node inside fragment
-        boolean isAfterFirst = isBefore(firstColumn, firstRow, cur.getBeginColumn(), cur.getBeginLine());
-        boolean isBeforeLast = isBefore(cur.getEndColumn(), cur.getEndLine(), lastColumn, lastRow);
+        boolean isAfterFirst = isBefore(firstColumn, firstRow, cur.getBegin().get().column, cur.getBegin().get().line);
+        boolean isBeforeLast = isBefore(cur.getBegin().get().column, cur.getBegin().get().line, lastColumn, lastRow);
         if (isAfterFirst && isBeforeLast) {
             String fragment = cur.toString();
 
@@ -152,7 +152,7 @@ public class MetadataExtractor {
 
             return null;
         } else {
-            for (Node n : cur.getChildrenNodes()) {
+            for (Node n : cur.getChildNodes()) {
                 MethodDeclaration md = traverse(n, firstColumn, firstRow, lastColumn, lastRow, instanceMembers);
                 if (md != null) {
                     return md;

@@ -334,7 +334,7 @@ public class Fragment {
                 fw.append(String.valueOf(features.get(i).getValue()));
                 fw.append(';');
             }
-            fw.append(String.valueOf(this.score)); //Score with 4 decimal places
+            fw.append(String.valueOf(this.score));
             fw.append(";");
             fw.append("-\n");
         }

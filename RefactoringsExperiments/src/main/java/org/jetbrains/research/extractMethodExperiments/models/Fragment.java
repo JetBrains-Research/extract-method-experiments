@@ -47,7 +47,7 @@ public class Fragment {
         this.repoName = repoName;
         this.filePath = filePath;
         this.statements = getSubStatements(methodDeclaration.getBody());
-        this.initialMethod = methodDeclaration.toString();
+        this.initialMethod = methodDeclaration.getBody().toString();
         this.logger = logger;
         this.methodArea = getNestingArea(methodDeclaration.toString());
         this.methodDepth = getNestingDepth(methodDeclaration.toString());
@@ -184,8 +184,8 @@ public class Fragment {
             this.parentFragment = fragment;
             this.methodDeclaration = fragment.methodDeclaration;
             int tmp = setLineBias();
-            this.beginLine = beginLine + tmp - 1;
-            this.endLine = endLine - tmp - 1;
+            this.beginLine = beginLine + tmp-1;
+            this.endLine = endLine - tmp-1;
             this.logger = fragment.logger;
             this.remainder = setRemainder();
         }
@@ -219,7 +219,7 @@ public class Fragment {
         private String setRemainder() {
             int relativeSubFragmentBeginLine = this.getBeginLine() - this.methodDeclaration.getBeginLine();
             int relativeSubFragmentEndLine = this.getEndLine() - this.methodDeclaration.getBeginLine();
-            List<String> lines = Arrays.asList(this.parentFragment.methodDeclaration.getBody().toString().split("\n"));
+            List<String> lines = Arrays.asList(this.getMethod().split("\n"));
             List<String> complementLines = new ArrayList<>();
             boolean dummyCall = true;
             try {

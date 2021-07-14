@@ -8,11 +8,11 @@ import static org.jetbrains.research.extractMethodExperiments.utils.feature.gene
 public class RankEvaluator {
     private final double lengthScoreSensitivity = 0.1;
     private final double maxLengthScore = 3;
-    private String candidate;
-    private String remainder;
+    private final String candidate;
+    private final String remainder;
     private double score;
-    private int methodDepth;
-    private int methodArea;
+    private final int methodDepth;
+    private final int methodArea;
 
     public RankEvaluator(String candidate, String remainder, int methodDepth, int methodArea) {
         this.candidate = candidate;

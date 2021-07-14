@@ -3,7 +3,6 @@ package org.jetbrains.research.extractMethodExperiments.handlers;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Logger;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
@@ -31,7 +30,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final int total;
     private int current = 0;
     private int count = 0;
-    private Logger logger;
+    private final Logger logger;
 
     public CustomRefactoringHandler(final PrintWriter out,
                                     final String repoURL,
@@ -94,7 +93,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                 }
 
                 SparseCSVBuilder.sharedInstance.writeVector(true);
-                OutputUtils.printLn("DESCRIPTION: " + ref.toString(), pw);
+                OutputUtils.printLn("DESCRIPTION: " + ref, pw);
                 ExtractOperationRefactoring refactoring = (ExtractOperationRefactoring) ref;
                 LocationInfo locInfo = refactoring.getExtractedOperation().getLocationInfo();
                 OutputUtils.printLn("REFACTORING FILE DIFF URL: " + commonURL + "/" + locInfo.getFilePath(), pw);
@@ -153,7 +152,6 @@ public class CustomRefactoringHandler extends RefactoringHandler {
 
         OutputUtils.printLn("---REFACTORING_FINISH---", pw);
     }
-
 
 
     private void addMd(MethodDeclaration md) {

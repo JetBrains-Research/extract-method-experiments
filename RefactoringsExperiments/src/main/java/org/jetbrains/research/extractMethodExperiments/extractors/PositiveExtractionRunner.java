@@ -10,10 +10,10 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class PositiveExtractionRunner {
-    private List<String> repos;
+    private final List<String> repos;
     private int current = 0;
     private int total = 0;
-    private Logger logger;
+    private final Logger logger;
 
     public PositiveExtractionRunner(List<String> repos, Logger logger) {
         this.repos = repos;

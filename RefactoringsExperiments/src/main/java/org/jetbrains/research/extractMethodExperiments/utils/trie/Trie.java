@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class Trie {
-    private TrieNode root;
+    private final TrieNode root;
 
     public Trie(List<String> words) {
         root = new TrieNode();

@@ -119,8 +119,8 @@ public enum Feature {
     MethodDeclarationDepth("MethodDeclarationDepth", 115),
     MethodDeclarationDepthPerLine("MethodDeclarationDepthPerLine", 116);
 
-    private String name;
-    private int id;
+    private final String name;
+    private final int id;
 
     Feature(String name, int id) {
         this.name = name;

@@ -17,8 +17,8 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
 import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
-import org.jetbrains.research.extractMethodExperiments.utils.OutputUtils;
 import org.jetbrains.research.extractMethodExperiments.utils.MethodDataPrinter;
+import org.jetbrains.research.extractMethodExperiments.utils.OutputUtils;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.CouplingCalculator;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.KeywordsCalculator;
 import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.MemberSetsGenerator;
@@ -31,9 +31,9 @@ import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormatti
 import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.countLines;
 
 public class MetadataExtractor {
-    private Repository repo;
-    private PrintWriter out;
-    private Logger logger;
+    private final Repository repo;
+    private final PrintWriter out;
+    private final Logger logger;
 
     public MetadataExtractor(final Repository repo, final PrintWriter out, Logger logger) {
         this.repo = repo;
@@ -115,7 +115,7 @@ public class MetadataExtractor {
                 logger.log(Level.ERROR, "Could not parse .java file " + filePath);
             }
         }
-        
+
         String codeFragmentString = clearCode(codeFragmentBuilder.toString());
         int fragLinesCount = countLines(codeFragmentString);
         KeywordsCalculator.calculateCSV(codeFragmentString, fragLinesCount);

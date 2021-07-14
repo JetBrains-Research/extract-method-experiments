@@ -9,7 +9,7 @@ public class DepthAnalyzer {
      */
     public static int[] getNestingDepths(String code) {
         String[] lines = code.split("\n");
-        int depthInLine[] = new int[lines.length];
+        int[] depthInLine = new int[lines.length];
         int currentDepth = 0; // current count
 
         // Traverse the input strings
@@ -28,6 +28,7 @@ public class DepthAnalyzer {
         }
         return depthInLine;
     }
+
     /**
      * Computes nesting area (i.e. line-wise sum of nesting levels) of the given code
      */
@@ -36,6 +37,7 @@ public class DepthAnalyzer {
         for (int value : getNestingDepths(code)) area += value;
         return area;
     }
+
     /**
      * Computes nesting depth (i.e. line-wise maximum of nesting levels) of the given code
      */

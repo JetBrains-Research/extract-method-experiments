@@ -3,8 +3,8 @@ package org.jetbrains.research.extractMethodExperiments.utils.trie;
 import java.util.HashMap;
 
 public class TrieNode {
-    private HashMap<Character, TrieNode> children;
-    private String content;
+    private final HashMap<Character, TrieNode> children;
+    private final String content;
     private boolean isWord;
 
     public TrieNode() {

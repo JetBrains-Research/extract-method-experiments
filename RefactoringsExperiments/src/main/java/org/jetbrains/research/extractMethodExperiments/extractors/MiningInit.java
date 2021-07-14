@@ -14,12 +14,12 @@ import org.refactoringminer.util.GitServiceImpl;
 import java.io.PrintWriter;
 
 public class MiningInit {
-    private PrintWriter out;
-    private String repoURL;
-    private String repoName;
+    private final PrintWriter out;
+    private final String repoURL;
+    private final String repoName;
     private int total = 1;
-    private int current = 0;
-    private Logger logger;
+    private final int current = 0;
+    private final Logger logger;
 
     public MiningInit(PrintWriter out, String repoURL, String repoName, Logger logger) {
         this.out = out;

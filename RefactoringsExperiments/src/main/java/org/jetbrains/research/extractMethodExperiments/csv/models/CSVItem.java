@@ -1,7 +1,7 @@
 package org.jetbrains.research.extractMethodExperiments.csv.models;
 
 public class CSVItem implements ICSVItem {
-    private Feature type;
+    private final Feature type;
     private double value;
 
     public CSVItem(Feature type, double value) {

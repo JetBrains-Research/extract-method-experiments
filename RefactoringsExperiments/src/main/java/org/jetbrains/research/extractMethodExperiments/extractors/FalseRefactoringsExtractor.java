@@ -21,8 +21,8 @@ import org.refactoringminer.util.GitServiceImpl;
 import java.io.*;
 
 public class FalseRefactoringsExtractor {
-    private FileWriter fw;
-    private Logger logger;
+    private final FileWriter fw;
+    private final Logger logger;
     private int fileCount;
 
     public FalseRefactoringsExtractor(FileWriter fw, Logger logger) {
@@ -68,7 +68,7 @@ public class FalseRefactoringsExtractor {
         }
 
         //Logging after each new 100 processed files.
-        if (fileCount % 100 == 0){
+        if (fileCount % 100 == 0) {
             logger.log(Level.INFO, String.format("Processed %d .java files, currently at repo %s", fileCount, repoName));
         }
         fileCount++;

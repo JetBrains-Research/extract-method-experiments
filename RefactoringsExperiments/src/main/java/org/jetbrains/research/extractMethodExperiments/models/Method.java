@@ -138,7 +138,7 @@ public class Method {
                     try {
                         sf.process(fw);
                     } catch (Exception e) {
-                        String errMsg = String.format("Could not process statements \n%s\n", methodDeclaration.toString());
+                        String errMsg = String.format("Could not process statements \n%s\n", methodDeclaration);
                         logger.log(Level.ERROR, errMsg);
                     }
                 }
@@ -152,10 +152,10 @@ public class Method {
         private final int beginLine;
         private final int endLine;
         private final String remainder;
-        private double score;
         private final Method parentMethod;
         private final Logger logger;
         private final MethodDeclaration methodDeclaration;
+        private double score;
 
         public Fragment(Method method, int beginLine, int endLine) {
             this.features = new ArrayList<>();

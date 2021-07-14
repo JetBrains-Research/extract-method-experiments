@@ -37,7 +37,7 @@ public class CMDCaller {
                 TrueRefactoringsExtractorCaller.run(line.getOptionValue("p"), context);
             }
         } catch (Exception e) {
-            logger.log(Level.ERROR, "Failed on true refactoring, details: "+e.getMessage());
+            logger.log(Level.ERROR, "Failed on true refactoring, details: " + e.getMessage());
         }
         try {
             if (line.hasOption("n")) {
@@ -45,7 +45,7 @@ public class CMDCaller {
                 FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
             }
         } catch (Exception e) {
-            logger.log(Level.ERROR, "Failed on false refactoring, details: "+e.getMessage());
+            logger.log(Level.ERROR, "Failed on false refactoring, details: " + e.getMessage());
         }
     }
 

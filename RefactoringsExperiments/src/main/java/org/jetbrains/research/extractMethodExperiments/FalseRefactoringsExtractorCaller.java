@@ -25,8 +25,8 @@ public class FalseRefactoringsExtractorCaller {
         Logger logger = context.getLogger("extract-call");
         try {
             new File("output/").mkdir();
-        } catch (Exception e){
-            logger.log(Level.ERROR, "Failed to make output directory, details: "+e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.ERROR, "Failed to make output directory, details: " + e.getMessage());
         }
         String outFilePath = "output/false.csv";
         FileWriter fw = new FileWriter(outFilePath);

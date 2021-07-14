@@ -27,6 +27,9 @@ import org.jetbrains.research.extractMethodExperiments.utils.feature.generators.
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.clearCode;
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.countLines;
+
 public class MetadataExtractor {
     private Repository repo;
     private PrintWriter out;
@@ -113,8 +116,8 @@ public class MetadataExtractor {
             }
         }
         
-        String codeFragmentString = codeFragmentBuilder.toString();
-        int fragLinesCount = lastLine - firstLine + 1;
+        String codeFragmentString = clearCode(codeFragmentBuilder.toString());
+        int fragLinesCount = countLines(codeFragmentString);
         KeywordsCalculator.calculateCSV(codeFragmentString, fragLinesCount);
 
         OutputUtils.printLn("FRAGMENT LENGTH: " + codeFragmentString.length(), out);

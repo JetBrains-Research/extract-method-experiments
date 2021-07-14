@@ -23,6 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.clearCode;
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.isUselessChar;
 import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingArea;
 import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingDepth;
 
@@ -57,34 +59,6 @@ public class Method {
         this.methodDepth = getNestingDepth(methodDeclaration.toString());
         this.methodBodyBeginLine = mDec.getBegin().get().line;
         this.methodBodyEndLine = mDec.getEnd().get().line;
-    }
-
-
-    public static boolean isUselessChar(char c) {
-        return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
-    }
-
-    /**
-     * Clears the passed code from redundant curly braces and trims end-lines, tabs and whitespaces.
-     */
-    public static String clearCode(String code) {
-        int trailingBracesToRemove = 0;
-        char[] charArray = code.toCharArray();
-        int index = 0;
-        while (isUselessChar(charArray[index]) || charArray[index] == '{') {
-            if (charArray[index] == '{') trailingBracesToRemove++;
-            charArray[index] = ' ';
-            index++;
-        }
-        index = charArray.length - 1;
-        while (trailingBracesToRemove > 0) {
-            if (charArray[index] == '}') {
-                charArray[index] = ' ';
-                trailingBracesToRemove--;
-            }
-            index--;
-        }
-        return String.valueOf(charArray).replaceAll("^[ \t\n\r]+|[ \t\n\r]+$", "");
     }
 
 

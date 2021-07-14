@@ -20,6 +20,8 @@ import org.refactoringminer.api.RefactoringType;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.clearCode;
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.countLines;
 import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingArea;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
@@ -127,8 +129,6 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                         locInfo.getEndLine(),
                         extractedOperationLocation);
 
-                OutputUtils.printLn("NUMBER OF LINES IN FRAGMENT: " + (locInfo.getEndLine() - locInfo.getStartLine() + 1), pw);
-                SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalLinesOfCode, locInfo.getEndLine() - locInfo.getStartLine() + 1));
                 if (md != null) {
                     addMd(md);
                 }
@@ -154,13 +154,15 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         OutputUtils.printLn("---REFACTORING_FINISH---", pw);
     }
 
-    private void addMd(MethodDeclaration md) {
-        String fragment = md.toString();
-        String linearFragment = fragment.replace('\n', ' ');
-        int fragLocs = StringUtils.countMatches(fragment, "\n") + 1;
 
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationSymbols, linearFragment.length()));
-        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationAverageSymbols, (double) linearFragment.length() / fragLocs));
+
+    private void addMd(MethodDeclaration md) {
+        String fragment = clearCode(md.toString());
+        int fragLocs = countLines(fragment);
+
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.TotalLinesOfCode, fragLocs));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationSymbols, fragment.length()));
+        SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.MethodDeclarationAverageSymbols, (double) fragment.length() / fragLocs));
 
         analyzeDepth(fragment, fragLocs);
     }

@@ -184,8 +184,8 @@ public class Fragment {
             this.parentFragment = fragment;
             this.methodDeclaration = fragment.methodDeclaration;
             int tmp = setLineBias();
-            this.beginLine = beginLine + tmp;
-            this.endLine = endLine - tmp;
+            this.beginLine = beginLine + tmp - 1;
+            this.endLine = endLine - tmp - 1;
             this.logger = fragment.logger;
             this.remainder = setRemainder();
         }
@@ -194,8 +194,8 @@ public class Fragment {
             String unclearedCode = this.methodDeclaration.getBody().toString();
             int i = 0;
             int res = 0;
-            while(unclearedCode.charAt(i) == '{' || unclearedCode.charAt(i) == ' ' || unclearedCode.charAt(i) == '\t' || unclearedCode.charAt(i) == '\n'){
-                if(unclearedCode.charAt(i) == '{') res++;
+            while (unclearedCode.charAt(i) == '{' || unclearedCode.charAt(i) == ' ' || unclearedCode.charAt(i) == '\t' || unclearedCode.charAt(i) == '\n') {
+                if (unclearedCode.charAt(i) == '{') res++;
                 i++;
             }
             return res - 1;
@@ -219,7 +219,7 @@ public class Fragment {
         private String setRemainder() {
             int relativeSubFragmentBeginLine = this.getBeginLine() - this.methodDeclaration.getBeginLine();
             int relativeSubFragmentEndLine = this.getEndLine() - this.methodDeclaration.getBeginLine();
-            List<String> lines = Arrays.asList(this.parentFragment.getInitialMethod().split("\n"));
+            List<String> lines = Arrays.asList(this.parentFragment.methodDeclaration.getBody().toString().split("\n"));
             List<String> complementLines = new ArrayList<>();
             boolean dummyCall = true;
             try {
@@ -300,11 +300,8 @@ public class Fragment {
         private void rankingScoreComputation() {
             RankEvaluator ranker = new RankEvaluator(this.getBody(), this.remainder, parentFragment.getMethodDepth(), parentFragment.getMethodArea());
             this.score = ranker.getScore();
-//            if (ranker.sNestArea() < 0) {
-                System.out.println(this.getBody());
-                System.out.println(this.remainder);
-                System.out.println(this.getMethod());
-//            }
+            if (!(this.score >= 0))
+                logger.log(Level.ERROR, "Unexpected score!");
         }
 
         public int getBodyLineLength() {

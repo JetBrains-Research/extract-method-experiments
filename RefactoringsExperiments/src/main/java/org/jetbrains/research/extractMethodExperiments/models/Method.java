@@ -329,15 +329,18 @@ public class Method {
         }
 
         public void process(FileWriter fw) throws IOException {
-            keywordFeaturesComputation();
-            historicalFeaturesComputation();
-            couplingFeaturesComputation();
-            methodDeclarationFeaturesComputation();
-            lengthFeaturesComputation();
-
             rankingScoreComputation();
+            if(this.score > 0) {
+                keywordFeaturesComputation();
+                historicalFeaturesComputation();
+                couplingFeaturesComputation();
+                methodDeclarationFeaturesComputation();
+                lengthFeaturesComputation();
 
-            writeFeatures(fw);
+                rankingScoreComputation();
+
+                writeFeatures(fw);
+            }
         }
     }
 

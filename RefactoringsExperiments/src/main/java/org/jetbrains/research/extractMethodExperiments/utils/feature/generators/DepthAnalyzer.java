@@ -14,16 +14,17 @@ public class DepthAnalyzer {
 
         // Traverse the input strings
         for (int i = 0; i < lines.length; i++) {
-            for (int j = 0; j < lines[i].length(); j++) {
-                if (lines[i].charAt(j) == '{') break;
+            String line = lines[i].replaceAll("[{].*[}]", " ");
+            for (int j = 0; j < line.length(); j++) {
+                if (line.charAt(j) == '{') break;
 
-                if (lines[i].charAt(j) == '}') {
+                if (line.charAt(j) == '}') {
                     currentDepth--;
                 }
             }
             depthInLine[i] = currentDepth;
-            for (int j = 0; j < lines[i].length(); j++) {
-                if (lines[i].charAt(j) == '{') currentDepth++;
+            for (int j = 0; j < line.length(); j++) {
+                if (line.charAt(j) == '{') currentDepth++;
             }
         }
         return depthInLine;

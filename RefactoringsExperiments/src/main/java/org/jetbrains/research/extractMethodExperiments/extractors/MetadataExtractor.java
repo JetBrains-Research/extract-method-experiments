@@ -108,7 +108,7 @@ public class MetadataExtractor {
         if (ExtractionConfig.parseJava) {
             try {
                 InputStream stream = new ByteArrayInputStream(allFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
-                CompilationUnit root = JavaParser.parse(stream);
+                CompilationUnit root = new JavaParser().parse(stream).getResult().get();
                 MembersSets members = new MemberSetsGenerator().instanceMembers(root);
                 md = traverse(root, firstCol, firstLine, lastCol, lastLine, members);
             } catch (Exception ex) {

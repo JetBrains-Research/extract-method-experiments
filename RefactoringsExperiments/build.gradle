@@ -17,7 +17,7 @@ test {
 sourceCompatibility = 11
 
 dependencies {
-    implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.0.1'
+    implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.22.1'
     implementation group: 'com.github.tsantalis', name: 'refactoring-miner', version: '2.0'
     implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.4.3.201909031940-r'
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'

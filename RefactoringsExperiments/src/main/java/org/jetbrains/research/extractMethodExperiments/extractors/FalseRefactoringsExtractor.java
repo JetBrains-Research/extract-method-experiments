@@ -116,7 +116,7 @@ public class FalseRefactoringsExtractor {
                     }
                     super.visit(n, arg);
                 }
-            }.visit(JavaParser.parse(contents), null);
+            }.visit(new JavaParser().parse(contents).getResult().get(), null);
         } catch (Exception e) {
             logger.log(Level.ERROR, "Could not parse a java file " + e.getMessage());
             e.printStackTrace();

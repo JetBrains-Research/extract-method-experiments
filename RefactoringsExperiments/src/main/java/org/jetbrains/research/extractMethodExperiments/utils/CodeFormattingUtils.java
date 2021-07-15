@@ -29,7 +29,10 @@ public class CodeFormattingUtils {
             }
             index--;
         }
-        return String.valueOf(charArray).replaceAll("((/\\*)[^/]+(\\*/))|(//.*)", "").replaceAll("(?m)^[ \t]*\r?\n", "").strip();
+        return String.valueOf(charArray).
+                replaceAll("((/\\*)[^/]+(\\*/))|(//.*)", ""). //Comments
+                replaceAll("(?m)^[ \t]*\r?\n", ""). //End-of-lines, whitespace, carriage returns
+                replaceAll("^[\t\n\r}]", " ").strip(); //Closing braces (tmp)
     }
 
     public static int countLines(String code) {

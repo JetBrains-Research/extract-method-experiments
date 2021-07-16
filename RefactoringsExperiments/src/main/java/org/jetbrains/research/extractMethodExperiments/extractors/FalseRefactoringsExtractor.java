@@ -1,124 +1,104 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Logger;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
-import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathFilter;
-import org.jetbrains.research.extractMethodExperiments.models.Fragment;
-import org.refactoringminer.api.GitService;
-import org.refactoringminer.util.GitServiceImpl;
+import com.intellij.ide.impl.ProjectUtil;
+import com.intellij.lang.java.JavaLanguage;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiTreeUtil;
+import git4idea.GitCommit;
+import git4idea.GitVcs;
+import git4idea.history.GitHistoryUtils;
+import git4idea.repo.GitRepository;
+import git4idea.repo.GitRepositoryManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
+import org.jetbrains.research.extractMethodExperiments.haas.HaasAlgorithm;
 
-import java.io.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * Processes repositories, gets the changes Java files from the latest commit,
+ * and processes all methods to generate "false" examples for dataset.
+ * The "false" examples are ones pieces of code that have the lowes score in terms of Haas ranking.
+ */
 public class FalseRefactoringsExtractor {
-    private FileWriter fw;
-    private Logger logger;
-    private int fileCount;
+    private final Logger LOG = Logger.getInstance(FalseRefactoringsExtractor.class);
+    private final List<String> repositoryPaths;
 
-    public FalseRefactoringsExtractor(FileWriter fw, Logger logger) {
-        this.fw = fw;
-        this.logger = logger;
-        this.fileCount = 0;
+    public FalseRefactoringsExtractor(List<String> repositoryPaths) {
+        this.repositoryPaths = repositoryPaths;
     }
 
-    public void run(final String repoName, final String repoURL) throws Exception {
-        GitService gitService = new GitServiceImpl();
-
-        Repository repo = gitService.cloneIfNotExists(repoName, repoURL);
-        logger.log(Level.INFO, "Processing repo at " + repoURL);
-        Git git = new Git(repo);
-        try {
-            Iterable<RevCommit> commits = git.log().all().call();
-            RevCommit latestCommit = commits.iterator().next(); //Access first item in commits, which are stored in reverse-chrono order.
-            handleCommit(repo, repoName, latestCommit);
-        } catch (Exception e) {
-            logger.log(Level.ERROR, "Could not parse repository " + repoName);
-        }
-    }
-
-    private void handleCommit(Repository repo, String repoName, RevCommit commit) throws Exception {
-        String commitId = commit.getId().getName();
-        RevTree tree = commit.getTree();
-
-        try (TreeWalk treeWalk = new TreeWalk(repo)) {
-            treeWalk.reset(tree);
-            while (treeWalk.next()) {
-                if (treeWalk.isSubtree()) {
-                    treeWalk.enterSubtree();
-                } else {
-                    handleFile(repo, repoName, treeWalk.getPathString(), commitId);
-                }
+    public void run() {
+        for (String path : repositoryPaths) {
+            LOG.info("Processing repo at: " + path);
+            try {
+                collectProjectExamples(path);
+            } catch (Exception e) {
+                LOG.error("Could not parse repository: " + path);
             }
         }
     }
 
-    private void handleFile(Repository repo, String repoName, final String filePath, final String commitId) throws Exception {
-        if (!filePath.endsWith(".java")) {
+    private void collectProjectExamples(String projectPath) {
+        Project project = ProjectUtil.openOrImport(projectPath, null, true);
+        if (project == null) {
+            LOG.error("Could not open project " + projectPath);
             return;
         }
 
-        //Logging after each new 100 processed files.
-        if (fileCount % 100 == 0){
-            logger.log(Level.INFO, String.format("Processed %d .java files, currently at repo %s", fileCount, repoName));
-        }
-        fileCount++;
+        ProjectLevelVcsManager vcsManager = ServiceManager.getService(project, ProjectLevelVcsManager.class);
+        GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
 
-        RevWalk revWalk = new RevWalk(repo);
-        ObjectId objectId = repo.resolve(commitId);
-        RevCommit commit = revWalk.parseCommit(objectId);
-        RevTree tree = commit.getTree();
-        TreeWalk treeWalk = new TreeWalk(repo);
-        treeWalk.addTree(tree);
-        treeWalk.setRecursive(true);
-        treeWalk.setFilter(PathFilter.create(filePath));
-        if (!treeWalk.next()) {
-            return;
-        }
-        ObjectId objtId = treeWalk.getObjectId(0);
-        ObjectLoader loader = repo.open(objtId);
-        InputStream in = loader.openStream();
-        StringBuilder allFileBuilder = new StringBuilder();
-
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-            while (br.ready()) {
-                allFileBuilder.append(br.readLine());
-                allFileBuilder.append('\n');
-            }
-            String fileContents = allFileBuilder.toString();
-            InputStream targetStream = new ByteArrayInputStream(fileContents.getBytes());
-            handleMethods(targetStream, repo, repoName, filePath);
-        }
-    }
-
-    /**
-     * Uses JavaParser to extract all methods from .java file
-     * contained in contents as InputStream, makes a Fragment,
-     * and computes its features
-     */
-    public void handleMethods(InputStream contents, Repository repo, String repoName, final String filePath) {
-        try {
-            new VoidVisitorAdapter<Object>() {
-                @Override
-                public void visit(MethodDeclaration n, Object arg) {
-                    if (n.getBody() != null) {
-                        Fragment fragment = new Fragment(n, repo, repoName, filePath, logger);
-                        fragment.processFragment(1, fw);
+        vcsManager.runAfterInitialization(() -> {
+            VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
+            for (VirtualFile root : gitRoots) {
+                GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
+                if (repo != null) {
+                    try {
+                        List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
+                        //process the latest commit
+                        processCommit(gitCommits.get(gitCommits.size() - 1), project);
+                    } catch (VcsException e) {
+                        e.printStackTrace();
                     }
-                    super.visit(n, arg);
                 }
-            }.visit(JavaParser.parse(contents, "UTF-8", false), null);
-        } catch (Exception e) {
-            logger.log(Level.ERROR, "Could not parse a java file " + filePath);
+            }
+        });
+    }
+
+    private void processCommit(GitCommit commit, Project project) {
+        List<VirtualFile> changedJavaFiles = commit.getChanges().stream()
+                .filter(c -> c.getVirtualFile() != null && c.getVirtualFile().getName().endsWith(".java"))
+                .map(Change::getVirtualFile)
+                .collect(Collectors.toList());
+
+        for (VirtualFile virtualFile : changedJavaFiles) {
+            PsiFile psiFile = buildPsiFile(project, virtualFile.getCanonicalPath());
+            handleMethods(psiFile);
         }
+    }
+
+    public void handleMethods(PsiFile psiFile) {
+        @NotNull Collection<PsiMethod> psiMethods = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class);
+        for (PsiMethod method : psiMethods) {
+            HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
+            List<Candidate> candidateList = haasAlgorithm.getCandidateList();
+        }
+    }
+
+    public PsiFile buildPsiFile(Project project, String content) {
+        PsiFileFactory factory = PsiFileFactory.getInstance(project);
+        return factory.createFileFromText(JavaLanguage.INSTANCE, content);
     }
 }

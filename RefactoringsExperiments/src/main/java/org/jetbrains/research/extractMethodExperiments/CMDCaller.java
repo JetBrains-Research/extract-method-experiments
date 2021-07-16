@@ -42,7 +42,7 @@ public class CMDCaller {
         try {
             if (line.hasOption("n")) {
                 logger.log(Level.INFO, "Collecting false refactorings at " + line.getOptionValue("n"));
-                FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
+                //FalseRefactoringsExtractorCaller.run(line.getOptionValue("n"), context);
             }
         } catch (Exception e) {
             logger.log(Level.ERROR, "Failed on false refactoring, details: "+e.getMessage());

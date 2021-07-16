@@ -1,6 +1,24 @@
 plugins {
-    id 'java'
-    id 'application'
+    id "java"
+    id "org.jetbrains.intellij" version "0.7.2"
+}
+
+
+apply {
+    plugin "java"
+    plugin "org.jetbrains.intellij"
+}
+
+repositories {
+    mavenCentral()
+}
+
+intellij {
+    type = "IC"
+    version = "2021.1"
+    downloadSources = true
+    plugins = ["java", "git4idea"]
+    updateSinceUntilBuild = true
 }
 
 group 'org.jetbrains.research.extractMethodExperiments'
@@ -30,8 +48,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
-
-
-application {
-    mainClass = 'org.jetbrains.research.extractMethodExperiments.CMDCaller'
+runIde {
+    runIde.args "RefactoringsExperiments"
+    runIde.jvmArgs "-Djava.awt.headless=true"
+    maxHeapSize = "20g"
 }

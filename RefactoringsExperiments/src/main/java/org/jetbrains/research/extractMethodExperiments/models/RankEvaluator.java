@@ -32,7 +32,7 @@ public class RankEvaluator {
      * `c` is a chosen coefficient, representing sensitivity of the score to length changes,
      * `max` is the upper bound on this part of the score
      */
-    double sLength() {
+    public double sLength() {
         int candidateLineLength = StringUtils.countMatches(candidate, '\n') + 1;
         int remainderLineLength = StringUtils.countMatches(remainder, '\n') + 1;
 
@@ -42,7 +42,7 @@ public class RankEvaluator {
     /**
      * Computation of Haas' nesting depth based score
      */
-    double sNestDepth() {
+    public double sNestDepth() {
         int depthMethod = this.methodDepth;
         int depthRemainder = getNestingDepth(remainder);
         int depthCandidate = getNestingDepth(candidate);
@@ -53,14 +53,14 @@ public class RankEvaluator {
      * Computation of Haas' nesting area based score,
      * 2 is stabilizing coefficient
      */
-    double sNestArea() {
+    public double sNestArea() {
         int areaMethod = this.methodArea;
         int areaRemainder = getNestingArea(remainder);
         int areaCandidate = getNestingArea(candidate);
         return 2 * this.methodDepth / (double) areaMethod * Math.min(areaMethod - areaCandidate, areaMethod - areaRemainder);
     }
 
-    double sParam() { //Placeholder for possible implementation of Haas' parameter-based score
+    public double sParam() { //Placeholder for possible implementation of Haas' parameter-based score
         return 0;
     }
 
@@ -68,7 +68,7 @@ public class RankEvaluator {
         return 0;
     }
 
-    double getScore() {
+    public double getScore() {
         return this.score;
     }
 }

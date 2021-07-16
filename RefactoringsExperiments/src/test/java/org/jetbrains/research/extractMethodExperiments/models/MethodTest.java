@@ -48,9 +48,4 @@ class MethodTest {
         assertEquals(7, getNestingArea(codeToTest1), "simple nesting area should be properly calculated");
         assertEquals(14, getNestingArea(codeToTest3), "full method's nesting area should be properly calculated");
     }
-
-    void parseMethod() {
-
-    }
-
 }

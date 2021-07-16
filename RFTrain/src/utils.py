@@ -11,7 +11,7 @@ def import_train_configuration(config_file):
     config = {'datasets_dir_path': content['datasets'].get('datasets_dir_path'),
               'positive_dataset_name': content['datasets'].get('positive_dataset_name'),
               'negative_dataset_name': content['datasets'].get('negative_dataset_name'),
-              'threshold_to_negative': content['datasets'].getfloat('threshold_to_negative'),
+              'quantile_to_negative': content['datasets'].getfloat('quantile_to_negative'),
               'random_seed': content['datasets'].get('random_seed'),
               'model_type': content['model'].get('model_type'),
               'model_config_path': os.path.join(content['model'].get('model_config_dir'),

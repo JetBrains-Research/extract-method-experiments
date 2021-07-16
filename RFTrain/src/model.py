@@ -4,7 +4,7 @@ from src.model_factory import ModelFactory
 from src.utils import import_model_args
 
 
-class ModelWrapper:
+class Model:
     def __init__(self, config):
         self.model_type = config.get('model_type')
         self.model_config_path = config.get('model_config_path')

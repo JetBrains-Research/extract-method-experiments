@@ -2,7 +2,7 @@ from sklearn.metrics import confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split, cross_val_score
 
 from src.preprocessor import Preprocessor
-from src.model import Model
+from src.model import Model, OCCModel, BinaryModel
 from src.utils import import_train_configuration
 
 
@@ -26,7 +26,7 @@ def binary_score(y_true, y_pred):
 
 def one_class_train(model, dataset_preprocessor):
     neutral, positive = dataset_preprocessor.make_neutral_positive(False)
-    model.fit_occ(neutral)
+    model.fit(neutral)
     pos_accuracy = sum(model.predict(positive) == -1) / len(positive)
 
 
@@ -45,7 +45,11 @@ if __name__ == "__main__":
     model = Model(config)
 
     if config.get('model_type') == 'OCC':
-        one_class_train(model, dataset_preprocessor)
+        neutral, positive = dataset_preprocessor.make_neutral_positive(False)
+        model = OCCModel(config)
+        model.train(neutral, positive)
 
     else:
-        two_class_train(model, dataset_preprocessor)
+        features, targets = dataset_preprocessor.make_binary()
+        model = BinaryModel(config)
+        model.train(features, targets)

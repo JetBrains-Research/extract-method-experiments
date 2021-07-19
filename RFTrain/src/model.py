@@ -33,7 +33,12 @@ class OCCModel(Model):
         return self._model.fit(neutrals)
 
     def train(self, neutral, positive):
-        pass
+        self.fit(neutral)
+        pos_accuracy = sum(self.predict(positive) == -1) / len(positive)
+        with open(os.path.join(self.model_train_path, "training_results.txt"), 'a') as f:
+            to_print = "Training error fraction: {}\n" \
+                       "Accuracy on positives: {}\n".format(self._model.nu, pos_accuracy)
+            f.write(to_print)
 
 
 class BinaryModel(Model):

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
-
     private final Logger LOG = Logger.getInstance(PluginRunner.class);
 
     @Override

@@ -70,7 +70,7 @@ public class FalseRefactoringsExtractor {
                         //process the latest commit
                         processCommit(gitCommits.get(gitCommits.size() - 1), project);
                     } catch (VcsException e) {
-                        e.printStackTrace();
+                        LOG.error("Error occurred while processing the latest commit in " + projectPath);
                     }
                 }
             }
@@ -94,6 +94,7 @@ public class FalseRefactoringsExtractor {
         for (PsiMethod method : psiMethods) {
             HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
             List<Candidate> candidateList = haasAlgorithm.getCandidateList();
+            //TODO: rank candidates and calculate code metrics
         }
     }
 

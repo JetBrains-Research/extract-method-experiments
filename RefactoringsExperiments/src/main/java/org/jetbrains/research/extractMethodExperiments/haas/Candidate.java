@@ -2,7 +2,10 @@ package org.jetbrains.research.extractMethodExperiments.haas;
 
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
+import com.intellij.psi.util.PsiTreeUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,27 +14,31 @@ import java.util.List;
 public class Candidate {
     private final PsiMethod originalMethod;
     private final List<PsiStatement> statementList;
-    private PsiMethod remainder;
-    private double length;
+    private final List<PsiStatement> remainedStatements;
 
     public Candidate(List<PsiStatement> statements, PsiMethod psiMethod) {
         this.originalMethod = psiMethod;
         this.statementList = statements;
+        this.remainedStatements = new ArrayList<>();
         calculateRemainder();
     }
 
     private void calculateRemainder() {
-        PsiMethod methodAfterRemoving = originalMethod;
-        //TODO: debug it and fix
-        // methodAfterRemoving.deleteChildRange(statementList.get(0), statementList.get(statementList.size()));
-        this.remainder = methodAfterRemoving;
+        Collection<PsiStatement> childrenOfType = PsiTreeUtil.findChildrenOfType(originalMethod, PsiStatement.class);
+        for (PsiStatement statement : childrenOfType) {
+            if (!statementList.contains(statement)) {
+                remainedStatements.add(statement);
+            }
+        }
     }
 
     public List<PsiStatement> getStatementList() {
         return this.statementList;
     }
 
-    public PsiMethod getRemainder() {
-        return remainder;
+
+    public List<PsiStatement> getRemainedStatements() {
+        return remainedStatements;
     }
+
 }

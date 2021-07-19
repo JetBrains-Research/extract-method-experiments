@@ -30,6 +30,7 @@ public class HaasAlgorithm {
 
             for (PsiBlockStatement blockStatement : blockStatements) {
                 PsiElement @NotNull [] innerStatements = blockStatement.getCodeBlock().getStatements();
+                //TODO: take into account minimumNumberOfStatements
                 for (int i = 0; i <= innerStatements.length; i++) {
                     for (int j = i; j <= innerStatements.length; j++) {
                         Candidate candidate = calculateCandidate(blockStatement, i, j);
@@ -46,7 +47,7 @@ public class HaasAlgorithm {
         for (int n = i; n < j; n++) {
             statementList.add(bodyStatements.get(n));
         }
-        return new Candidate(statementList, originalMethod);
+        return statementList.size() > 0 ? new Candidate(statementList, originalMethod) : null;
     }
 
     public List<Candidate> getCandidateList() {

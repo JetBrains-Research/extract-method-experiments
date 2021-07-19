@@ -1,9 +1,9 @@
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC, LinearSVC, OneClassSVM
 from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import ComplementNB, GaussianNB
+from sklearn.svm import SVC, LinearSVC, OneClassSVM
 
-from src.utils import import_model_args
+from utils import import_model_args
 
 
 class ModelFactory:

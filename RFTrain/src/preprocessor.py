@@ -1,4 +1,5 @@
 import os
+
 import pandas as pd
 
 
@@ -31,6 +32,6 @@ class Preprocessor:
         else:
             neutral = self.df_neg.drop(columns=['score', 'label'])
 
-        positives = self.df_pos.drop(columns=['label'])
+        positive = self.df_pos.drop(columns=['label'])
 
-        return neutral, positives
+        return neutral, positive

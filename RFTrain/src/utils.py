@@ -12,7 +12,7 @@ def import_train_configuration(config_file):
               'positive_dataset_name': content['datasets'].get('positive_dataset_name'),
               'negative_dataset_name': content['datasets'].get('negative_dataset_name'),
               'quantile_to_negative': content['datasets'].getfloat('quantile_to_negative'),
-              'random_seed': content['datasets'].get('random_seed'),
+              'random_state': content['datasets'].get('random_seed'),
               'model_type': content['model'].get('model_type'),
               'model_config_path': os.path.join(content['model'].get('model_config_dir'),
                                                 content['model'].get('model_config_name')),

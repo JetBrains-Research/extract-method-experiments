@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.csv.models;
+package org.jetbrains.research.extractMethodExperiments.csv;
 
 public enum Feature {
     TotalConnectivity("TotalConnectivity", 0),

@@ -1,8 +1,5 @@
 package org.jetbrains.research.extractMethodExperiments.csv;
 
-import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
-import org.jetbrains.research.extractMethodExperiments.csv.models.ICSVItem;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;

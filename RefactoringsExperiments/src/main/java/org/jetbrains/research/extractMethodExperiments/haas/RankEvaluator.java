@@ -1,9 +1,9 @@
-package org.jetbrains.research.extractMethodExperiments.models;
+package org.jetbrains.research.extractMethodExperiments.haas;
 
 import org.apache.commons.lang3.StringUtils;
 
-import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingArea;
-import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.getNestingDepth;
+import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
+import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingDepth;
 
 public class RankEvaluator {
     private final double lengthScoreSensitivity = 0.1;

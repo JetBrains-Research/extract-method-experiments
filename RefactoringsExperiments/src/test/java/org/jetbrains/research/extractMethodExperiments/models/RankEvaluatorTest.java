@@ -1,5 +1,6 @@
 package org.jetbrains.research.extractMethodExperiments.models;
 
+import org.jetbrains.research.extractMethodExperiments.haas.RankEvaluator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

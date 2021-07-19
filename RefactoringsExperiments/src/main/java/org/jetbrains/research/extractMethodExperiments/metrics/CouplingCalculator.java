@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.utils.feature.generators;
+package org.jetbrains.research.extractMethodExperiments.metrics;
 
 import java.util.Set;
 

@@ -2,9 +2,7 @@ package org.jetbrains.research.extractMethodExperiments.models;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
-import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.*;
+import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -31,11 +29,11 @@ class FragmentTest {
             "}"; // 0
 
 
-    @Test
+/*    @Test
     void clearCodeTest() {
         assertEquals(codeToTest1, Fragment.clearCode(codeToTest1), "valid code should remain valid");
         assertEquals("return i;", Fragment.clearCode(codeToTest2), "embedded into braces code be cleared");
-    }
+    }*/
 
     @Test
     void getNestingDepthTest() {

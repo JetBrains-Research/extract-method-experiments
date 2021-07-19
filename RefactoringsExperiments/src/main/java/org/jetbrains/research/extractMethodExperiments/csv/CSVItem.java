@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.csv.models;
+package org.jetbrains.research.extractMethodExperiments.csv;
 
 public class CSVItem implements ICSVItem {
     private Feature type;

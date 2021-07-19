@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.utils.feature.generators;
+package org.jetbrains.research.extractMethodExperiments.metrics;
 
 /**
  * Utility class for computing depth-metrics of passed code

@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.utils.feature.generators;
+package org.jetbrains.research.extractMethodExperiments.metrics;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -9,9 +9,9 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
-import org.jetbrains.research.extractMethodExperiments.csv.models.CSVItem;
-import org.jetbrains.research.extractMethodExperiments.csv.models.Feature;
-import org.jetbrains.research.extractMethodExperiments.csv.models.ICSVItem;
+import org.jetbrains.research.extractMethodExperiments.csv.CSVItem;
+import org.jetbrains.research.extractMethodExperiments.csv.Feature;
+import org.jetbrains.research.extractMethodExperiments.csv.ICSVItem;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,7 +22,6 @@ import java.util.Set;
  * Class for analyzing historical features of snippets of code via GitBlame
  */
 public class GitBlameAnalyzer {
-
     public static void extractLineAuthorAndCreationDate(Repository repo,
                                                         int firstLine,
                                                         int lastLine,
@@ -76,8 +75,6 @@ public class GitBlameAnalyzer {
                                      String filePath, List<ICSVItem> features) throws GitAPIException {
         final BlameResult result = new Git(repo).blame().setFilePath(filePath)
                 .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
-
-
         ArrayList<Integer> creationDates = new ArrayList<>();
         Set<String> commits = new HashSet<>();
         Set<String> authors = new HashSet<>();

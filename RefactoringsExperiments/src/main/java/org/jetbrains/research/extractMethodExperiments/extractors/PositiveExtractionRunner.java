@@ -1,58 +1,88 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
+import com.intellij.ide.impl.ProjectUtil;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vfs.VirtualFile;
+import git4idea.GitCommit;
+import git4idea.GitVcs;
+import git4idea.history.GitHistoryUtils;
+import git4idea.repo.GitRepository;
+import git4idea.repo.GitRepositoryManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Logger;
+import org.eclipse.jgit.lib.Repository;
+import org.refactoringminer.api.GitHistoryRefactoringMiner;
+import org.refactoringminer.api.GitService;
+import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
+import org.refactoringminer.util.GitServiceImpl;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * Runs RefactoringMiner and processes discovered "Extract Method" refactorings in project's changes history.
+ */
 public class PositiveExtractionRunner {
-    private List<String> repos;
-    private int current = 0;
-    private int total = 0;
-    private Logger logger;
+    private final List<String> repositoriesPaths;
+    private Logger LOG;
 
-    public PositiveExtractionRunner(List<String> repos, Logger logger) {
-        this.repos = repos;
-        this.logger = logger;
+    public PositiveExtractionRunner(List<String> repositoriesPaths, Logger LOG) {
+        this.repositoriesPaths = repositoriesPaths;
+        this.LOG = LOG;
     }
 
-    public void run() throws Exception {
-        current = 0;
-        total = Math.max(repos.size(), 1);
+    public void run() {
+        for (String repo : repositoriesPaths) {
+            collectSamples(repo);
+        }
+    }
 
-        for (String repo : repos) {
-            String url = "https://github.com/" + repo + ".git";
-            String pathToResult = repo;
-            if (ExtractionConfig.noSubfolders) {
-                String[] parts = repo.split(" ");
-                if (parts.length >= 2) {
-                    pathToResult = parts[1];
+    private void collectSamples(String projectPath) {
+        Project project = ProjectUtil.openOrImport(projectPath, null, true);
+        if (project == null) {
+            LOG.error("Could not open project " + projectPath);
+            return;
+        }
+
+        ProjectLevelVcsManager vcsManager = ServiceManager.getService(project, ProjectLevelVcsManager.class);
+        GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
+
+        vcsManager.runAfterInitialization(() -> {
+            VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
+            for (VirtualFile root : gitRoots) {
+                GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
+                if (repo != null) {
+                    try {
+                        List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--master");
+                        gitCommits.forEach(c -> processCommit(c, project));
+                    } catch (VcsException e) {
+                        LOG.error("Error occurred while processing commit in " + projectPath);
+                    }
                 }
             }
-            String outputFileName = "results/" + pathToResult + "_results.txt";
-            tryCreateFile(outputFileName);
-            FileWriter fileWriter = new FileWriter(outputFileName);
-            logger.log(Level.INFO, String.format("Stepped into %s repository, processed %d out of %d", repo, current, total));
-            current++;
-            final PrintWriter printWriter = new PrintWriter(fileWriter);
-            MiningInit extractor = new MiningInit(printWriter, url, repo, logger);
-            extractor.run();
-
-        }
-        //CSVBuilder.shared.finish(true);
+        });
     }
 
-    private void tryCreateFile(String name) {
-        File file = new File(name);
+    private void processCommit(GitCommit commit, Project project) {
+        GitService gitService = new GitServiceImpl();
+        Repository repository = null;
         try {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-        } catch (IOException e) {
-            logger.log(Level.ERROR, "Could not make file " + name);
+            repository = gitService.openRepository(project.getProjectFilePath());
+        } catch (Exception e) {
+            //TODO: log
         }
+        GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
+        refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
+                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit, LOG));
     }
+
 }

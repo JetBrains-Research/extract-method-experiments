@@ -1,12 +1,27 @@
 package org.jetbrains.research.extractMethodExperiments.csv;
 
 public enum Feature {
-    TotalConnectivity("TotalConnectivity", 0),
-    TotalConnectivityPerLine("TotalConnectivityPerLine", 1),
-    FieldConnectivity("FieldConnectivity", 2),
-    FieldConnectivityPerLine("FieldConnectivityPerLine", 3),
-    MethodConnectivity("MethodConnectivity", 4),
-    MethodConnectivityPerLine("MethodConnectivityPerLine", 5),
+    TotalLinesOfCode("TotalLinesOfCode", 0),
+    TotalSymbolsInFragment("TotalSymbolsInCode", 1),
+    AverageSymbolsInCodeLine("AverageSymbolsInCodeLine", 2),
+    FragmentArea("CodeArea", 3),
+    AverageAreaInFragmentLine("AverageAreaInCodeLine", 3),
+    TotalCommitsInFragment("TotalCommitsInFragment", 4),
+    TotalAuthorsInFragment("TotalAuthorsInFragment", 5),
+    LiveTimeOfFragment("LiveTimeOfFragment", 6),
+    AverageLiveTimeOfLine("AverageLiveTimeOfLine", 7),
+    TotalConnectivity("TotalConnectivity", 8),
+    TotalConnectivityPerLine("TotalConnectivityPerLine", 9),
+    FieldConnectivity("FieldConnectivity", 10),
+    FieldConnectivityPerLine("FieldConnectivityPerLine", 11),
+    MethodConnectivity("MethodConnectivity", 12),
+    MethodConnectivityPerLine("MethodConnectivityPerLine", 13),
+    MethodDeclarationLines("MethodDeclarationLines", 14),
+    MethodDeclarationSymbols("MethodDeclarationSymbols", 15),
+    MethodDeclarationAverageSymbolsInLine("MethodDeclarationAverageSymbolsInLine", 16),
+    MethodDeclarationDepth("MethodDeclarationArea", 17),
+    MethodDeclarationDepthPerLine("MethodDeclarationDepthPerLine", 18),
+
     KeywordAbstractTotalCount("KeywordAbstractTotalCount", 6),
     KeywordAbstractCountPerLine("KeywordAbstractCountPerLine", 7),
     KeywordContinueTotalCount("KeywordContinueTotalCount", 8),
@@ -104,20 +119,7 @@ public enum Feature {
     KeywordSuperTotalCount("KeywordSuperTotalCount", 100),
     KeywordSuperCountPerLine("KeywordSuperCountPerLine", 101),
     KeywordWhileTotalCount("KeywordWhileTotalCount", 102),
-    KeywordWhileCountPerLine("KeywordWhileCountPerLine", 103),
-    TotalSymbolsInCodeFragment("TotalSymbolsInCodeFragment", 104),
-    AverageSymbolsInCodeLine("AverageSymbolsInCodeLine", 105),
-    TotalLinesDepth("TotalLinesDepth", 106),
-    AverageLinesDepth("AverageLinesDepth", 107),
-    TotalCommitsInFragment("TotalCommitsInFragment", 108),
-    TotalAuthorsInFragment("TotalAuthorsInFragment", 109),
-    LiveTimeOfFragment("LiveTimeOfFragment", 110),
-    AverageLiveTimeOfLine("AverageLiveTimeOfLine", 111),
-    TotalLinesOfCode("TotalLinesOfCode", 112),
-    MethodDeclarationSymbols("MethodDeclarationSymbols", 113),
-    MethodDeclarationAverageSymbols("MethodDeclarationAverageSymbols", 114),
-    MethodDeclarationDepth("MethodDeclarationDepth", 115),
-    MethodDeclarationDepthPerLine("MethodDeclarationDepthPerLine", 116);
+    KeywordWhileCountPerLine("KeywordWhileCountPerLine", 103);
 
     private String name;
     private int id;

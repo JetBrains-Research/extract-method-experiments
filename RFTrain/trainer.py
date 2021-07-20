@@ -17,3 +17,5 @@ if __name__ == "__main__":
         features, targets = dataset_preprocessor.make_binary()
         model = BinaryModel(config)
         model.train(features, targets)
+        # TODO: cross validate-split to config
+        # TODO: save model info etc.

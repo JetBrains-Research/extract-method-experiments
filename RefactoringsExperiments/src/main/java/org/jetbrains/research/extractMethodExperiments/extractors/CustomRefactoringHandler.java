@@ -1,5 +1,6 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -11,7 +12,6 @@ import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Logger;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
@@ -24,16 +24,14 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
     private final GitCommit gitCommit;
     private final String repositoryPath;
-    private Logger logger;
+    private final Logger LOG = Logger.getInstance(FalseRefactoringsExtractor.class);
 
     public CustomRefactoringHandler(Project project,
                                     String repositoryPath,
-                                    GitCommit gitCommit,
-                                    Logger logger) {
+                                    GitCommit gitCommit) {
         this.project = project;
         this.repositoryPath = repositoryPath;
         this.gitCommit = gitCommit;
-        this.logger = logger;
     }
 
     @Override
@@ -47,7 +45,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     public void handleException(String commitId, Exception e) {
-        logger.log(Level.ERROR, "Cannot handle commit with ID: " + commitId);
+        LOG.error("Cannot handle commit with ID: " + commitId);
     }
 
     private void handleCommit(List<Refactoring> refactorings) {

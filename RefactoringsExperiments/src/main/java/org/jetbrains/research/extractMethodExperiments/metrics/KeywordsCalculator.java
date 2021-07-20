@@ -14,11 +14,11 @@ public class KeywordsCalculator {
             "continue", "for", "new", "switch",
             "assert", "synchronized", "boolean", "do",
             "if","this", "break", "double",
-            "throw", "byte", "else", "throws", "case",
-            "enum", "instanceof", "return", "transient",
+            "throw", "byte", "else", "case",
+            "instanceof", "return", "transient",
             "catch", "int", "short", "try",
             "char", "final", "finally", "long",
-            "strictfp", "float", "super", "while"); // 33 keywords, id from 6 to
+            "strictfp", "float", "super", "while"); // 31 keywords, id from 19 to 80
 
     public static void calculateCSV(String codeFragmentString, int fragmentLinesCount) {
         HashMap<String, Integer> counts = new HashMap<>();

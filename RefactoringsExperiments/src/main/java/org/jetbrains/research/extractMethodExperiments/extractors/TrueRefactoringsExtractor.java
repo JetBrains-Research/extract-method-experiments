@@ -2,18 +2,15 @@ package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.VirtualFile;
 import git4idea.GitCommit;
 import git4idea.GitVcs;
 import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Logger;
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
@@ -31,13 +28,12 @@ import java.util.stream.Collectors;
 /**
  * Runs RefactoringMiner and processes discovered "Extract Method" refactorings in project's changes history.
  */
-public class PositiveExtractionRunner {
+public class TrueRefactoringsExtractor {
     private final List<String> repositoriesPaths;
-    private Logger LOG;
+    private final Logger LOG = Logger.getInstance(FalseRefactoringsExtractor.class);
 
-    public PositiveExtractionRunner(List<String> repositoriesPaths, Logger LOG) {
+    public TrueRefactoringsExtractor(List<String> repositoriesPaths) {
         this.repositoriesPaths = repositoriesPaths;
-        this.LOG = LOG;
     }
 
     public void run() {
@@ -64,7 +60,7 @@ public class PositiveExtractionRunner {
                     try {
                         List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--master");
                         gitCommits.forEach(c -> processCommit(c, project));
-                    } catch (VcsException e) {
+                    } catch (Exception e) {
                         LOG.error("Error occurred while processing commit in " + projectPath);
                     }
                 }
@@ -82,7 +78,7 @@ public class PositiveExtractionRunner {
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
-                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit, LOG));
+                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit));
     }
 
 }

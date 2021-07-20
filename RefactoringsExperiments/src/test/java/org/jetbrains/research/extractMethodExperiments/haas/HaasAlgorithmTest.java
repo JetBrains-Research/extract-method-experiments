@@ -77,7 +77,8 @@ public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
     }
 
     public void generateTrueCandidates() {
-        String c1 = "       for (Button btn : buttons) {\n" +
+        String c1 =
+                "       for (Button btn : buttons) {\n" +
                 "           int cx = btn.fig.getX() + btn.fig.getWidth() - btn.icon.getIconWidth();\n" +
                 "           int cy = btn.fig.getY();\n" +
                 "           int cw = btn.icon.getIconWidth();\n" +
@@ -115,14 +116,14 @@ public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
 
         String c1_7 =
                 "           if (rect.contains(me.getX(), me.getY())) {\n" +
-                        "               Object metaType = btn.metaType;\n" +
-                        "               FigClassifierBox fcb = (FigClassifierBox) getContent();\n" +
-                        "               FigCompartment fc = fcb.getCompartment(metaType);\n" +
-                        "               fc.setEditOnRedraw(true);\n" +
-                        "               fc.createModelElement();\n" +
-                        "               me.consume();\n" +
-                        "               return;\n" +
-                        "           }\n";
+                "               Object metaType = btn.metaType;\n" +
+                "               FigClassifierBox fcb = (FigClassifierBox) getContent();\n" +
+                "               FigCompartment fc = fcb.getCompartment(metaType);\n" +
+                "               fc.setEditOnRedraw(true);\n" +
+                "               fc.createModelElement();\n" +
+                "               me.consume();\n" +
+                "               return;\n" +
+                "           }\n";
         String c1_7_1 =
                 "               Object metaType = btn.metaType;\n";
 
@@ -169,9 +170,6 @@ public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
         List<String> candidates3 = getAllStatementSeqsFromStatements(statements2);
 
         candidates1.addAll(candidates2);
-
         candidates1.addAll(candidates3);
-
-
     }
 }

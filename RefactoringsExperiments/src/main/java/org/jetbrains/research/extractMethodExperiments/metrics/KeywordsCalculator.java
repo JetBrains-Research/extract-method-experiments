@@ -11,14 +11,14 @@ import java.util.List;
 
 public class KeywordsCalculator {
     public static List<String> allKeywords = Arrays.asList(
-            "abstract", "continue", "for", "new", "switch", "assert",
-            "default", "package", "synchronized", "boolean", "do", "if",
-            "private", "this", "break", "double", "implements", "protected",
-            "throw", "byte", "else", "import", "public", "throws", "case",
-            "enum", "instanceof", "return", "transient", "catch", "extends",
-            "int", "short", "try", "char", "final", "interface", "static",
-            "void", "class", "finally", "long", "strictfp", "volatile",
-            "const", "float", "native", "super", "while");
+            "continue", "for", "new", "switch",
+            "assert", "synchronized", "boolean", "do",
+            "if","this", "break", "double",
+            "throw", "byte", "else", "throws", "case",
+            "enum", "instanceof", "return", "transient",
+            "catch", "int", "short", "try",
+            "char", "final", "finally", "long",
+            "strictfp", "float", "super", "while"); // 33 keywords, id from 6 to
 
     public static void calculateCSV(String codeFragmentString, int fragmentLinesCount) {
         HashMap<String, Integer> counts = new HashMap<>();

@@ -72,7 +72,8 @@ public class GitBlameAnalyzer {
     public static void extractToList(Repository repo,
                                      int firstLine,
                                      int lastLine,
-                                     String filePath, List<ICSVItem> features) throws GitAPIException {
+                                     String filePath,
+                                     List<ICSVItem> features) throws GitAPIException {
         final BlameResult result = new Git(repo).blame().setFilePath(filePath)
                 .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
         ArrayList<Integer> creationDates = new ArrayList<>();

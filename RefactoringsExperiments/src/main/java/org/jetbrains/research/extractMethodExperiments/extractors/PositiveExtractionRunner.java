@@ -78,7 +78,7 @@ public class PositiveExtractionRunner {
         try {
             repository = gitService.openRepository(project.getProjectFilePath());
         } catch (Exception e) {
-            //TODO: log
+            LOG.error("could not open git repo " + project.getProjectFilePath());
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),

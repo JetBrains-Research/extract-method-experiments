@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.extractors.NegativeRefactoringsExtractionRunner;
 import org.jetbrains.research.extractMethodExperiments.extractors.PositiveRefactoringsExtractionRunner;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
@@ -32,6 +34,7 @@ public class PluginRunner implements ApplicationStarter {
         if (line == null) return;
 
         List<String> projectPaths = new ArrayList<>();
+        System.out.println(args);
         if (line.hasOption("projectsFilePath")) {
             String projectsFilePath = line.getOptionValue("projectsFilePath");
             projectPaths = extractProjectsPaths(projectsFilePath);
@@ -50,13 +53,20 @@ public class PluginRunner implements ApplicationStarter {
         Options options = new Options();
         options.addOption("runner", false, "Runner name.");
         options.addRequiredOption("paths", "projectsFilePath", true, "Path to the file containing paths to the projects for dataset.");
-        options.addOption("p", "generatePositiveSamples", true, "Runs generation of positive samples for dataset.");
-        options.addOption("n", "generateNegativeSamples", true, "Runs generation of negative samples for dataset.");
+        options.addOption("p", "generatePositiveSamples", false, "Runs generation of positive samples for dataset.");
+        options.addOption("n", "generateNegativeSamples", false, "Runs generation of negative samples for dataset.");
         return options;
     }
 
     private List<String> extractProjectsPaths(String path) {
         ArrayList<String> paths = new ArrayList<>();
+        File directory = new File("C:\\Users\\vultu\\CodingStuff\\jbr\\extract-method-experiments\\RefactoringsExperiments\\data");
+        System.out.println(directory.getAbsolutePath());
+
+        File reposDir = new File(path);
+        System.out.println(path);
+
+        System.out.println(Arrays.toString(reposDir.list()));
         //TODO: parse the file and extract paths to the projects
         return paths;
     }

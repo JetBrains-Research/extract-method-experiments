@@ -1,14 +1,11 @@
 plugins {
     id "java"
     id "org.jetbrains.intellij" version "0.7.2"
-    id "org.jetbrains.kotlin.jvm" version "1.5.10"
 }
-
 
 apply {
     plugin "java"
     plugin "org.jetbrains.intellij"
-    plugin "org.jetbrains.kotlin.jvm"
 }
 
 repositories {
@@ -34,18 +31,9 @@ test {
     useJUnitPlatform()
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 sourceCompatibility = 11
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation group: 'com.github.tsantalis', name: 'refactoring-miner', version: '2.0'
     implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.4.3.201909031940-r'
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
@@ -54,7 +42,6 @@ dependencies {
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
-    implementation("com.github.ajalt:clikt:2.8.0")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }

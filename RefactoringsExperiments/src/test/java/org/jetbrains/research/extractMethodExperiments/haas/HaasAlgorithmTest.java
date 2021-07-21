@@ -67,10 +67,10 @@ public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
         List<String> result = new ArrayList<>();
         for(int size = 1; size != statements.size(); size++){
             for(int shift = 0; shift <= statements.size() - size; shift++) {
-                String sequence = "";
+                StringBuilder sequence = new StringBuilder();
                 for(int i = shift; i < statements.size(); i++)
-                    sequence += statements.get(i);
-                result.add(sequence);
+                    sequence.append(statements.get(i));
+                result.add(sequence.toString());
             }
         }
         return result;

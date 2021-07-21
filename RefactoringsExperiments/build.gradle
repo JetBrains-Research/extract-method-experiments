@@ -52,6 +52,10 @@ gradle.taskGraph.whenReady { graph ->
     if (graph.hasTask(runRefactoringsExperiments)) {
         runIde.args "RefactoringsExperiments", "$runPositives", "$runNegatives", "$repoPathsFile"
         runIde.jvmArgs "-Djava.awt.headless=true"
-        maxHeapSize = "20g"
+        //maxHeapSize = "20g"
     }
+}
+
+buildSearchableOptions {
+    enabled = false
 }

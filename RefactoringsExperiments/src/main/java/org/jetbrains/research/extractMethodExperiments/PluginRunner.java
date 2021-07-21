@@ -9,6 +9,7 @@ import org.jetbrains.research.extractMethodExperiments.extractors.FalseRefactori
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
@@ -26,6 +27,7 @@ public class PluginRunner implements ApplicationStarter {
             //TODO: make it possible to configure parameters in console
             File reposDir = new File("cloned_repos/");
             String[] dirs = reposDir.list();
+            System.out.println(Arrays.asList(dirs));
             List<String> repositoryPaths = new ArrayList<>();
             FalseRefactoringsExtractor falseRefactoringsExtractor = new FalseRefactoringsExtractor(repositoryPaths);
             falseRefactoringsExtractor.run();

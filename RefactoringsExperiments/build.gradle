@@ -50,7 +50,7 @@ task runRefactoringsExperiments(dependsOn: runIde) {}
 
 gradle.taskGraph.whenReady { graph ->
     if (graph.hasTask(runRefactoringsExperiments)) {
-        runIde.args "RefactoringsExperiments", "$runPositives", "$runNegatives", "$repoPathsFile"
+        runIde.args "RefactoringsExperiments"
         runIde.jvmArgs "-Djava.awt.headless=true"
         //maxHeapSize = "20g"
     }

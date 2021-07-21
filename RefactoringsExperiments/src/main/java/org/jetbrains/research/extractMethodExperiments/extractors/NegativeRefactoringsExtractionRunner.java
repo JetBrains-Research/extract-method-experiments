@@ -28,14 +28,14 @@ import java.util.stream.Collectors;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
- * and processes all methods to generate "false" examples for dataset.
- * The "false" examples are ones pieces of code that have the lowes score in terms of Haas ranking.
+ * and processes all methods to generate "negative" samples for dataset.
+ * The "negative" samples are ones pieces of code that have the lowes score in terms of Haas ranking.
  */
-public class FalseRefactoringsExtractor {
-    private final Logger LOG = Logger.getInstance(FalseRefactoringsExtractor.class);
+public class NegativeRefactoringsExtractionRunner {
+    private final Logger LOG = Logger.getInstance(NegativeRefactoringsExtractionRunner.class);
     private final List<String> repositoryPaths;
 
-    public FalseRefactoringsExtractor(List<String> repositoryPaths) {
+    public NegativeRefactoringsExtractionRunner(List<String> repositoryPaths) {
         this.repositoryPaths = repositoryPaths;
     }
 

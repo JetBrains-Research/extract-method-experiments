@@ -31,8 +31,8 @@ public class HaasAlgorithm {
             for (PsiBlockStatement blockStatement : blockStatements) {
                 PsiElement @NotNull [] innerStatements = blockStatement.getCodeBlock().getStatements();
                 //TODO: take into account minimumNumberOfStatements
-                for (int i = 0; i < innerStatements.length; i++) {
-                    for (int j = i; j < innerStatements.length; j++) {
+                for (int i = 0; i <= innerStatements.length; i++) {
+                    for (int j = i; j <= innerStatements.length; j++) {
                         Candidate candidate = calculateCandidate(blockStatement, i, j);
                         candidateList.add(candidate);
                     }
@@ -44,7 +44,7 @@ public class HaasAlgorithm {
     private Candidate calculateCandidate(PsiStatement psiStatement, int i, int j) {
         List<PsiStatement> statementList = new ArrayList<>();
         @NotNull List<PsiStatement> bodyStatements = new ArrayList<>(PsiTreeUtil.findChildrenOfType(psiStatement, PsiStatement.class));
-        for (int n = i; n <= j; n++) {
+        for (int n = i; n < j; n++) {
             statementList.add(bodyStatements.get(n));
         }
         return statementList.size() > 0 ? new Candidate(statementList, originalMethod) : null;

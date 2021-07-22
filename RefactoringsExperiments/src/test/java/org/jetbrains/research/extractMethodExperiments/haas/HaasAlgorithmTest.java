@@ -16,6 +16,8 @@ import java.util.List;
  * - TODO: calculation of candidate's metrics;
  * - TODO: candidates' ranking.
  */
+
+
 public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
     @Override
     protected @NotNull LightProjectDescriptor getProjectDescriptor() {
@@ -28,7 +30,25 @@ public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
         return "src/test/testData/";
     }
 
-    public void testCandidatesGeneration() {
+    public void checkCountOfGeneratedCandidates() {
+        String code =
+                "public class Test1 {\n" +
+                        "    public void test1() {\n" +
+                        "        int a = 1;\n" +
+                        "        int b = 2;\n" +
+                        "        int c = 3;\n" +
+                        "        int d = 4;\n" +
+                        "        int e = 5;\n" +
+                        "    }\n" +
+                        "}";
+        PsiFile psiFile = myFixture.configureByText("Test1.java", code);
+        PsiMethod psiMethod = PsiTreeUtil.findChildOfType(psiFile, PsiMethod.class);
+        HaasAlgorithm algorithm = new HaasAlgorithm(psiMethod);
+        List<Candidate> candidateList = algorithm.getCandidateList();
+        assertEquals(15, candidateList.size());
+    }
+
+    public void testCandidatesGeneration2() {
         //Example from Silva's paper
         String code =
                 "public class Test1 {" +

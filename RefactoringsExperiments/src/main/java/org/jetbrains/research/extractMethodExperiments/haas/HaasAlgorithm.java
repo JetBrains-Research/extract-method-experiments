@@ -1,22 +1,20 @@
 package org.jetbrains.research.extractMethodExperiments.haas;
 
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiCodeBlock;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiStatement;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 
 public class HaasAlgorithm {
-    private final PsiMethod originalMethod;
     private List<Candidate> candidateList;
     private final int minimumNumberOfStatements = 3;
 
     public HaasAlgorithm(PsiMethod psiMethod) {
         candidateList = new ArrayList<>();
-        this.originalMethod = psiMethod;
         generateStatementSequencesInMethod(psiMethod);
     }
 
@@ -26,28 +24,21 @@ public class HaasAlgorithm {
     private void generateStatementSequencesInMethod(PsiMethod psiMethod) {
         if (psiMethod.getBody() != null) {
             @Nullable PsiCodeBlock methodBodyBlock = psiMethod.getBody();
-            @NotNull Collection<PsiBlockStatement> blockStatements = PsiTreeUtil.findChildrenOfType(methodBodyBlock, PsiBlockStatement.class);
-
-            for (PsiBlockStatement blockStatement : blockStatements) {
-                PsiElement @NotNull [] innerStatements = blockStatement.getCodeBlock().getStatements();
-                //TODO: take into account minimumNumberOfStatements
-                for (int i = 0; i < innerStatements.length; i++) {
-                    for (int j = i; j < innerStatements.length; j++) {
-                        Candidate candidate = calculateCandidate(blockStatement, i, j);
-                        candidateList.add(candidate);
-                    }
+            PsiStatement[] psiStatements = methodBodyBlock.getStatements();
+            //TODO: take into account minimumNumberOfStatements
+            for (int i = 0; i < psiStatements.length; i++) {
+                for (int j = i; j < psiStatements.length; j++) {
+                    Candidate candidate = calculateCandidate(psiMethod, i, j);
+                    candidateList.add(candidate);
                 }
             }
         }
     }
 
-    private Candidate calculateCandidate(PsiStatement psiStatement, int i, int j) {
-        List<PsiStatement> statementList = new ArrayList<>();
-        @NotNull List<PsiStatement> bodyStatements = new ArrayList<>(PsiTreeUtil.findChildrenOfType(psiStatement, PsiStatement.class));
-        for (int n = i; n <= j; n++) {
-            statementList.add(bodyStatements.get(n));
-        }
-        return statementList.size() > 0 ? new Candidate(statementList, originalMethod) : null;
+    private Candidate calculateCandidate(PsiMethod method, int i, int j) {
+        PsiMethod copyMethod = (PsiMethod) method.copy();
+        List<PsiStatement> statementList = new ArrayList<>(Arrays.asList(copyMethod.getBody().getStatements()).subList(i, j + 1));
+        return statementList.size() > 0 ? new Candidate(statementList, copyMethod) : null;
     }
 
     public List<Candidate> getCandidateList() {

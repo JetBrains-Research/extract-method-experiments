@@ -1,16 +1,11 @@
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-
-from  sklearn.metrics import recall_score, precision_score, f1_score
-from sklearn.metrics import average_precision_score
-
+import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-from scipy import stats
+from sklearn.ensemble import RandomForestClassifier
+
 sns.set(color_codes=True)
+
 
 def main():
     rf = RandomForestClassifier(n_estimators=1000, random_state=42)

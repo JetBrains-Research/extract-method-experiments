@@ -42,7 +42,7 @@ def set_train_path(models_path_name):
     else:
         new_version = '1'
 
-    data_path = os.path.join(models_path, 'model_'+new_version, '')
+    data_path = os.path.join(models_path, 'model_' + new_version, '')
     os.makedirs(os.path.dirname(data_path), exist_ok=True)
     return data_path
 

@@ -1,4 +1,6 @@
-import sys, getopt
+import getopt
+import sys
+
 
 def main(argc, argv):
     try:

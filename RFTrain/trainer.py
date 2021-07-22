@@ -1,5 +1,5 @@
-from src.preprocessor import Preprocessor
 from src.model import Model, OCCModel, BinaryModel
+from src.preprocessor import Preprocessor
 from src.utils import import_train_configuration
 
 if __name__ == "__main__":

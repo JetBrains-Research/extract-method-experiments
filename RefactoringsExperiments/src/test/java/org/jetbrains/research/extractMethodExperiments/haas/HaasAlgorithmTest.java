@@ -30,7 +30,7 @@ public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
         return "src/test/testData/";
     }
 
-    public void checkCountOfGeneratedCandidates() {
+    public void testCountOfGeneratedCandidates() {
         String code =
                 "public class Test1 {\n" +
                         "    public void test1() {\n" +

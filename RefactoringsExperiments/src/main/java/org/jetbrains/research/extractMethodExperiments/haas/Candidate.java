@@ -1,11 +1,10 @@
 package org.jetbrains.research.extractMethodExperiments.haas;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
-import com.intellij.psi.util.PsiTreeUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,31 +13,37 @@ import java.util.List;
 public class Candidate {
     private final PsiMethod originalMethod;
     private final List<PsiStatement> statementList;
-    private final List<PsiStatement> remainedStatements;
+    private final String candidateAsString;
+    private String remainderAsString = "";
 
     public Candidate(List<PsiStatement> statements, PsiMethod psiMethod) {
         this.originalMethod = psiMethod;
         this.statementList = statements;
-        this.remainedStatements = new ArrayList<>();
+        this.candidateAsString = getCandidateAsString();
         calculateRemainder();
     }
 
     private void calculateRemainder() {
-        Collection<PsiStatement> childrenOfType = PsiTreeUtil.findChildrenOfType(originalMethod, PsiStatement.class);
-        for (PsiStatement statement : childrenOfType) {
-            if (!statementList.contains(statement)) {
-                remainedStatements.add(statement);
-            }
+        ApplicationManager.getApplication().invokeAndWait(() -> {
+            WriteCommandAction.runWriteCommandAction(originalMethod.getProject(), () -> {
+                for (PsiStatement statement : statementList) {
+                    statement.getParent().deleteChildRange(statementList.get(0), statementList.get(statementList.size() - 1));
+                }
+                remainderAsString = originalMethod.getText();
+            });
+        });
+    }
+
+    public String getRemainderAsString() {
+        return this.remainderAsString;
+    }
+
+    public String getCandidateAsString() {
+        StringBuilder result = new StringBuilder();
+        for (PsiStatement statement : statementList) {
+            result.append(statement.getText());
         }
-    }
-
-    public List<PsiStatement> getStatementList() {
-        return this.statementList;
-    }
-
-
-    public List<PsiStatement> getRemainedStatements() {
-        return remainedStatements;
+        return result.toString();
     }
 
 }

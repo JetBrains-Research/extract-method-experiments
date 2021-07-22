@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HaasAlgorithm {
     private List<Candidate> candidateList;
@@ -47,9 +48,23 @@ public class HaasAlgorithm {
     }
 
     private Candidate calculateCandidate(PsiMethod psiMethod, PsiCodeBlock codeBlock, int i, int j) {
-        PsiCodeBlock copyBlock = (PsiCodeBlock) codeBlock.copy();
+        // make a copy to avoid modifying the original method
+        PsiMethod copyMethod = (PsiMethod) psiMethod.copy();
+        PsiCodeBlock copyBlock = null;
+        if (copyMethod.getBody() != null && copyMethod.getBody().getText().equals(codeBlock.getText())) {
+            copyBlock = copyMethod.getBody();
+        } else {
+            List<PsiCodeBlock> block = Arrays.stream(copyMethod.getBody().getStatements())
+                    .filter(s -> s instanceof PsiCodeBlock && s.getText().equals(codeBlock.getText()))
+                    .map(s -> (PsiCodeBlock) s)
+                    .collect(Collectors.toList());
+            if (block.size() > 0 && block.get(0) != null) {
+                copyBlock = block.get(0);
+            }
+        }
+        if (copyBlock == null) return null;
         List<PsiStatement> statementList = new ArrayList<>(Arrays.asList(copyBlock.getStatements()).subList(i, j));
-        return statementList.size() > 0 ? new Candidate(statementList, psiMethod) : null;
+        return statementList.size() > 0 ? new Candidate(statementList, copyMethod) : null;
     }
 
     public List<Candidate> getCandidateList() {

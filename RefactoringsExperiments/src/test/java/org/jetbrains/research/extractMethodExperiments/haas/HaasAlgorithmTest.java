@@ -67,6 +67,29 @@ public class HaasAlgorithmTest extends LightJavaCodeInsightFixtureTestCase {
         assertEquals(9, candidateList.size());
     }
 
+    public void testCountOfGeneratedCandidates3() {
+        String code =
+                "    public class Test1 {\n" +
+                        "    public void test() {\n" +
+                        "        int a = 10;\n" +
+                        "        int b = 20;\n" +
+                        "        if (a < b) {\n" +
+                        "            System.out.println(\"H\");\n" +
+                        "            System.out.println(\"e\");\n" +
+                        "            System.out.println(\"l\");\n" +
+                        "        } else {\n" +
+                        "            System.out.println(\"l\");\n" +
+                        "            System.out.println(\"o\");\n" +
+                        "        }\n" +
+                        "    }" +
+                        "    }";
+        PsiFile psiFile = myFixture.configureByText("Test1.java", code);
+        PsiMethod psiMethod = PsiTreeUtil.findChildOfType(psiFile, PsiMethod.class);
+        HaasAlgorithm algorithm = new HaasAlgorithm(psiMethod);
+        List<Candidate> candidateList = algorithm.getCandidateList();
+        assertEquals(15, candidateList.size());
+    }
+
     public void testCandidatesGeneration2() {
         //Example from Silva's paper
         String code =

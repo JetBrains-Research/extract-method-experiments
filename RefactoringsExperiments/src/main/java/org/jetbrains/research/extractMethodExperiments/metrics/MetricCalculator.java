@@ -25,12 +25,12 @@ public class MetricCalculator {
     }
 
     public FeaturesVector computeMetrics(){
-        FeaturesVector result = new FeaturesVector(117);
+        FeaturesVector result = new FeaturesVector(81);
         return null;
     }
 
     /**
-     * Almost direct copy from anti-copy-paster
+     * Almost a direct copy from anti-copy-paster
      * */
     private Map<Feature, Double> couplingFeatures(){
         PsiFile thisFile = candidate.getContainingFile();
@@ -82,5 +82,8 @@ public class MetricCalculator {
         return result;
     }
 
+    private Map<Feature, Double> keywordFeatures(){
+
+    }
 
 }

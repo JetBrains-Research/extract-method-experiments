@@ -5,12 +5,10 @@ from pathlib import Path
 
 def parse_in_file(filename):
     result = []
-    with open(filename, 'r') as f:
-        line = f.readline()
-        while line:
-            url = "https://github.com/{}.git".format(line.strip())
+    with open(filename) as f:
+        for line in f:
+            url = f'https://github.com/{line.strip()}.git'
             result.append(url)
-            line = f.readline()
     return result
 
 

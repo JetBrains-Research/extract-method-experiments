@@ -5,3 +5,11 @@
 results/
 *.csv
 *.ipynb
+RefactoringsExperiments/*
+!RefactoringsExperiments/data/
+!RefactoringsExperiments/gradlew.bat
+!RefactoringsExperiments/log4j2.xml
+!RefactoringsExperiments/gradlew
+!RefactoringsExperiments/build.gradle
+!RefactoringsExperiments/src/
+!RefactoringsExperiments/gradle/

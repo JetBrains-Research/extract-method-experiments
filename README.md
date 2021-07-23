@@ -25,7 +25,7 @@ The procedure is identical with one key difference, use command `gradlew.bat` in
 
 ## Machine Learning
 
-Currently, there are a number of ML algorithms proposed as a valid models:
+Currently, there are a number of ML algorithms proposed as valid models:
 
 | classifier name    | implementation source | shortcut name  |
 |:-------------|:-------------| :-----:|
@@ -43,7 +43,7 @@ The requirements are specified in `requirements.txt`.
 
 ### Training
 
-To train a model, one is ought to complete a list of procedures:
+To train a model, one has to complete a list of procedures:
 - Obtain datasets from `RefactoringExperiments/`
 - Configure training procedure through config files.
     - Make a model config and specify model's arguments there. 

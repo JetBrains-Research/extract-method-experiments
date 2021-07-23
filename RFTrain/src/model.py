@@ -39,8 +39,8 @@ class OCCModel(Model):
         self.fit(neutral)
         pos_accuracy = sum(self.predict(positive) == -1) / len(positive)
         with open(os.path.join(self.model_train_path, "training_results.txt"), 'a') as f:
-            to_print = "Training error fraction: {}\n" \
-                       "Accuracy on positives: {}\n".format(self._model.nu, pos_accuracy)
+            to_print = f'Training error fraction: {self._model.nu,}\n' \
+                       f'Accuracy on positives: {pos_accuracy}\n'
             f.write(to_print)
         return self.save_model()
 

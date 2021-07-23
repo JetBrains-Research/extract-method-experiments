@@ -45,40 +45,42 @@ public class PluginRunner implements ApplicationStarter {
             return;
         }
 
+        String outputDir = null;
+
         if (line.hasOption("datasetsDirPath")) {
-            String outputDir = line.getOptionValue("datasetsDirPath");
+            outputDir = line.getOptionValue("datasetsDirPath");
             try {
                 Files.createDirectories(Paths.get(outputDir));
             } catch (IOException e) {
                 LOG.error("Failed to create output dir");
             }
-
-            if (line.hasOption("generatePositiveSamples")) {
-                try {
-                    FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
-                } catch (IOException e) {
-                    LOG.error("Failed to create file-writer for positive samples");
-                }
-
-                PositiveRefactoringsExtractionRunner positiveRefactoringsExtractionRunner = new PositiveRefactoringsExtractionRunner(projectPaths);
-                positiveRefactoringsExtractionRunner.run();
-            }
-            if (line.hasOption("generateNegativeSamples")) {
-
-                try {
-                    FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
-                } catch (IOException e) {
-                    LOG.error("Failed to create file-writer for negative samples");
-                }
-
-                NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths);
-                negativeRefactoringsExtractionRunner.run();
-            }
         } else {
             LOG.error("Output directory is mandatory.");
-            return;
+        }
+
+        if (line.hasOption("generatePositiveSamples")) {
+            try {
+                FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
+            } catch (IOException e) {
+                LOG.error("Failed to create file-writer for positive samples");
+            }
+
+            PositiveRefactoringsExtractionRunner positiveRefactoringsExtractionRunner = new PositiveRefactoringsExtractionRunner(projectPaths);
+            positiveRefactoringsExtractionRunner.run();
+        }
+        if (line.hasOption("generateNegativeSamples")) {
+
+            try {
+                FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
+            } catch (IOException e) {
+                LOG.error("Failed to create file-writer for negative samples");
+            }
+
+            NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths);
+            negativeRefactoringsExtractionRunner.run();
         }
     }
+
 
     private Options configureOptionsForCLI() {
         Options options = new Options();
@@ -92,7 +94,12 @@ public class PluginRunner implements ApplicationStarter {
 
     private List<String> extractProjectsPaths(String path) {
         ArrayList<String> paths = new ArrayList<>();
-        //TODO: parse the file and extract paths to the projects
+        File reposDir = new File(path);
+
+        for (File repoFile : reposDir.listFiles()) {
+            paths.add(repoFile.getAbsolutePath());
+        }
+
         return paths;
     }
 }

@@ -3,7 +3,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import ComplementNB, GaussianNB
 from sklearn.svm import SVC, LinearSVC, OneClassSVM
 
-from . utils import import_model_args
+from .utils import import_model_args
 
 
 class ModelFactory:

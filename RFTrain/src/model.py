@@ -2,11 +2,11 @@ import os
 from shutil import copyfile
 
 import joblib
-from sklearn.metrics import precision_score
+from sklearn.metrics import precision_score, f1_score, recall_score
 from sklearn.model_selection import train_test_split, cross_val_score, KFold
 
-from . model_factory import ModelFactory
-from . utils import set_train_path
+from .model_factory import ModelFactory
+from .utils import set_train_path
 
 
 class Model:
@@ -24,8 +24,11 @@ class Model:
         return self._model.predict(features)
 
     def save_model(self):
-        copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'training_settings.ini'))
+        copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
         return joblib.dump(self._model, os.path.join(self.model_train_path, 'trained.sav'))
+
+    def save_training_config(self, training_config_path):
+        copyfile(src=training_config_path, dst=os.path.join(self.model_train_path, 'training_settings.ini'))
 
 
 class OCCModel(Model):
@@ -46,15 +49,25 @@ class BinaryModel(Model):
     def fit(self, features, targets):
         return self._model.fit(features, targets)
 
+    def cross_validate(self, x, y, folds=5):
+        cv = KFold(n_splits=folds, random_state=self.random_state, shuffle=True)
+        cv_scores = cross_val_score(self._model, X=x, y=y, cv=cv, scoring='f1')
+        with open(os.path.join(self.model_train_path, "cross_validation_results.txt"), 'w') as f:
+            to_print = f'Cross val f1 scores: {cv_scores}\n'
+            f.write(to_print)
+
     def train(self, x, y):
         x_train, x_test, y_train, y_test = train_test_split(x, y, )
-        cv = KFold(n_splits=10, random_state=self.random_state, shuffle=True)
-        cv_scores = cross_val_score(self._model, X=x_train, y=y_train, cv=cv, scoring='precision')
         self.fit(x_train, y_train)
-        f1 = precision_score(y_test, self.predict(x_test))
-        with open(os.path.join(self.model_train_path, "training_results.txt"), 'a') as f:
-            to_print = "Cross val f1 scores: {}\n" \
-                       "Test f1 score: {}\n".format(cv_scores, f1)
+        f1 = f1_score(y_test, self.predict(x_test))
+        precision = precision_score(y_test, self.predict(x_test))
+        recall = recall_score(y_test, self.predict(x_test))
+
+        with open(os.path.join(self.model_train_path, "training_results.txt"), 'w') as f:
+            to_print = f'Test precision score: {precision}\n' \
+                       f'Test f1 score: {f1}\n' \
+                       f'Test recall score: {recall}\n'
+
             f.write(to_print)
         self.save_model()
 

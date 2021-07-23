@@ -14,6 +14,10 @@ class Preprocessor:
         self.df_neg = self.df_neg[self.df_neg.score > 0]
 
     def make_binary(self):
+        """
+        Makes and returns  a pair X, y which correspond to features(X) and targets(y) dataframe,
+        each sample has target label of 1 or 0, suitable for binary classification.
+        """
         negatives = self.df_neg[self.df_neg.score <= self.df_neg.score.quantile(
             self.quantile_to_negative)]  # Filter only lower part, up to specified quantile
         negatives = negatives.assign(label=lambda x: 0)  # Set label to zero, meaning negative
@@ -25,7 +29,14 @@ class Preprocessor:
 
         return X, y
 
-    def make_neutral_positive(self, consider_quantile):
+    def make_neutral_positive(self, consider_quantile=False):
+        """
+        Makes and returns a pair neutral, positive which correspond to two features dataframes,
+        each sample has no target label, suitable for one class classification.
+
+        :param `consider_quantile` is responsible for choosing
+        whether `neutral` should be built with quantile consideration
+        """
         if consider_quantile:
             neutral = self.df_neg[self.df_neg.score <= self.df_neg.score.quantile(
                 self.quantile_to_negative)].drop(columns=['score', 'label'])

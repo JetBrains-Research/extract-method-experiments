@@ -1,12 +1,10 @@
-package org.jetbrains.research.extractMethodExperiments.csv;
+package org.jetbrains.research.extractMethodExperiments.features;
 
-import org.jetbrains.research.extractMethodExperiments.features.Feature;
-
-public class CSVItem implements ICSVItem {
+public class FeatureItem implements IFeatureItem {
     private Feature type;
     private double value;
 
-    public CSVItem(Feature type, double value) {
+    public FeatureItem(Feature type, double value) {
         this.type = type;
         this.value = value;
     }

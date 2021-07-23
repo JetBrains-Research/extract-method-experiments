@@ -1,4 +1,4 @@
-package org.jetbrains.research.extractMethodExperiments.csv;
+package org.jetbrains.research.extractMethodExperiments.features;
 
 public enum Feature {
     TotalConnectivity("TotalConnectivity", 0),
@@ -119,23 +119,69 @@ public enum Feature {
     MethodDeclarationDepth("MethodDeclarationDepth", 115),
     MethodDeclarationDepthPerLine("MethodDeclarationDepthPerLine", 116);
 
-    private String name;
-    private int id;
-
     Feature(String name, int id) {
         this.name = name;
         this.id = id;
-    }
-
-    public static Feature fromId(int id) {
-        return Feature.values()[id];
     }
 
     public String getName() {
         return name;
     }
 
+    public String getCyrName() {
+        if (name.startsWith("Keyword") && name.endsWith("TotalCount")) {
+            return "the total count of the " + name.substring(7, 7 + name.length() - "Keyword".length() - "TotalCount".length()) + " keyword";
+        }
+
+        if (name.startsWith("Keyword") && name.endsWith("CountPerLine")) {
+            return "the average count of the " + name.substring(7, 7 + name.length() - "Keyword".length() - "CountPerLine".length()) + " keyword";
+        }
+
+        switch (this) {
+            case MethodDeclarationSymbols:
+                return "the total size of the enclosing method";
+            case MethodDeclarationAverageSymbols:
+                return "the average size of the enclosing method";
+            case MethodDeclarationDepth:
+                return "the total nested depth of the enclosing method";
+            case MethodDeclarationDepthPerLine:
+                return "the average nested depth of the enclosing method";
+            case TotalSymbolsInCodeFragment:
+                return "the total size of the code fragment";
+            case AverageSymbolsInCodeLine:
+                return "the average size of the code fragment";
+            case TotalLinesDepth:
+                return "the total nested depth of the code fragment";
+            case AverageLinesDepth:
+                return "the average nested depth of the code fragment";
+            case TotalLinesOfCode:
+                return "the total number of lines of code";
+            case TotalConnectivity:
+                return "the total coupling with the enclosing class";
+            case TotalConnectivityPerLine:
+                return "the average coupling with the enclosing class";
+            case FieldConnectivity:
+                return "the total coupling with the enclosing class by fields";
+            case FieldConnectivityPerLine:
+                return "the average coupling with the enclosing class by fields";
+            case MethodConnectivity:
+                return "the total coupling with the enclosing class by methods";
+            case MethodConnectivityPerLine:
+                return "the average coupling with the enclosing class by methods";
+            default:
+                return "";
+        }
+    }
+
     public int getId() {
         return id;
     }
+
+    private String name;
+    private int id;
+
+    public static Feature fromId(int id) {
+        return Feature.values()[id];
+    }
 }
+

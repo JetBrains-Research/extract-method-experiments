@@ -2,7 +2,7 @@ package org.jetbrains.research.extractMethodExperiments.metrics;
 
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.research.extractMethodExperiments.csv.CSVItem;
-import org.jetbrains.research.extractMethodExperiments.csv.Feature;
+import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 
 import java.util.Arrays;

@@ -2,6 +2,7 @@ package org.jetbrains.research.extractMethodExperiments.haas;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
 
@@ -19,7 +20,7 @@ public class Candidate {
     public Candidate(List<PsiStatement> statements, PsiMethod psiMethod) {
         this.originalMethod = psiMethod;
         this.statementList = statements;
-        this.candidateAsString = getCandidateAsString();
+        this.candidateAsString = statementSequenceToString(statements);
         calculateRemainder();
     }
 
@@ -38,12 +39,21 @@ public class Candidate {
         return this.remainderAsString;
     }
 
-    public String getCandidateAsString() {
+    public static String statementSequenceToString(List<PsiStatement> statementSeq){
         StringBuilder result = new StringBuilder();
-        for (PsiStatement statement : statementList) {
+        for (PsiStatement statement : statementSeq) {
             result.append(statement.getText());
+            result.append('\n');
         }
         return result.toString();
+    }
+
+    public String getCandidateAsString() {
+        return candidateAsString;
+    }
+
+    public PsiFile getContainingFile(){
+        return originalMethod.getContainingFile();
     }
 
 }

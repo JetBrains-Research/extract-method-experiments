@@ -14,13 +14,15 @@ import java.util.List;
 public class Candidate {
     private final PsiMethod originalMethod;
     private final List<PsiStatement> statementList;
-    private final String candidateAsString;
+    private final String methodAsString;
+    private String candidateAsString = "";
     private String remainderAsString = "";
 
     public Candidate(List<PsiStatement> statements, PsiMethod psiMethod) {
         this.originalMethod = psiMethod;
         this.statementList = statements;
-        this.candidateAsString = statementSequenceToString(statements);
+        this.methodAsString = psiMethod.getText();
+        calculateStrCandidate();
         calculateRemainder();
     }
 
@@ -35,24 +37,28 @@ public class Candidate {
         });
     }
 
+    public void calculateStrCandidate() {
+        StringBuilder result = new StringBuilder();
+        for (PsiStatement statement : this.statementList) {
+            result.append(statement.getText());
+            result.append('\n');
+        }
+        this.candidateAsString = result.toString();
+    }
+
     public String getRemainderAsString() {
         return this.remainderAsString;
     }
 
-    public static String statementSequenceToString(List<PsiStatement> statementSeq){
-        StringBuilder result = new StringBuilder();
-        for (PsiStatement statement : statementSeq) {
-            result.append(statement.getText());
-            result.append('\n');
-        }
-        return result.toString();
+    public String getMethodAsString() {
+        return this.methodAsString;
     }
 
     public String getCandidateAsString() {
         return candidateAsString;
     }
 
-    public PsiFile getContainingFile(){
+    public PsiFile getContainingFile() {
         return originalMethod.getContainingFile();
     }
 

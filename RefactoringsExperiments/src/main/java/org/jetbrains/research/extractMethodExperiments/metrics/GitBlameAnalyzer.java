@@ -65,7 +65,7 @@ public class GitBlameAnalyzer {
             }
 
             SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.LiveTimeOfFragment, maxTime - minTime));
-            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.AverageLiveTimeOfLine, (double) totalTime / creationDates.size()));
+            SparseCSVBuilder.sharedInstance.addFeature(new CSVItem(Feature.LiveTimePerLine, (double) totalTime / creationDates.size()));
         }
     }
 
@@ -110,7 +110,7 @@ public class GitBlameAnalyzer {
                 totalTime += time - minTime;
             }
             features.add(new CSVItem(Feature.LiveTimeOfFragment, (double) maxTime - minTime));
-            features.add(new CSVItem(Feature.AverageLiveTimeOfLine, (double) totalTime / creationDates.size()));
+            features.add(new CSVItem(Feature.LiveTimePerLine, (double) totalTime / creationDates.size()));
         }
     }
 

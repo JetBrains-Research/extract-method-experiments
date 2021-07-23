@@ -1,27 +1,35 @@
 package org.jetbrains.research.extractMethodExperiments.features;
 
 public enum Feature {
+    //Meta-Features
     TotalLinesOfCode("TotalLinesOfCode", 0),
-    TotalSymbolsInFragment("TotalSymbolsInCode", 1),
-    AverageSymbolsPerLine("AverageSymbolsPerLine", 2),
-    FragmentArea("FragmentArea", 3),
-    AverageAreaInFragmentLine("AverageAreaInCodeLine", 3),
+    TotalSymbols("TotalSymbols", 1),
+    SymbolsPerLine("SymbolsPerLine", 2),
+    Area("Area", 3),
+    AreaPerLine("AreaPerLine", 3),
+
+    //Historical-Features
     TotalCommitsInFragment("TotalCommitsInFragment", 4),
     TotalAuthorsInFragment("TotalAuthorsInFragment", 5),
     LiveTimeOfFragment("LiveTimeOfFragment", 6),
-    AverageLiveTimeOfLine("AverageLiveTimeOfLine", 7),
+    LiveTimePerLine("LiveTimePerLine", 7),
+
+    //Coupling-Features
     TotalConnectivity("TotalConnectivity", 8),
     TotalConnectivityPerLine("TotalConnectivityPerLine", 9),
     FieldConnectivity("FieldConnectivity", 10),
     FieldConnectivityPerLine("FieldConnectivityPerLine", 11),
     MethodConnectivity("MethodConnectivity", 12),
     MethodConnectivityPerLine("MethodConnectivityPerLine", 13),
+
+    //Method-Features
     MethodDeclarationLines("MethodDeclarationLines", 14),
     MethodDeclarationSymbols("MethodDeclarationSymbols", 15),
-    MethodDeclarationAverageSymbolsPerLine("MethodDeclarationAverageSymbolsPerLine", 16),
+    MethodDeclarationSymbolsPerLine("MethodDeclarationSymbolsPerLine", 16),
     MethodDeclarationArea("MethodDeclarationArea", 17),
     MethodDeclarationAreaPerLine("MethodDeclarationDepthPerLine", 18),
 
+    //Keyword-Features
     KeywordContinueTotalCount("KeywordContinueTotalCount", 19),
     KeywordContinueCountPerLine("KeywordContinueCountPerLine", 20),
     KeywordForTotalCount("KeywordForTotalCount", 21),
@@ -107,19 +115,19 @@ public enum Feature {
         switch (this) {
             case MethodDeclarationSymbols:
                 return "the total size of the enclosing method in symbols";
-            case MethodDeclarationAverageSymbolsPerLine:
+            case MethodDeclarationSymbolsPerLine:
                 return "the per-line-averaged size of the enclosing method in symbols";
             case MethodDeclarationArea:
                 return "the total nesting area of the enclosing method";
             case MethodDeclarationAreaPerLine:
                 return "the per-line-averaged nesting area of the enclosing method";
-            case TotalSymbolsInFragment:
+            case TotalSymbols:
                 return "the total size of the code fragment in symbols";
-            case AverageSymbolsPerLine:
+            case SymbolsPerLine:
                 return "the per-line-averaged size of the code fragment in symbols";
-            case FragmentArea:
+            case Area:
                 return "the total nested area of the code fragment";
-            case AverageAreaInFragmentLine:
+            case AreaPerLine:
                 return "the per-line-averaged nested area of the code fragment";
             case TotalLinesOfCode:
                 return "the total number of lines of code";

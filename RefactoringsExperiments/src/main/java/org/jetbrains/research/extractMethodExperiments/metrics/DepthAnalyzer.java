@@ -3,7 +3,7 @@ package org.jetbrains.research.extractMethodExperiments.metrics;
 /**
  * Utility class for computing depth-metrics of passed code
  */
-public class DepthAnalyzer {
+private class DepthAnalyzer {
     /**
      * Generates and returns array of integers, representing the nesting level of each line
      */

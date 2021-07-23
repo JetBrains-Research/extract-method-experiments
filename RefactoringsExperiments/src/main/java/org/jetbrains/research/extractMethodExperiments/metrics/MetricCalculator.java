@@ -30,11 +30,11 @@ import java.util.*;
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
 
 public class MetricCalculator {
+    private static final Logger LOG = Logger.getInstance(MetricCalculator.class);
     private final Candidate candidate;
     private final int beginLine;
     private final int endLine;
     private FeaturesVector featuresVector;
-    private static final Logger LOG = Logger.getInstance(MetricCalculator.class);
 
     MetricCalculator(Candidate candidate, int beginLine, int endLine) {
         this.candidate = candidate;
@@ -42,11 +42,28 @@ public class MetricCalculator {
         this.endLine = endLine;
         this.featuresVector = new FeaturesVector(81); // TODO: Make dimension changeable outside
 
+        // These calls actually compute featuresVector
         couplingFeatures();
         keywordFeatures();
         methodFeatures();
         metaFeatures();
         historicalFeatures();
+    }
+
+    private static Repository openRepository(String repositoryPath) throws Exception {
+        File folder = new File(repositoryPath);
+        Repository repository;
+        if (folder.exists()) {
+            RepositoryBuilder builder = new RepositoryBuilder();
+            repository = builder
+                    .setGitDir(new File(folder, ".git"))
+                    .readEnvironment()
+                    .findGitDir()
+                    .build();
+        } else {
+            throw new FileNotFoundException(repositoryPath);
+        }
+        return repository;
     }
 
     public FeaturesVector getFeaturesVector() {
@@ -120,7 +137,7 @@ public class MetricCalculator {
         for (String keyword : allKeywords) {
             Integer count = counts.get(keyword);
             featuresVector.addFeature(new FeatureItem(Feature.fromId(id++), count));
-            featuresVector.addFeature(new FeatureItem(Feature.fromId(id++),(double) count / linesCount));
+            featuresVector.addFeature(new FeatureItem(Feature.fromId(id++), (double) count / linesCount));
         }
     }
 
@@ -135,7 +152,7 @@ public class MetricCalculator {
         featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationSymbols, method.length()));
         featuresVector.addFeature(new FeatureItem(
                 Feature.MethodDeclarationSymbolsPerLine, (double) method.length() / lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationArea,  methodArea));
+        featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationArea, methodArea));
         featuresVector.addFeature(new FeatureItem(
                 Feature.MethodDeclarationAreaPerLine, (double) methodArea / lineCount));
 
@@ -219,21 +236,5 @@ public class MetricCalculator {
             featuresVector.addFeature(
                     new FeatureItem(Feature.LiveTimePerLine, (double) totalTime / creationDates.size()));
         }
-    }
-
-    private static Repository openRepository(String repositoryPath) throws Exception {
-        File folder = new File(repositoryPath);
-        Repository repository;
-        if (folder.exists()) {
-            RepositoryBuilder builder = new RepositoryBuilder();
-            repository = builder
-                    .setGitDir(new File(folder, ".git"))
-                    .readEnvironment()
-                    .findGitDir()
-                    .build();
-        } else {
-            throw new FileNotFoundException(repositoryPath);
-        }
-        return repository;
     }
 }

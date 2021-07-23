@@ -53,7 +53,7 @@ public class PositiveRefactoringsExtractionRunner {
                 GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
                 if (repo != null) {
                     try {
-                        List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--master");
+                        List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
                         gitCommits.forEach(c -> processCommit(c, project));
                     } catch (VcsException e) {
                         LOG.error("Error occurred while processing commit in " + projectPath);
@@ -67,7 +67,7 @@ public class PositiveRefactoringsExtractionRunner {
         GitService gitService = new GitServiceImpl();
         Repository repository = null;
         try {
-            repository = gitService.openRepository(project.getProjectFilePath());
+            repository = gitService.openRepository(project.getBasePath());
         } catch (Exception e) {
             LOG.error("Error occurred while opening git repository.");
         }

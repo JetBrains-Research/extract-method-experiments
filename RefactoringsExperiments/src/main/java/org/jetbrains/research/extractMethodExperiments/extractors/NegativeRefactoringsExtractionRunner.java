@@ -94,7 +94,9 @@ public class NegativeRefactoringsExtractionRunner {
         for (PsiMethod method : psiMethods) {
             HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
             List<Candidate> candidateList = haasAlgorithm.getCandidateList();
-            //TODO: rank candidates and calculate code metrics
+            // rank candidates by Haas's score
+            candidateList.sort(Candidate::compareTo);
+            //TODO: calculate metrics and write it to file
         }
     }
 

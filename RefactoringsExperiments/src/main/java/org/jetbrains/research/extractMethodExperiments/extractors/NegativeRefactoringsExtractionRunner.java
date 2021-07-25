@@ -21,10 +21,13 @@ import git4idea.repo.GitRepositoryManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
 import org.jetbrains.research.extractMethodExperiments.haas.HaasAlgorithm;
+import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getNumberOfLine;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
@@ -96,7 +99,11 @@ public class NegativeRefactoringsExtractionRunner {
             List<Candidate> candidateList = haasAlgorithm.getCandidateList();
             // rank candidates by Haas's score
             candidateList.sort(Candidate::compareTo);
-            //TODO: calculate metrics and write it to file
+            //TODO: get the candidates with the lowest score and calculate features only for them!
+            MetricCalculator metricCalculator = new MetricCalculator(method,
+                    getNumberOfLine(psiFile, method.getTextRange().getStartOffset()),
+                    getNumberOfLine(psiFile, method.getTextRange().getEndOffset()));
+            //TODO: write result feature to the file
         }
     }
 

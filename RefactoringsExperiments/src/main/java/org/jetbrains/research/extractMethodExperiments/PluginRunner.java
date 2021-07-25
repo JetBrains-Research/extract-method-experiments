@@ -36,7 +36,7 @@ public class PluginRunner implements ApplicationStarter {
         }
         if (line == null) return;
 
-        List<String> projectPaths = new ArrayList<>();
+        List<String> projectPaths;
         if (line.hasOption("projectsDirPath")) {
             String projectsFilePath = line.getOptionValue("projectsDirPath");
             projectPaths = extractProjectsPaths(projectsFilePath);
@@ -68,8 +68,8 @@ public class PluginRunner implements ApplicationStarter {
             PositiveRefactoringsExtractionRunner positiveRefactoringsExtractionRunner = new PositiveRefactoringsExtractionRunner(projectPaths);
             positiveRefactoringsExtractionRunner.run();
         }
-        if (line.hasOption("generateNegativeSamples")) {
 
+        if (line.hasOption("generateNegativeSamples")) {
             try {
                 FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
             } catch (IOException e) {
@@ -80,7 +80,6 @@ public class PluginRunner implements ApplicationStarter {
             negativeRefactoringsExtractionRunner.run();
         }
     }
-
 
     private Options configureOptionsForCLI() {
         Options options = new Options();

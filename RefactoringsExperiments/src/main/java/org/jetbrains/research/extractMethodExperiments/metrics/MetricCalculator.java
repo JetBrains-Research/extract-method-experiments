@@ -41,6 +41,7 @@ public class MetricCalculator {
         this.beginLine = beginLine;
         this.endLine = endLine;
         this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
+        computeFeatureVector();
     }
 
     private void computeFeatureVector() {
@@ -147,8 +148,6 @@ public class MetricCalculator {
         int methodArea = getNestingArea(method);
         int lineCount = StringUtils.countMatches(method, '\n') + 1;
 
-        Map<Feature, Double> result = new HashMap<>();
-
         featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationLines, lineCount));
         featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationSymbols, method.length()));
         featuresVector.addFeature(new FeatureItem(
@@ -164,11 +163,11 @@ public class MetricCalculator {
         int fragmentArea = getNestingArea(fragment);
         int lineCount = StringUtils.countMatches(fragment, '\n') + 1;
 
-        featuresVector.addFeature(new FeatureItem(Feature.TotalLinesOfCode, (double) lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.TotalSymbols, (double) fragment.length()));
+        featuresVector.addFeature(new FeatureItem(Feature.TotalLinesOfCode, lineCount));
+        featuresVector.addFeature(new FeatureItem(Feature.TotalSymbols, fragment.length()));
         featuresVector.addFeature(new FeatureItem(
                 Feature.SymbolsPerLine, (double) fragment.length() / lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.Area, (double) fragmentArea));
+        featuresVector.addFeature(new FeatureItem(Feature.Area, fragmentArea));
         featuresVector.addFeature(new FeatureItem(
                 Feature.AreaPerLine, (double) fragmentArea / lineCount));
 

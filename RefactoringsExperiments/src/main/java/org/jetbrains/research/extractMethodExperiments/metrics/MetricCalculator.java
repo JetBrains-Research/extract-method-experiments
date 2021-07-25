@@ -40,9 +40,10 @@ public class MetricCalculator {
         this.candidate = candidate;
         this.beginLine = beginLine;
         this.endLine = endLine;
-        this.featuresVector = new FeaturesVector(81); // TODO: Make dimension changeable outside
+        this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
+    }
 
-        // These calls actually compute featuresVector
+    private void computeFeatureVector() {
         couplingFeatures();
         keywordFeatures();
         methodFeatures();
@@ -124,7 +125,7 @@ public class MetricCalculator {
                 "instanceof", "return", "transient",
                 "catch", "int", "short", "try",
                 "char", "final", "finally", "long",
-                "strictfp", "float", "super", "while"); // 31 keywords, id from 19 to 80
+                "strictfp", "float", "super", "while"); // 31 keywords, id from 20 to 81
 
         HashMap<String, Integer> counts = new HashMap<>();
         for (String key : allKeywords) {
@@ -133,7 +134,7 @@ public class MetricCalculator {
 
         int linesCount = endLine - beginLine + 1;
 
-        int id = 19; // initialized with 19 to account for shift in Keyword-Features begin id.
+        int id = 20; // initialized with 20 to account for shift in Keyword-Features begin id.
         for (String keyword : allKeywords) {
             Integer count = counts.get(keyword);
             featuresVector.addFeature(new FeatureItem(Feature.fromId(id++), count));
@@ -180,7 +181,7 @@ public class MetricCalculator {
         try {
             repository = openRepository(repoPath);
         } catch (Exception e) {
-            LOG.error("[ACP] Failed to open the project repository.");
+            LOG.error("Failed to open the project repository.");
             return;
         }
 

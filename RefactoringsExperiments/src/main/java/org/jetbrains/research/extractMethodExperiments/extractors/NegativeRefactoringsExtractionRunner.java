@@ -124,6 +124,7 @@ public class NegativeRefactoringsExtractionRunner {
             for(int i = 0; i < featuresVector.getDimension(); i++){
                 this.fileWriter.append(String.format("%.4f", featuresVector.getFeature(Feature.fromId(i))));
                 this.fileWriter.append(';');
+                // TODO: Change decimal delimiter to full-stop.
             }
             this.fileWriter.append(String.format("%.4f", candidate.getScore()));
             this.fileWriter.append(';');

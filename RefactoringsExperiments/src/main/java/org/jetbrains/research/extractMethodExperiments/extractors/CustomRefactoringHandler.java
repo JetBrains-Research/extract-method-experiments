@@ -96,9 +96,11 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         int endLine = getNumberOfLine(psiFile, psiElement.getTextRange().getEndOffset());
         MetricCalculator metricCalculator = new MetricCalculator(psiElement, beginLine, endLine);
         FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+
         for (int i = 0; i < featuresVector.getDimension(); i++) {
             this.fileWriter.append(String.format("%.4f", featuresVector.getFeature(Feature.fromId(i))));
             this.fileWriter.append(';');
+            // TODO: Change decimal delimiter to full-stop.
         }
 
         this.fileWriter.append('\n');

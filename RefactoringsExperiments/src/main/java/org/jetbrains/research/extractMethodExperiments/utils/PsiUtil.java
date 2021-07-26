@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.TimeoutUtil;
 import git4idea.GitVcs;
 import git4idea.config.GitVcsApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,8 @@ public class PsiUtil {
     public static ProjectLevelVcsManagerImpl vcsSetup(Project project, String projectPath) {
         VfsUtil.markDirtyAndRefresh(false, true, false, new File(projectPath));
         ProjectLevelVcsManagerImpl vcsManager = (ProjectLevelVcsManagerImpl) ProjectLevelVcsManager.getInstance(project);
-        ApplicationManager.getApplication().invokeAndWait(vcsManager::waitForInitialized);
+        vcsManager.waitForInitialized();
+        TimeoutUtil.sleep(10000);
         @NotNull GitVcs vcs = GitVcs.getInstance(project);
         try {
             vcs.doActivate();

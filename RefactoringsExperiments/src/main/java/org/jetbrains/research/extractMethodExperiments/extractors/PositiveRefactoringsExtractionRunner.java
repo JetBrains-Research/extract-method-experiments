@@ -4,8 +4,8 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vfs.VirtualFile;
 import git4idea.GitCommit;
 import git4idea.GitVcs;
@@ -19,6 +19,8 @@ import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
 import java.util.List;
+
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsSetup;
 
 /**
  * Runs RefactoringMiner and processes discovered "Extract Method" refactorings in project's changes history.
@@ -44,9 +46,8 @@ public class PositiveRefactoringsExtractionRunner {
             return;
         }
 
-        ProjectLevelVcsManager vcsManager = ServiceManager.getService(project, ProjectLevelVcsManager.class);
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
-
+        ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, projectPath);
         vcsManager.runAfterInitialization(() -> {
             VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
             for (VirtualFile root : gitRoots) {

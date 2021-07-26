@@ -12,6 +12,8 @@ import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiTreeUtil;
 import git4idea.GitVcs;
 import git4idea.config.GitVcsApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,16 @@ public class PsiUtil {
         FileViewProvider fileViewProvider = file.getViewProvider();
         Document document = fileViewProvider.getDocument();
         return document != null ? document.getLineNumber(offset) + 1 : 0;
+    }
+
+    public static PsiMethod findMethodByName(PsiFile psiFile, String methodName) {
+        Collection<PsiMethod> psiMethods = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class);
+        for (PsiMethod psiMethod : psiMethods) {
+            if (psiMethod.getName().equals(methodName)) {
+                return psiMethod;
+            }
+        }
+        return null;
     }
 
     /**

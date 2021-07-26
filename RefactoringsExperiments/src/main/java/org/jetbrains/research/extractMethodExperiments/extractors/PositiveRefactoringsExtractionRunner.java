@@ -58,20 +58,18 @@ public class PositiveRefactoringsExtractionRunner {
 
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
         ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, projectPath);
-        vcsManager.runAfterInitialization(() -> {
-            VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
-            for (VirtualFile root : gitRoots) {
-                GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
-                if (repo != null) {
-                    try {
-                        List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                        gitCommits.forEach(c -> processCommit(c, project));
-                    } catch (VcsException e) {
-                        LOG.error("Error occurred while processing commit in " + projectPath);
-                    }
+        VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
+        for (VirtualFile root : gitRoots) {
+            GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
+            if (repo != null) {
+                try {
+                    List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
+                    gitCommits.forEach(c -> processCommit(c, project));
+                } catch (VcsException e) {
+                    LOG.error("Error occurred while processing commit in " + projectPath);
                 }
             }
-        });
+        }
     }
 
     private void processCommit(GitCommit commit, Project project) {

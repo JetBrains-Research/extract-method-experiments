@@ -40,7 +40,7 @@ public class PsiUtil {
         try {
             vcs.doActivate();
         } catch (VcsException e) {
-            LOG.error("Error occurred while VCS setup.");
+            LOG.error("[RefactoringJudge]: Error occurred during VCS setup.");
         }
 
         GitVcsApplicationSettings appSettings = GitVcsApplicationSettings.getInstance();

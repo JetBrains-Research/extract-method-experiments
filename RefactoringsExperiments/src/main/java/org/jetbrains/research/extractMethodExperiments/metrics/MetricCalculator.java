@@ -190,7 +190,7 @@ public class MetricCalculator {
         try {
             repository = openRepository(repoPath);
         } catch (Exception e) {
-            LOG.error("Failed to open the project repository.");
+            LOG.error("[RefactoringJudge]: Failed to open the project repository.");
             return;
         }
 
@@ -200,7 +200,7 @@ public class MetricCalculator {
                     (filePath.substring(filePath.indexOf("src")))
                     .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
         } catch (GitAPIException e) {
-            LOG.error("Failed to get GitBlame.");
+            LOG.error("[RefactoringJudge]: Failed to get GitBlame.");
         }
 
         ArrayList<Integer> creationDates = new ArrayList<>();

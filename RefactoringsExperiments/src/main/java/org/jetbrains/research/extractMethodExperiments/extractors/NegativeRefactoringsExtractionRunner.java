@@ -9,10 +9,7 @@ import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiStatement;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import git4idea.GitCommit;
 import git4idea.GitVcs;
@@ -34,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getNumberOfLine;
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsSetup;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
@@ -51,51 +49,48 @@ public class NegativeRefactoringsExtractionRunner {
     }
 
     public void run() {
-        for (String path : repositoryPaths) {
-            LOG.info("Processing repo at: " + path);
-            System.out.println("Processing repo at: " + path);
+        for (String repoPath : repositoryPaths) {
+            LOG.info("[RefactoringJudge]: Processing repo at: " + repoPath);
             try {
-                collectProjectExamples(path);
+                collectProjectExamples(repoPath);
             } catch (Exception e) {
-                LOG.error("Could not parse repository: " + path);
+                LOG.error("[RefactoringJudge]: Could not parse repository: " + path);
             }
         }
         try {
             this.fileWriter.close();
         } catch (IOException e) {
-            LOG.error("Cannot close the file-writer.");
+            LOG.error("[RefactoringJudge]: Cannot close the file-writer.");
         }
-        System.out.println("Done");
+        LOG.info("[RefactoringJudge]: Finished negative extraction");
     }
 
     private void collectProjectExamples(String projectPath) {
         Project project = ProjectUtil.openOrImport(projectPath, null, true);
         if (project == null) {
-            LOG.error("Could not open project " + projectPath);
+            LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
             return;
         }
 
-        ProjectLevelVcsManager vcsManager = ServiceManager.getService(project, ProjectLevelVcsManager.class);
+        ProjectLevelVcsManager vcsManager = vcsSetup(project, projectPath);
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
 
-        vcsManager.runAfterInitialization(() -> {
-            VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
-            for (VirtualFile root : gitRoots) {
-                GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
-                if (repo != null) {
-                    try {
-                        List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                        //process the latest commit
-                        processCommit(gitCommits.get(gitCommits.size() - 1), project);
-                    } catch (VcsException e) {
-                        LOG.error("Error occurred while processing the latest commit in " + projectPath);
-                    }
+        VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
+        for (VirtualFile root : gitRoots) {
+            GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
+            if (repo != null) {
+                try {
+                    List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
+                    gitCommits.forEach(c -> processCommit(c, project));
+                } catch (VcsException e) {
+                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + projectPath);
                 }
             }
-        });
+        }
     }
 
     private void processCommit(GitCommit commit, Project project) {
+        List<PsiJavaFile> javaFiles = extractFiles(project);
         List<VirtualFile> changedJavaFiles = commit.getChanges().stream()
                 .filter(c -> c.getVirtualFile() != null && c.getVirtualFile().getName().endsWith(".java"))
                 .map(Change::getVirtualFile)
@@ -106,7 +101,7 @@ public class NegativeRefactoringsExtractionRunner {
             try {
                 handleMethods(psiFile);
             } catch (IOException e) {
-                LOG.error("Cannot handle commit with ID: " + commit.getId());
+                LOG.error("[RefactoringJudge]: Cannot handle commit with ID: " + commit.getId());
             }
         }
     }

@@ -58,7 +58,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     public void handleException(String commitId, Exception e) {
-        LOG.error("Cannot handle commit with ID: " + commitId);
+        LOG.error("[RefactoringJudge]: Cannot handle commit with ID: " + commitId);
     }
 
     private void handleCommit(List<Refactoring> refactorings) throws IOException {

@@ -38,21 +38,25 @@ public class PositiveRefactoringsExtractionRunner {
     }
 
     public void run() {
-        for (String repo : repositoriesPaths) {
-            collectSamples(repo);
+        for (String repoPath : repositoriesPaths) {
+            try {
+                collectSamples(repoPath);
+            } catch (Exception e) {
+                LOG.error("[RefactoringJudge]: Could not parse repository: " + repoPath);
+            }
         }
-
         try {
             this.fileWriter.close();
         } catch (IOException e) {
-            LOG.error("Cannot close the file-writer.");
+            LOG.error("[RefactoringJudge]: Cannot close the file-writer.");
         }
+        LOG.info("[RefactoringJudge]: Finished positive extraction");
     }
 
     private void collectSamples(String projectPath) {
         Project project = ProjectUtil.openOrImport(projectPath, null, true);
         if (project == null) {
-            LOG.error("Could not open project " + projectPath);
+            LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
             return;
         }
 
@@ -66,7 +70,7 @@ public class PositiveRefactoringsExtractionRunner {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
                     gitCommits.forEach(c -> processCommit(c, project));
                 } catch (VcsException e) {
-                    LOG.error("Error occurred while processing commit in " + projectPath);
+                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + projectPath);
                 }
             }
         }
@@ -78,7 +82,7 @@ public class PositiveRefactoringsExtractionRunner {
         try {
             repository = gitService.openRepository(project.getBasePath());
         } catch (Exception e) {
-            LOG.error("Error occurred while opening git repository.");
+            LOG.error("[RefactoringJudge]: Error occurred while opening git repository.");
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),

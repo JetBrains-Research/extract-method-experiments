@@ -34,7 +34,7 @@ public class PluginRunner implements ApplicationStarter {
         try {
             line = parser.parse(configureOptionsForCLI(), args.toArray(new String[0]));
         } catch (ParseException e) {
-            LOG.error("Failed to parse command-line arguments.");
+            LOG.error("[RefactoringJudge]: Failed to parse command-line arguments.");
         }
         if (line == null) return;
 
@@ -43,7 +43,7 @@ public class PluginRunner implements ApplicationStarter {
             String projectsFilePath = line.getOptionValue("projectsDirPath");
             projectPaths = extractProjectsPaths(projectsFilePath);
         } else {
-            LOG.error("Projects directory is mandatory.");
+            LOG.error("[RefactoringJudge]: Projects directory is mandatory.");
             return;
         }
 
@@ -54,10 +54,10 @@ public class PluginRunner implements ApplicationStarter {
             try {
                 Files.createDirectories(Paths.get(outputDir));
             } catch (IOException e) {
-                LOG.error("Failed to create output dir.");
+                LOG.error("[RefactoringJudge]: Failed to create output directory.");
             }
         } else {
-            LOG.error("Output directory is mandatory.");
+            LOG.error("[RefactoringJudge]: Output directory is mandatory.");
         }
 
         if (line.hasOption("generatePositiveSamples")) {
@@ -65,7 +65,7 @@ public class PluginRunner implements ApplicationStarter {
             try {
                 positiveFW = makePositiveHeader(outputDir);
             } catch (Exception e) {
-                LOG.error("Failed to make header for positive.csv.");
+                LOG.error("[RefactoringJudge]: Failed to make header for positive.csv.");
             }
 
             if(positiveFW != null) {
@@ -79,7 +79,7 @@ public class PluginRunner implements ApplicationStarter {
             try {
                 negativeFW = makeNegativeHeader(outputDir);
             } catch (IOException e) {
-                LOG.error("Failed to make header for negative.csv.");
+                LOG.error("[RefactoringJudge]: Failed to make header for negative.csv.");
             }
             if(negativeFW != null) {
                 NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths, negativeFW);

@@ -1,6 +1,7 @@
 package org.jetbrains.research.extractMethodExperiments.utils;
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -35,7 +36,7 @@ public class PsiUtil {
     public static ProjectLevelVcsManagerImpl vcsSetup(Project project, String projectPath) {
         VfsUtil.markDirtyAndRefresh(false, true, false, new File(projectPath));
         ProjectLevelVcsManagerImpl vcsManager = (ProjectLevelVcsManagerImpl) ProjectLevelVcsManager.getInstance(project);
-        vcsManager.waitForInitialized();
+        ApplicationManager.getApplication().invokeAndWait(vcsManager::waitForInitialized);
         @NotNull GitVcs vcs = GitVcs.getInstance(project);
         try {
             vcs.doActivate();

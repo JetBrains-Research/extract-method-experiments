@@ -72,7 +72,6 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                 .collect(Collectors.toList());
 
         for (Refactoring ref : extractMethodRefactorings) {
-            SparseCSVBuilder.sharedInstance.writeVector(true);
             ExtractOperationRefactoring extractOperationRefactoring = (ExtractOperationRefactoring) ref;
             UMLOperation extractedOperation = extractOperationRefactoring.getExtractedOperation();
             LocationInfo locationInfo = extractedOperation.getLocationInfo();

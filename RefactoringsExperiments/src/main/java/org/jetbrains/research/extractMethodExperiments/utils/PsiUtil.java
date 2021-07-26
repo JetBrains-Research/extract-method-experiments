@@ -1,6 +1,7 @@
 package org.jetbrains.research.extractMethodExperiments.utils;
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -11,6 +12,8 @@ import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiTreeUtil;
 import git4idea.GitVcs;
 import git4idea.config.GitVcsApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -29,13 +32,23 @@ public class PsiUtil {
         return document != null ? document.getLineNumber(offset) + 1 : 0;
     }
 
+    public static PsiMethod findMethodByName(PsiFile psiFile, String methodName) {
+        Collection<PsiMethod> psiMethods = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class);
+        for (PsiMethod psiMethod : psiMethods) {
+            if (psiMethod.getName().equals(methodName)) {
+                return psiMethod;
+            }
+        }
+        return null;
+    }
+
     /**
      * Setups VCS to get access to the project's Git root
      */
     public static ProjectLevelVcsManagerImpl vcsSetup(Project project, String projectPath) {
         VfsUtil.markDirtyAndRefresh(false, true, false, new File(projectPath));
         ProjectLevelVcsManagerImpl vcsManager = (ProjectLevelVcsManagerImpl) ProjectLevelVcsManager.getInstance(project);
-        vcsManager.waitForInitialized();
+        ApplicationManager.getApplication().invokeAndWait(vcsManager::waitForInitialized);
         @NotNull GitVcs vcs = GitVcs.getInstance(project);
         try {
             vcs.doActivate();

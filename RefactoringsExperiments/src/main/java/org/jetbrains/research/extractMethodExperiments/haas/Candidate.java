@@ -34,9 +34,9 @@ public class Candidate implements Comparable<Candidate> {
         this.methodAsString = psiMethod.getText();
         calculateCandidateAsString();
         calculateRemainder();
-        calculateScore();
         this.methodArea = getNestingArea(candidateAsString);
         this.methodDepth = getNestingDepth(candidateAsString);
+        calculateScore();
     }
 
     /**
@@ -99,7 +99,7 @@ public class Candidate implements Comparable<Candidate> {
             result.append(statement.getText());
             result.append('\n');
         }
-        this.candidateAsString = result.toString();
+        this.candidateAsString = result.toString().strip();
     }
 
     public double getParametersCount() { //Placeholder for possible implementation of Haas' parameter-based score

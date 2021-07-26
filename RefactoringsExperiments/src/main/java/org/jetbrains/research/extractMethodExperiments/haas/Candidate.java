@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingDepth;
+import static org.jetbrains.research.extractMethodExperiments.utils.StatementListUtil.ListToStr;
 
 /**
  * Candidate for extraction by Haas definition.
@@ -20,7 +21,7 @@ public class Candidate implements Comparable<Candidate> {
     private final PsiMethod originalMethod;
     private final List<PsiStatement> statementList;
     private final String methodAsString;
-    private String candidateAsString = "";
+    private String candidateAsString;
     private String remainderAsString = "";
     private final double maxLengthScore = 3;
     private final double lengthScoreSensitivity = 0.1;
@@ -32,7 +33,7 @@ public class Candidate implements Comparable<Candidate> {
         this.originalMethod = psiMethod;
         this.statementList = statements;
         this.methodAsString = psiMethod.getText();
-        calculateCandidateAsString();
+        this.candidateAsString = ListToStr(this.statementList);
         calculateRemainder();
         this.methodArea = getNestingArea(candidateAsString);
         this.methodDepth = getNestingDepth(candidateAsString);
@@ -93,15 +94,6 @@ public class Candidate implements Comparable<Candidate> {
         return 2 * this.methodDepth / (double) areaMethod * Math.min(areaMethod - areaCandidate, areaMethod - areaRemainder);
     }
 
-    public void calculateCandidateAsString() {
-        StringBuilder result = new StringBuilder();
-        for (PsiStatement statement : this.statementList) {
-            result.append(statement.getText());
-            result.append('\n');
-        }
-        this.candidateAsString = result.toString().strip();
-    }
-
     public double getParametersCount() { //Placeholder for possible implementation of Haas' parameter-based score
         return 0;
     }
@@ -123,11 +115,11 @@ public class Candidate implements Comparable<Candidate> {
     }
 
     public String getCandidateAsString() {
-        return candidateAsString;
+        return this.candidateAsString;
     }
 
-    public PsiFile getContainingFile() {
-        return originalMethod.getContainingFile();
+    public final List<PsiStatement> getStatementList(){
+        return this.statementList;
     }
 
     @Override

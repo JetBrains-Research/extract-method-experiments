@@ -16,6 +16,10 @@ public class FeaturesVector implements IFeaturesVector {
         this.features.add(item);
     }
 
+    public int getDimension(){
+        return dimension;
+    }
+
     @Override
     public double getFeature(Feature toSearch) {
         for (IFeatureItem item: features) {

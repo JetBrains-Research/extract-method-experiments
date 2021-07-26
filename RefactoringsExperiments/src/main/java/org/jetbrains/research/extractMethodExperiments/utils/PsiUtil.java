@@ -5,14 +5,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import git4idea.GitVcs;
 import git4idea.config.GitVcsApplicationSettings;
@@ -20,11 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class PsiUtil {
     private static Logger LOG = Logger.getInstance(PsiUtil.class);
+    private static final String FILE_TYPE_NAME = "JAVA";
 
     public static int getNumberOfLine(PsiFile file, int offset) {
         FileViewProvider fileViewProvider = file.getViewProvider();
@@ -95,5 +98,21 @@ public class PsiUtil {
             }
         }
         return null;
+    }
+
+    public static List<PsiJavaFile> extractFiles(Project project) {
+        final List<PsiJavaFile> javaFiles = new ArrayList<>();
+
+        ProjectFileIndex.SERVICE.getInstance(project).iterateContent(
+                (VirtualFile file) -> {
+                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                    if (psiFile instanceof PsiJavaFile && !psiFile.isDirectory()
+                            && FILE_TYPE_NAME.equals(psiFile.getFileType().getName())) {
+                        javaFiles.add((PsiJavaFile) psiFile);
+                    }
+                    return true;
+                }
+        );
+        return javaFiles;
     }
 }

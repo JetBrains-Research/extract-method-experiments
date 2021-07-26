@@ -30,8 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getNumberOfLine;
-import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsSetup;
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
@@ -54,7 +53,7 @@ public class NegativeRefactoringsExtractionRunner {
             try {
                 collectProjectExamples(repoPath);
             } catch (Exception e) {
-                LOG.error("[RefactoringJudge]: Could not parse repository: " + path);
+                LOG.error("[RefactoringJudge]: Could not parse repository: " + repoPath);
             }
         }
         try {
@@ -91,13 +90,9 @@ public class NegativeRefactoringsExtractionRunner {
 
     private void processCommit(GitCommit commit, Project project) {
         List<PsiJavaFile> javaFiles = extractFiles(project);
-        List<VirtualFile> changedJavaFiles = commit.getChanges().stream()
-                .filter(c -> c.getVirtualFile() != null && c.getVirtualFile().getName().endsWith(".java"))
-                .map(Change::getVirtualFile)
-                .collect(Collectors.toList());
 
-        for (VirtualFile virtualFile : changedJavaFiles) {
-            PsiFile psiFile = buildPsiFile(project, virtualFile.getCanonicalPath());
+        for (PsiJavaFile javaFile : javaFiles) {
+            PsiFile psiFile = buildPsiFile(project, ((VirtualFile) javaFile).getCanonicalPath());
             try {
                 handleMethods(psiFile);
             } catch (IOException e) {

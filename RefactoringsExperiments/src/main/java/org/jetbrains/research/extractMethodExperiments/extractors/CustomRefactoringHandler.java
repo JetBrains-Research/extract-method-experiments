@@ -7,17 +7,20 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
 import git4idea.GitCommit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
+import org.jetbrains.research.extractMethodExperiments.features.Feature;
+import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,14 +30,17 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
     private final GitCommit gitCommit;
     private final String repositoryPath;
+    private final FileWriter fileWriter;
     private Logger LOG = Logger.getInstance(CustomRefactoringHandler.class);
 
     public CustomRefactoringHandler(Project project,
                                     String repositoryPath,
-                                    GitCommit gitCommit) {
+                                    GitCommit gitCommit,
+                                    FileWriter fileWriter) {
         this.project = project;
         this.repositoryPath = repositoryPath;
         this.gitCommit = gitCommit;
+        this.fileWriter = fileWriter;
     }
 
     @Override
@@ -44,14 +50,18 @@ public class CustomRefactoringHandler extends RefactoringHandler {
 
     @Override
     public void handle(String commitId, List<Refactoring> refactorings) {
-        handleCommit(refactorings);
+        try {
+            handleCommit(refactorings);
+        } catch (IOException e) {
+           handleException(commitId, e);
+        }
     }
 
     public void handleException(String commitId, Exception e) {
         LOG.error("Cannot handle commit with ID: " + commitId);
     }
 
-    private void handleCommit(List<Refactoring> refactorings) {
+    private void handleCommit(List<Refactoring> refactorings) throws IOException {
         List<Refactoring> extractMethodRefactorings = refactorings.stream()
                 .filter(r -> r.getRefactoringType() == RefactoringType.EXTRACT_OPERATION)
                 .collect(Collectors.toList());
@@ -71,14 +81,25 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                     if (psiFile != null) {
                         PsiElement psiElement = psiFile.findElementAt(locationInfo.getStartOffset());
-                        MetricCalculator metricCalculator = new MetricCalculator(
-                                (PsiMethod) psiElement,
-                                getNumberOfLine(psiFile, psiElement.getTextRange().getStartOffset()),
-                                getNumberOfLine(psiFile, psiElement.getTextRange().getEndOffset()));
-                        //TODO: write result feature to the file
+                        if(psiElement != null) {
+                            writeFeaturesToFile(psiFile, psiElement);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private void writeFeaturesToFile(PsiFile psiFile, PsiElement psiElement) throws IOException {
+        int beginLine = getNumberOfLine(psiFile, psiElement.getTextRange().getStartOffset());
+        int endLine = getNumberOfLine(psiFile, psiElement.getTextRange().getEndOffset());
+        MetricCalculator metricCalculator = new MetricCalculator(psiElement, beginLine, endLine);
+        FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+        for (int i = 0; i < featuresVector.getDimension(); i++) {
+            this.fileWriter.append(String.format("%.4f", featuresVector.getFeature(Feature.fromId(i))));
+            this.fileWriter.append(';');
+        }
+
+        this.fileWriter.append('\n');
     }
 }

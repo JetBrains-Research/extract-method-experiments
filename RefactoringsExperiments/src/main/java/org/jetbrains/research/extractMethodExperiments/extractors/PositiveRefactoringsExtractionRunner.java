@@ -18,6 +18,8 @@ import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsSetup;
@@ -27,15 +29,23 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsS
  */
 public class PositiveRefactoringsExtractionRunner {
     private final List<String> repositoriesPaths;
+    private FileWriter fileWriter;
     private Logger LOG = Logger.getInstance(PositiveRefactoringsExtractionRunner.class);
 
-    public PositiveRefactoringsExtractionRunner(List<String> repositoriesPaths) {
-        this.repositoriesPaths = repositoriesPaths;
+    public PositiveRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
+        this.repositoriesPaths = repositoryPaths;
+        this.fileWriter = fw;
     }
 
     public void run() {
         for (String repo : repositoriesPaths) {
             collectSamples(repo);
+        }
+
+        try {
+            this.fileWriter.close();
+        } catch (IOException e) {
+            LOG.error("Cannot close the file-writer.");
         }
     }
 
@@ -74,7 +84,7 @@ public class PositiveRefactoringsExtractionRunner {
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
-                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit));
+                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit, fileWriter));
     }
 
 }

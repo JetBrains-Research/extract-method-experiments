@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.extractors.NegativeRefactoringsExtractionRunner;
 import org.jetbrains.research.extractMethodExperiments.extractors.PositiveRefactoringsExtractionRunner;
+import org.jetbrains.research.extractMethodExperiments.features.Feature;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
     private final Logger LOG = Logger.getInstance(PluginRunner.class);
+    private final int featureCount = 82;
 
     @Override
     public @NonNls
@@ -52,32 +54,37 @@ public class PluginRunner implements ApplicationStarter {
             try {
                 Files.createDirectories(Paths.get(outputDir));
             } catch (IOException e) {
-                LOG.error("Failed to create output dir");
+                LOG.error("Failed to create output dir.");
             }
         } else {
             LOG.error("Output directory is mandatory.");
         }
 
         if (line.hasOption("generatePositiveSamples")) {
+            FileWriter positiveFW = null;
             try {
-                FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
-            } catch (IOException e) {
-                LOG.error("Failed to create file-writer for positive samples");
+                positiveFW = makePositiveHeader(outputDir);
+            } catch (Exception e) {
+                LOG.error("Failed to make header for positive.csv.");
             }
 
-            PositiveRefactoringsExtractionRunner positiveRefactoringsExtractionRunner = new PositiveRefactoringsExtractionRunner(projectPaths);
-            positiveRefactoringsExtractionRunner.run();
+            if(positiveFW != null) {
+                PositiveRefactoringsExtractionRunner positiveRefactoringsExtractionRunner = new PositiveRefactoringsExtractionRunner(projectPaths, positiveFW);
+                positiveRefactoringsExtractionRunner.run();
+            }
         }
 
         if (line.hasOption("generateNegativeSamples")) {
+            FileWriter negativeFW = null;
             try {
-                FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
+                negativeFW = makeNegativeHeader(outputDir);
             } catch (IOException e) {
-                LOG.error("Failed to create file-writer for negative samples");
+                LOG.error("Failed to make header for negative.csv.");
             }
-
-            NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths);
-            negativeRefactoringsExtractionRunner.run();
+            if(negativeFW != null) {
+                NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths, negativeFW);
+                negativeRefactoringsExtractionRunner.run();
+            }
         }
     }
 
@@ -100,5 +107,26 @@ public class PluginRunner implements ApplicationStarter {
         }
 
         return paths;
+    }
+
+    private FileWriter makePositiveHeader(String outputDir) throws IOException {
+        FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
+        for(int i = 0; i < featureCount; i++){
+            positiveFW.append(Feature.fromId(i).getName());
+            positiveFW.append(';');
+        }
+        positiveFW.append('\n');
+        return positiveFW;
+    }
+
+    private FileWriter makeNegativeHeader(String outputDir) throws IOException {
+        FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
+        for(int i = 0; i < featureCount; i++){
+            negativeFW.append(Feature.fromId(i).getName());
+            negativeFW.append(';');
+        }
+        negativeFW.append("Score;\n");
+
+        return negativeFW;
     }
 }

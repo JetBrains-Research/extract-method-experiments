@@ -1,10 +1,7 @@
 package org.jetbrains.research.extractMethodExperiments.metrics;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiIdentifier;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
@@ -17,9 +14,11 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryBuilder;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeatureItem;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
+import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
 import org.jetbrains.research.extractMethodExperiments.utils.MemberSets;
 
 import java.io.File;
@@ -27,16 +26,28 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
+import static org.jetbrains.research.extractMethodExperiments.utils.StatementListUtil.ListToStr;
 
 public class MetricCalculator {
     private static final Logger LOG = Logger.getInstance(MetricCalculator.class);
-    private final PsiMethod psiMethod;
+    private final String statementsStr;
+    private final PsiMethod method;
     private final int beginLine;
     private final int endLine;
     private FeaturesVector featuresVector;
 
-    public MetricCalculator(PsiMethod psiMethod, int beginLine, int endLine) {
-        this.psiMethod = psiMethod;
+    public MetricCalculator(List<PsiStatement> statements, PsiMethod method, int beginLine, int endLine) {
+        this.statementsStr = ListToStr(statements);
+        this.method = method;
+        this.beginLine = beginLine;
+        this.endLine = endLine;
+        this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
+        computeFeatureVector();
+    }
+
+    public MetricCalculator(PsiElement psiElement, int beginLine, int endLine) {
+        this.method = ((PsiMethod) psiElement);
+        this.statementsStr = this.method.getBody().getText();
         this.beginLine = beginLine;
         this.endLine = endLine;
         this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
@@ -72,7 +83,7 @@ public class MetricCalculator {
     }
 
     private void couplingFeatures() {
-        PsiFile thisFile = psiMethod.getContainingFile();
+        PsiFile thisFile = method.getContainingFile();
         MemberSets memberSets = MemberSets.extractAllMethodsAndFields(thisFile);
 
         int linesCount = endLine - beginLine + 1;
@@ -82,10 +93,11 @@ public class MetricCalculator {
         int totalMatches;
 
         PsiFileFactory factory = PsiFileFactory.getInstance(thisFile.getProject());
-       // @Nullable PsiFile psiFromText = factory.createFileFromText(psiMethod, thisFile);
-
+        @Nullable PsiFile psiFromText = factory.createFileFromText(statementsStr, thisFile);
+        PsiElement psiElement = factory.createFileFromText(statementsStr, thisFile);
+        psiElement.getText();
         // search for all identifiers (methods and variables) in the code fragment
-        @NotNull Collection<PsiIdentifier> identifiers = PsiTreeUtil.collectElementsOfType(psiMethod,
+        @NotNull Collection<PsiIdentifier> identifiers = PsiTreeUtil.collectElementsOfType(psiFromText,
                 PsiIdentifier.class);
         HashSet<String> identifiersNames = new HashSet<>();
         identifiers.forEach(i -> identifiersNames.add(i.getText()));
@@ -128,7 +140,7 @@ public class MetricCalculator {
 
         HashMap<String, Integer> counts = new HashMap<>();
         for (String key : allKeywords) {
-            counts.put(key, StringUtils.countMatches(psiMethod.getText(), key));
+            counts.put(key, StringUtils.countMatches(this.statementsStr, key));
         }
 
         int linesCount = endLine - beginLine + 1;
@@ -142,7 +154,7 @@ public class MetricCalculator {
     }
 
     private void methodFeatures() {
-        String method = this.psiMethod.getText();
+        String method = this.statementsStr;
         int methodArea = getNestingArea(method);
         int lineCount = StringUtils.countMatches(method, '\n') + 1;
 
@@ -157,7 +169,7 @@ public class MetricCalculator {
     }
 
     private void metaFeatures() {
-        String fragment = psiMethod.getText();
+        String fragment = statementsStr;
         int fragmentArea = getNestingArea(fragment);
         int lineCount = StringUtils.countMatches(fragment, '\n') + 1;
 
@@ -172,8 +184,8 @@ public class MetricCalculator {
     }
 
     private void historicalFeatures() { //Actually no clue if it works
-        String repoPath = psiMethod.getContainingFile().getProject().getBasePath();
-        String filePath = psiMethod.getContainingFile().getVirtualFile().getCanonicalPath();
+        String repoPath = method.getContainingFile().getProject().getBasePath();
+        String filePath = method.getContainingFile().getVirtualFile().getCanonicalPath();
         Repository repository;
         try {
             repository = openRepository(repoPath);

@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiStatement;
 import com.intellij.psi.util.PsiTreeUtil;
 import git4idea.GitCommit;
 import git4idea.GitVcs;
@@ -19,10 +20,15 @@ import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.research.extractMethodExperiments.features.Feature;
+import org.jetbrains.research.extractMethodExperiments.features.FeatureItem;
+import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
 import org.jetbrains.research.extractMethodExperiments.haas.HaasAlgorithm;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,21 +42,30 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getN
  */
 public class NegativeRefactoringsExtractionRunner {
     private final Logger LOG = Logger.getInstance(NegativeRefactoringsExtractionRunner.class);
+    private FileWriter fileWriter;
     private final List<String> repositoryPaths;
 
-    public NegativeRefactoringsExtractionRunner(List<String> repositoryPaths) {
+    public NegativeRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
         this.repositoryPaths = repositoryPaths;
+        this.fileWriter = fw;
     }
 
     public void run() {
         for (String path : repositoryPaths) {
             LOG.info("Processing repo at: " + path);
+            System.out.println("Processing repo at: " + path);
             try {
                 collectProjectExamples(path);
             } catch (Exception e) {
                 LOG.error("Could not parse repository: " + path);
             }
         }
+        try {
+            this.fileWriter.close();
+        } catch (IOException e) {
+            LOG.error("Cannot close the file-writer.");
+        }
+        System.out.println("Done");
     }
 
     private void collectProjectExamples(String projectPath) {
@@ -88,11 +103,15 @@ public class NegativeRefactoringsExtractionRunner {
 
         for (VirtualFile virtualFile : changedJavaFiles) {
             PsiFile psiFile = buildPsiFile(project, virtualFile.getCanonicalPath());
-            handleMethods(psiFile);
+            try {
+                handleMethods(psiFile);
+            } catch (IOException e) {
+                LOG.error("Cannot handle commit with ID: " + commit.getId());
+            }
         }
     }
 
-    public void handleMethods(PsiFile psiFile) {
+    public void handleMethods(PsiFile psiFile) throws IOException {
         @NotNull Collection<PsiMethod> psiMethods = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class);
         for (PsiMethod method : psiMethods) {
             HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
@@ -100,10 +119,25 @@ public class NegativeRefactoringsExtractionRunner {
             // rank candidates by Haas's score
             candidateList.sort(Candidate::compareTo);
             //TODO: get the candidates with the lowest score and calculate features only for them!
-            MetricCalculator metricCalculator = new MetricCalculator(method,
-                    getNumberOfLine(psiFile, method.getTextRange().getStartOffset()),
-                    getNumberOfLine(psiFile, method.getTextRange().getEndOffset()));
-            //TODO: write result feature to the file
+            writeFeaturesToFile(psiFile, method, candidateList);
+        }
+    }
+
+    private void writeFeaturesToFile(PsiFile psiFile, PsiMethod method, List<Candidate> candidateList) throws IOException {
+        for(Candidate candidate : candidateList){
+            List<PsiStatement> statementList = candidate.getStatementList();
+            int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
+            int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
+            MetricCalculator metricCalculator = new MetricCalculator(candidate.getStatementList(), method, beginLine, endLine);
+
+            FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+            for(int i = 0; i < featuresVector.getDimension(); i++){
+                this.fileWriter.append(String.format("%.4f", featuresVector.getFeature(Feature.fromId(i))));
+                this.fileWriter.append(';');
+            }
+            this.fileWriter.append(String.format("%.4f", candidate.getScore()));
+            this.fileWriter.append(';');
+            this.fileWriter.append('\n');
         }
     }
 

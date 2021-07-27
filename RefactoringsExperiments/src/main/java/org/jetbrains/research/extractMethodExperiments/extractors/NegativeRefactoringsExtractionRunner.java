@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -18,7 +17,6 @@ import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
-import org.jetbrains.research.extractMethodExperiments.features.FeatureItem;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
 import org.jetbrains.research.extractMethodExperiments.haas.HaasAlgorithm;
@@ -28,7 +26,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
 
@@ -51,7 +48,7 @@ public class NegativeRefactoringsExtractionRunner {
         for (String repoPath : repositoryPaths) {
             LOG.info("[RefactoringJudge]: Processing repo at: " + repoPath);
             try {
-                collectProjectExamples(repoPath);
+                collectSamples(repoPath);
             } catch (Exception e) {
                 LOG.error("[RefactoringJudge]: Could not parse repository: " + repoPath);
             }
@@ -64,7 +61,7 @@ public class NegativeRefactoringsExtractionRunner {
         LOG.info("[RefactoringJudge]: Finished negative extraction");
     }
 
-    private void collectProjectExamples(String projectPath) {
+    private void collectSamples(String projectPath) {
         Project project = ProjectUtil.openOrImport(projectPath, null, true);
         if (project == null) {
             LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
@@ -89,12 +86,11 @@ public class NegativeRefactoringsExtractionRunner {
     }
 
     private void processCommit(GitCommit commit, Project project) {
-        List<PsiJavaFile> javaFiles = extractFiles(project);
+         List<PsiJavaFile> javaFiles = extractFiles(project);
 
         for (PsiJavaFile javaFile : javaFiles) {
-            PsiFile psiFile = buildPsiFile(project, ((VirtualFile) javaFile).getCanonicalPath());
             try {
-                handleMethods(psiFile);
+                handleMethods(javaFile);
             } catch (IOException e) {
                 LOG.error("[RefactoringJudge]: Cannot handle commit with ID: " + commit.getId());
             }
@@ -106,8 +102,6 @@ public class NegativeRefactoringsExtractionRunner {
         for (PsiMethod method : psiMethods) {
             HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
             List<Candidate> candidateList = haasAlgorithm.getCandidateList();
-            // rank candidates by Haas's score
-            candidateList.sort(Candidate::compareTo);
             //TODO: get the candidates with the lowest score and calculate features only for them!
             writeFeaturesToFile(psiFile, method, candidateList);
         }
@@ -115,20 +109,21 @@ public class NegativeRefactoringsExtractionRunner {
 
     private void writeFeaturesToFile(PsiFile psiFile, PsiMethod method, List<Candidate> candidateList) throws IOException {
         for(Candidate candidate : candidateList){
-            List<PsiStatement> statementList = candidate.getStatementList();
-            int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
-            int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
-            MetricCalculator metricCalculator = new MetricCalculator(candidate.getStatementList(), method, beginLine, endLine);
+            if(candidate != null) {
+                List<PsiStatement> statementList = candidate.getStatementList();
+                int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
+                int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
+                MetricCalculator metricCalculator = new MetricCalculator(candidate.getStatementList(), method, beginLine, endLine);
 
-            FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
-            for(int i = 0; i < featuresVector.getDimension(); i++){
-                this.fileWriter.append(String.format("%.4f", featuresVector.getFeature(Feature.fromId(i))));
+                FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+                for (int i = 0; i < featuresVector.getDimension(); i++) {
+                    this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
+                    this.fileWriter.append(';');
+                }
+                this.fileWriter.append(String.valueOf(candidate.getScore()));
                 this.fileWriter.append(';');
-                // TODO: Change decimal delimiter to full-stop.
+                this.fileWriter.append('\n');
             }
-            this.fileWriter.append(String.format("%.4f", candidate.getScore()));
-            this.fileWriter.append(';');
-            this.fileWriter.append('\n');
         }
     }
 

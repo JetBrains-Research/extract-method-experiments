@@ -35,8 +35,8 @@ public class Candidate implements Comparable<Candidate> {
         this.methodAsString = psiMethod.getText();
         this.candidateAsString = ListToStr(this.statementList);
         calculateRemainder();
-        this.methodArea = getNestingArea(candidateAsString);
-        this.methodDepth = getNestingDepth(candidateAsString);
+        this.methodArea = getNestingArea(methodAsString);
+        this.methodDepth = getNestingDepth(methodAsString);
         calculateScore();
     }
 

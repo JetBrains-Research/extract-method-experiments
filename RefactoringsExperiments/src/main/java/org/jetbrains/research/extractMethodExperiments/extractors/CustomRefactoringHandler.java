@@ -98,9 +98,8 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 
         for (int i = 0; i < featuresVector.getDimension(); i++) {
-            this.fileWriter.append(String.format("%.4f", featuresVector.getFeature(Feature.fromId(i))));
+            this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
             this.fileWriter.append(';');
-            // TODO: Change decimal delimiter to full-stop.
         }
 
         this.fileWriter.append('\n');

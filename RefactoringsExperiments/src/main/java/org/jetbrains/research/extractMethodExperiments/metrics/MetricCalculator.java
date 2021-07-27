@@ -23,6 +23,8 @@ import org.jetbrains.research.extractMethodExperiments.utils.MemberSets;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
@@ -184,11 +186,11 @@ public class MetricCalculator {
     }
 
     private void historicalFeatures() { //Actually no clue if it works
-        String repoPath = method.getContainingFile().getProject().getBasePath();
-        String filePath = method.getContainingFile().getVirtualFile().getCanonicalPath();
+        Path repoPath = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
+        Path filePath = Paths.get(method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
         Repository repository;
         try {
-            repository = openRepository(repoPath);
+            repository = openRepository(repoPath.toString());
         } catch (Exception e) {
             LOG.error("[RefactoringJudge]: Failed to open the project repository.");
             return;
@@ -197,7 +199,7 @@ public class MetricCalculator {
         BlameResult result = null;
         try {
             result = new Git(repository).blame().setFilePath
-                    (filePath.substring(filePath.indexOf("src")))
+                    (filePath.relativize(repoPath).toString())
                     .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
         } catch (GitAPIException e) {
             LOG.error("[RefactoringJudge]: Failed to get GitBlame.");
@@ -245,6 +247,10 @@ public class MetricCalculator {
             featuresVector.addFeature(new FeatureItem(Feature.LiveTimeOfFragment, maxTime - minTime));
             featuresVector.addFeature(
                     new FeatureItem(Feature.LiveTimePerLine, (double) totalTime / creationDates.size()));
+        } else {
+            featuresVector.addFeature(new FeatureItem(Feature.LiveTimeOfFragment, 0));
+            featuresVector.addFeature(
+                    new FeatureItem(Feature.LiveTimePerLine, (double) 0));
         }
     }
 }

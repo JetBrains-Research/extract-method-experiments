@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.findMethodByName;
-import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getNumberOfLine;
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
+import static org.jetbrains.research.extractMethodExperiments.utils.StringUtil.calculateSignature;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
@@ -81,7 +81,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                 if (filePath != null && locationInfo.getFilePath().equals(filePath.replace(cleanRepoPath, ""))) {
                     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                     if (psiFile != null) {
-                        PsiMethod method = findMethodByName(psiFile, extractedOperation.getName());
+                        PsiMethod method = findMethodBySignature(psiFile, calculateSignature(extractedOperation));
                         if (method != null) {
                             writeFeaturesToFile(psiFile, method);
                         }
@@ -104,4 +104,5 @@ public class CustomRefactoringHandler extends RefactoringHandler {
 
         this.fileWriter.append('\n');
     }
+
 }

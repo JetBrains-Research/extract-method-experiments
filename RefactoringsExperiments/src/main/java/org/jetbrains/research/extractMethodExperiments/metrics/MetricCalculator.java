@@ -156,7 +156,7 @@ public class MetricCalculator {
     }
 
     private void methodFeatures() {
-        String method = this.statementsStr;
+        String method = this.method.getText();
         int methodArea = getNestingArea(method);
         int lineCount = StringUtils.countMatches(method, '\n') + 1;
 

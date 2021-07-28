@@ -29,8 +29,8 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsS
  */
 public class PositiveRefactoringsExtractionRunner {
     private final List<String> repositoriesPaths;
-    private FileWriter fileWriter;
-    private Logger LOG = Logger.getInstance(PositiveRefactoringsExtractionRunner.class);
+    private final FileWriter fileWriter;
+    private final Logger LOG = Logger.getInstance(PositiveRefactoringsExtractionRunner.class);
 
     public PositiveRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
         this.repositoriesPaths = repositoryPaths;
@@ -39,6 +39,7 @@ public class PositiveRefactoringsExtractionRunner {
 
     public void run() {
         for (String repoPath : repositoriesPaths) {
+            LOG.info("[RefactoringJudge]: Processing repo at: " + repoPath);
             try {
                 collectSamples(repoPath);
             } catch (Exception e) {

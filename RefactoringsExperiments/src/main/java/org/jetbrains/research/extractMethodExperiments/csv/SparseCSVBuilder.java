@@ -11,9 +11,9 @@ import java.util.List;
 
 public class SparseCSVBuilder {
     public static SparseCSVBuilder sharedInstance;
-    private PrintWriter pw;
-    private List<ICSVItem> items = new ArrayList<>();
-    private int nFeatures;
+    private final PrintWriter pw;
+    private final List<ICSVItem> items = new ArrayList<>();
+    private final int nFeatures;
 
     public SparseCSVBuilder(final String fileName, int nFeatures) throws IOException {
         FileWriter fileWriter = new FileWriter(fileName);

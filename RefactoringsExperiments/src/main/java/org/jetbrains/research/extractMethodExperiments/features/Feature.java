@@ -93,9 +93,16 @@ public enum Feature {
     KeywordWhileTotalCount("KeywordWhileTotalCount", 80),
     KeywordWhileCountPerLine("KeywordWhileCountPerLine", 81);
 
+    private final String name;
+    private final int id;
+
     Feature(String name, int id) {
         this.name = name;
         this.id = id;
+    }
+
+    public static Feature fromId(int id) {
+        return Feature.values()[id];
     }
 
     public String getName() {
@@ -149,13 +156,6 @@ public enum Feature {
 
     public int getId() {
         return id;
-    }
-
-    private String name;
-    private int id;
-
-    public static Feature fromId(int id) {
-        return Feature.values()[id];
     }
 }
 

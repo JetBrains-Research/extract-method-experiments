@@ -3,7 +3,7 @@ package org.jetbrains.research.extractMethodExperiments.csv;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 
 public class CSVItem implements ICSVItem {
-    private Feature type;
+    private final Feature type;
     private double value;
 
     public CSVItem(Feature type, double value) {

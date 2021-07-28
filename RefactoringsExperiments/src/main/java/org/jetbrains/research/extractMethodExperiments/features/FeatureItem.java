@@ -1,7 +1,7 @@
 package org.jetbrains.research.extractMethodExperiments.features;
 
 public class FeatureItem implements IFeatureItem {
-    private Feature type;
+    private final Feature type;
     private double value;
 
     public FeatureItem(Feature type, double value) {

@@ -68,7 +68,7 @@ public class PluginRunner implements ApplicationStarter {
                 LOG.error("[RefactoringJudge]: Failed to make header for positive.csv.");
             }
 
-            if(positiveFW != null) {
+            if (positiveFW != null) {
                 PositiveRefactoringsExtractionRunner positiveRefactoringsExtractionRunner = new PositiveRefactoringsExtractionRunner(projectPaths, positiveFW);
                 positiveRefactoringsExtractionRunner.run();
             }
@@ -81,7 +81,7 @@ public class PluginRunner implements ApplicationStarter {
             } catch (IOException e) {
                 LOG.error("[RefactoringJudge]: Failed to make header for negative.csv.");
             }
-            if(negativeFW != null) {
+            if (negativeFW != null) {
                 NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths, negativeFW);
                 negativeRefactoringsExtractionRunner.run();
             }
@@ -111,7 +111,7 @@ public class PluginRunner implements ApplicationStarter {
 
     private FileWriter makePositiveHeader(String outputDir) throws IOException {
         FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
-        for(int i = 0; i < featureCount; i++){
+        for (int i = 0; i < featureCount; i++) {
             positiveFW.append(Feature.fromId(i).getName());
             positiveFW.append(';');
         }
@@ -121,7 +121,7 @@ public class PluginRunner implements ApplicationStarter {
 
     private FileWriter makeNegativeHeader(String outputDir) throws IOException {
         FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
-        for(int i = 0; i < featureCount; i++){
+        for (int i = 0; i < featureCount; i++) {
             negativeFW.append(Feature.fromId(i).getName());
             negativeFW.append(';');
         }

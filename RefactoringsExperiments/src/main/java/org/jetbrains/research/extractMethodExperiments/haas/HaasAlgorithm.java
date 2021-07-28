@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HaasAlgorithm {
-    private List<Candidate> candidateList;
     private final int minimumNumberOfStatements = 3;
+    private final List<Candidate> candidateList;
 
     public HaasAlgorithm(PsiMethod psiMethod) {
         candidateList = new ArrayList<>();

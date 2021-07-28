@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class FeaturesVector implements IFeaturesVector {
-    private List<IFeatureItem> features = new ArrayList<>();
-    private int dimension;
+    private final List<IFeatureItem> features = new ArrayList<>();
+    private final int dimension;
 
     public FeaturesVector(int dimension) {
         this.dimension = dimension;
@@ -18,7 +18,7 @@ public class FeaturesVector implements IFeaturesVector {
         this.features.add(item);
     }
 
-    public int getDimension(){
+    public int getDimension() {
         return dimension;
     }
 
@@ -32,7 +32,7 @@ public class FeaturesVector implements IFeaturesVector {
 
     @Override
     public double getFeature(Feature toSearch) {
-        for (IFeatureItem item: features) {
+        for (IFeatureItem item : features) {
             if (item.getId() == toSearch.getId()) {
                 return item.getValue();
             }

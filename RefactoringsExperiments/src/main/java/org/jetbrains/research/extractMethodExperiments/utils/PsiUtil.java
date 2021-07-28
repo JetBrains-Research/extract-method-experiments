@@ -21,13 +21,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
-import org.jetbrains.research.extractMethodExperiments.utils.StringUtil;
 
 import static org.jetbrains.research.extractMethodExperiments.utils.StringUtil.calculateSignature;
 
 public class PsiUtil {
-    private static Logger LOG = Logger.getInstance(PsiUtil.class);
     private static final String FILE_TYPE_NAME = "JAVA";
+    private static final Logger LOG = Logger.getInstance(PsiUtil.class);
 
     public static int getNumberOfLine(PsiFile file, int offset) {
         FileViewProvider fileViewProvider = file.getViewProvider();

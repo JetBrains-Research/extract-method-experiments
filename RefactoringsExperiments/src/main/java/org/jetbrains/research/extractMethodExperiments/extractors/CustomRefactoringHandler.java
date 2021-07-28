@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.findMethodBySignature;
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getNumberOfLine;
 import static org.jetbrains.research.extractMethodExperiments.utils.StringUtil.calculateSignature;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
@@ -31,7 +32,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final GitCommit gitCommit;
     private final String repositoryPath;
     private final FileWriter fileWriter;
-    private Logger LOG = Logger.getInstance(CustomRefactoringHandler.class);
+    private final Logger LOG = Logger.getInstance(CustomRefactoringHandler.class);
 
     public CustomRefactoringHandler(Project project,
                                     String repositoryPath,

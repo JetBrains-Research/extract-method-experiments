@@ -8,10 +8,10 @@ import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
 import org.jetbrains.research.extractMethodExperiments.csv.CSVItem;
-import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.csv.ICSVItem;
+import org.jetbrains.research.extractMethodExperiments.csv.SparseCSVBuilder;
+import org.jetbrains.research.extractMethodExperiments.features.Feature;
 
 import java.util.ArrayList;
 import java.util.HashSet;

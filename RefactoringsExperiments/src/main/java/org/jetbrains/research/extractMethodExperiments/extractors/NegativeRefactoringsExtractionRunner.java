@@ -36,8 +36,8 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
  */
 public class NegativeRefactoringsExtractionRunner {
     private final Logger LOG = Logger.getInstance(NegativeRefactoringsExtractionRunner.class);
-    private FileWriter fileWriter;
     private final List<String> repositoryPaths;
+    private final FileWriter fileWriter;
 
     public NegativeRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
         this.repositoryPaths = repositoryPaths;
@@ -86,7 +86,7 @@ public class NegativeRefactoringsExtractionRunner {
     }
 
     private void processCommit(GitCommit commit, Project project) {
-         List<PsiJavaFile> javaFiles = extractFiles(project);
+        List<PsiJavaFile> javaFiles = extractFiles(project);
 
         for (PsiJavaFile javaFile : javaFiles) {
             try {
@@ -108,8 +108,8 @@ public class NegativeRefactoringsExtractionRunner {
     }
 
     private void writeFeaturesToFile(PsiFile psiFile, PsiMethod method, List<Candidate> candidateList) throws IOException {
-        for(Candidate candidate : candidateList){
-            if(candidate != null) {
+        for (Candidate candidate : candidateList) {
+            if (candidate != null) {
                 List<PsiStatement> statementList = candidate.getStatementList();
                 int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
                 int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());

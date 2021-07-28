@@ -2,7 +2,6 @@ package org.jetbrains.research.extractMethodExperiments.haas;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
 import org.apache.commons.lang3.StringUtils;
@@ -21,12 +20,12 @@ public class Candidate implements Comparable<Candidate> {
     private final PsiMethod originalMethod;
     private final List<PsiStatement> statementList;
     private final String methodAsString;
-    private String candidateAsString;
-    private String remainderAsString = "";
     private final double maxLengthScore = 3;
     private final double lengthScoreSensitivity = 0.1;
-    private int methodArea;
-    private int methodDepth;
+    private final String candidateAsString;
+    private String remainderAsString = "";
+    private final int methodArea;
+    private final int methodDepth;
     private double score;
 
     public Candidate(List<PsiStatement> statements, PsiMethod psiMethod) {
@@ -118,7 +117,7 @@ public class Candidate implements Comparable<Candidate> {
         return this.candidateAsString;
     }
 
-    public final List<PsiStatement> getStatementList(){
+    public final List<PsiStatement> getStatementList() {
         return this.statementList;
     }
 

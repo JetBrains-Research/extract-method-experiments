@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeatureItem;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
-import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
 import org.jetbrains.research.extractMethodExperiments.utils.MemberSets;
 
 import java.io.File;
@@ -36,7 +35,7 @@ public class MetricCalculator {
     private final PsiMethod method;
     private final int beginLine;
     private final int endLine;
-    private FeaturesVector featuresVector;
+    private final FeaturesVector featuresVector;
 
     public MetricCalculator(List<PsiStatement> statements, PsiMethod method, int beginLine, int endLine) {
         this.statementsStr = ListToStr(statements);
@@ -56,14 +55,6 @@ public class MetricCalculator {
         computeFeatureVector();
     }
 
-    private void computeFeatureVector() {
-        couplingFeatures();
-        keywordFeatures();
-        methodFeatures();
-        metaFeatures();
-        historicalFeatures();
-    }
-
     private static Repository openRepository(String repositoryPath) throws Exception {
         File folder = new File(repositoryPath);
         Repository repository;
@@ -78,6 +69,14 @@ public class MetricCalculator {
             throw new FileNotFoundException(repositoryPath);
         }
         return repository;
+    }
+
+    private void computeFeatureVector() {
+        couplingFeatures();
+        keywordFeatures();
+        methodFeatures();
+        metaFeatures();
+        historicalFeatures();
     }
 
     public FeaturesVector getFeaturesVector() {
@@ -156,14 +155,14 @@ public class MetricCalculator {
     }
 
     private void methodFeatures() {
-        String method = this.method.getText();
-        int methodArea = getNestingArea(method);
-        int lineCount = StringUtils.countMatches(method, '\n') + 1;
+        String methodStr = this.method.getText();
+        int methodArea = getNestingArea(methodStr);
+        int lineCount = StringUtils.countMatches(methodStr, '\n') + 1;
 
         featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationLines, lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationSymbols, method.length()));
+        featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationSymbols, methodStr.length()));
         featuresVector.addFeature(new FeatureItem(
-                Feature.MethodDeclarationSymbolsPerLine, (double) method.length() / lineCount));
+                Feature.MethodDeclarationSymbolsPerLine, (double) methodStr.length() / lineCount));
         featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationArea, methodArea));
         featuresVector.addFeature(new FeatureItem(
                 Feature.MethodDeclarationAreaPerLine, (double) methodArea / lineCount));
@@ -250,7 +249,7 @@ public class MetricCalculator {
         } else {
             featuresVector.addFeature(new FeatureItem(Feature.LiveTimeOfFragment, 0));
             featuresVector.addFeature(
-                    new FeatureItem(Feature.LiveTimePerLine, (double) 0));
+                    new FeatureItem(Feature.LiveTimePerLine, 0));
         }
     }
 }

@@ -5,7 +5,7 @@ import com.intellij.psi.PsiStatement;
 import java.util.List;
 
 public class StatementListUtil {
-    public static String ListToStr(List<PsiStatement> statementList){
+    public static String ListToStr(List<PsiStatement> statementList) {
         StringBuilder result = new StringBuilder();
         for (PsiStatement statement : statementList) {
             result.append(statement.getText());

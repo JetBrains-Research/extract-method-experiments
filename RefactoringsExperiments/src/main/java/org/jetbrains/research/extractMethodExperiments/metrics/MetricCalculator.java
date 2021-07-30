@@ -198,7 +198,7 @@ public class MetricCalculator {
         BlameResult result = null;
         try {
             result = new Git(repository).blame().setFilePath
-                    (filePath.relativize(repoPath).toString())
+                    (repoPath.relativize(filePath).toString())
                     .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
         } catch (GitAPIException e) {
             LOG.error("[RefactoringJudge]: Failed to get GitBlame.");

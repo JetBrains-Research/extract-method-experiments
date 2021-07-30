@@ -38,32 +38,21 @@ public class PluginRunner implements ApplicationStarter {
         }
         if (line == null) return;
 
-        List<String> projectPaths;
-        if (line.hasOption("projectsDirPath")) {
-            String projectsFilePath = line.getOptionValue("projectsDirPath");
-            projectPaths = extractProjectsPaths(projectsFilePath);
-        } else {
-            LOG.error("[RefactoringJudge]: Projects directory is mandatory.");
-            return;
-        }
+        runExtractions(line);
+    }
 
-        String outputDir = null;
+    private void runExtractions(CommandLine cmdLine) {
+        List<String> projectPaths = new ArrayList<>();
+        StringBuilder outputDirPathBuilder = new StringBuilder();
 
-        if (line.hasOption("datasetsDirPath")) {
-            outputDir = line.getOptionValue("datasetsDirPath");
-            try {
-                Files.createDirectories(Paths.get(outputDir));
-            } catch (IOException e) {
-                LOG.error("[RefactoringJudge]: Failed to create output directory.");
-            }
-        } else {
-            LOG.error("[RefactoringJudge]: Output directory is mandatory.");
-        }
+        configureIO(projectPaths, outputDirPathBuilder, cmdLine);
 
-        if (line.hasOption("generatePositiveSamples")) {
+        String outputDirPath = outputDirPathBuilder.toString();
+
+        if (cmdLine.hasOption("generatePositiveSamples")) {
             FileWriter positiveFW = null;
             try {
-                positiveFW = makePositiveHeader(outputDir);
+                positiveFW = makePositiveHeader(outputDirPath);
             } catch (Exception e) {
                 LOG.error("[RefactoringJudge]: Failed to make header for positive.csv.");
             }
@@ -74,10 +63,10 @@ public class PluginRunner implements ApplicationStarter {
             }
         }
 
-        if (line.hasOption("generateNegativeSamples")) {
+        if (cmdLine.hasOption("generateNegativeSamples")) {
             FileWriter negativeFW = null;
             try {
-                negativeFW = makeNegativeHeader(outputDir);
+                negativeFW = makeNegativeHeader(outputDirPath);
             } catch (IOException e) {
                 LOG.error("[RefactoringJudge]: Failed to make header for negative.csv.");
             }
@@ -86,6 +75,29 @@ public class PluginRunner implements ApplicationStarter {
                 negativeRefactoringsExtractionRunner.run();
             }
         }
+    }
+
+    private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine){
+        if (cmdLine.hasOption("projectsDirPath")) {
+            String projectsFilePath = cmdLine.getOptionValue("projectsDirPath");
+            inRepoPaths.addAll(extractProjectsPaths(projectsFilePath));
+        } else {
+            LOG.error("[RefactoringJudge]: Projects directory is mandatory.");
+            return;
+        }
+
+
+        if (cmdLine.hasOption("datasetsDirPath")) {
+            outputDirBuilder.append(cmdLine.getOptionValue("datasetsDirPath"));
+            try {
+                Files.createDirectories(Paths.get(outputDirBuilder.toString()));
+            } catch (IOException e) {
+                LOG.error("[RefactoringJudge]: Failed to create output directory.");
+            }
+        } else {
+            LOG.error("[RefactoringJudge]: Output directory is mandatory.");
+        }
+
     }
 
     private Options configureOptionsForCLI() {
@@ -113,7 +125,8 @@ public class PluginRunner implements ApplicationStarter {
         FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
         for (int i = 0; i < featureCount; i++) {
             positiveFW.append(Feature.fromId(i).getName());
-            positiveFW.append(';');
+            if (i != featureCount - 1)
+                positiveFW.append(';');
         }
         positiveFW.append('\n');
         return positiveFW;
@@ -125,7 +138,7 @@ public class PluginRunner implements ApplicationStarter {
             negativeFW.append(Feature.fromId(i).getName());
             negativeFW.append(';');
         }
-        negativeFW.append("Score;\n");
+        negativeFW.append("Score\n");
 
         return negativeFW;
     }

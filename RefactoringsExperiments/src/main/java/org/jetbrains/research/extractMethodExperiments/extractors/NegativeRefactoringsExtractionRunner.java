@@ -121,14 +121,8 @@ public class NegativeRefactoringsExtractionRunner {
                     this.fileWriter.append(';');
                 }
                 this.fileWriter.append(String.valueOf(candidate.getScore()));
-                this.fileWriter.append(';');
                 this.fileWriter.append('\n');
             }
         }
-    }
-
-    public PsiFile buildPsiFile(Project project, String content) {
-        PsiFileFactory factory = PsiFileFactory.getInstance(project);
-        return factory.createFileFromText(JavaLanguage.INSTANCE, content);
     }
 }

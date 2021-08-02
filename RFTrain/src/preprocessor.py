@@ -11,19 +11,21 @@ class Preprocessor:
 
         self.df_pos = pd.read_csv(self.path_to_positive, delimiter=';', error_bad_lines=False).dropna()
         self.df_neg = pd.read_csv(self.path_to_negative, delimiter=';', error_bad_lines=False).dropna()
-        self.df_neg = self.df_neg[self.df_neg.score > 0]
+        self.df_neg = self.df_neg[self.df_neg.Score > 0]
 
     def make_binary(self):
         """
         Makes and returns  a pair X, y which correspond to features(X) and targets(y) dataframe,
         each sample has target label of 1 or 0, suitable for binary classification.
         """
-        negatives = self.df_neg[self.df_neg.score <= self.df_neg.score.quantile(
+        negatives = self.df_neg[self.df_neg.Score <= self.df_neg.Score.quantile(
             self.quantile_to_negative)]  # Filter only lower part, up to specified quantile
         negatives = negatives.assign(label=lambda x: 0)  # Set label to zero, meaning negative
-        negatives = negatives.drop(columns=['score'])
+        negatives = negatives.drop(columns=['Score'])
 
-        whole_df = pd.concat([self.df_pos, negatives])
+        positives = self.df_pos.assign(label=lambda x: 1)
+
+        whole_df = pd.concat([positives, negatives])
         X = whole_df.drop(columns=['label'])
         y = whole_df.label
 
@@ -38,12 +40,12 @@ class Preprocessor:
         whether `neutral` should be built with quantile consideration
         """
         if consider_quantile:
-            neutral = self.df_neg[self.df_neg.score <= self.df_neg.score.quantile(
-                self.quantile_to_negative)].drop(columns=['score', 'label'])
+            neutral = self.df_neg[self.df_neg.Score <= self.df_neg.Score.quantile(
+                self.quantile_to_negative)].drop(columns=['Score'])
 
         else:
-            neutral = self.df_neg.drop(columns=['score', 'label'])
+            neutral = self.df_neg.drop(columns=['Score'])
 
-        positive = self.df_pos.drop(columns=['label'])
+        positive = self.df_pos
 
         return neutral, positive

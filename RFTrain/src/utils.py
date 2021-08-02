@@ -50,20 +50,20 @@ def set_train_path(models_path_name):
 
 def import_model_args(model_config_path, model_type):
     type_to_config_parser = {
-        'RF': import_rf_args,
-        'SVC': import_svc_args,
-        'LSVC': import_linear_svc_args,
-        'SGD': import_sgd_args,
-        'DNN': import_dnn_args,
-        'OCC': import_occ_args,
-        'GNB': import_gnb_args,
-        'CNB': import_cnb_args,
+        'rf': import_rf_args,
+        'svc': import_svc_args,
+        'lsvc': import_linear_svc_args,
+        'sgd': import_sgd_args,
+        'dnn': import_dnn_args,
+        'occ': import_occ_args,
+        'gnb': import_gnb_args,
+        'cnb': import_cnb_args,
     }
 
     content = configparser.ConfigParser()
     content.read(model_config_path)
 
-    return type_to_config_parser[model_type](content['settings'])
+    return type_to_config_parser[model_type.lower()](content['settings'])
 
 
 def import_rf_args(settings):
@@ -115,12 +115,13 @@ def import_sgd_args(settings):
 def import_dnn_args(settings):
     """Returns parsed config for DeepNeuralNetwork model from provided settings"""
     args = {
-        'optimizer': settings.get('optimizer', fallback='Adadelta'),
+        'optimizer': settings.get('optimizer', fallback='adadelta'),
         'loss': settings.get('loss', fallback='binary_crossentropy'),
         'hidden_layers_width': list(map(int, (settings.get('hidden_layers_width', fallback='512, 128')).split(','))),
         'has_dropout': settings.getboolean('has_dropout', fallback=True),
         'dropout_rate': settings.getfloat('dropout_rate', fallback=0.5),
-        'epoch_count': settings.getint('epoch_count', fallback=100)
+        'epoch_count': settings.getint('epoch_count', fallback=100),
+        'batch_size': settings.getint('batch_size')
     }
     return args
 

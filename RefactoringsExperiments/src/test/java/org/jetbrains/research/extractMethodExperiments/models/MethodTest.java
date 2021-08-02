@@ -2,11 +2,12 @@ package org.jetbrains.research.extractMethodExperiments.models;
 
 import org.junit.jupiter.api.Test;
 
-import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.*;
+import static org.jetbrains.research.extractMethodExperiments.utils.CodeFormattingUtils.clearCode;
+import static org.jetbrains.research.extractMethodExperiments.utils.feature.generators.DepthAnalyzer.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-class FragmentTest {
+class MethodTest {
     String codeToTest1 =
             "for(int i = 0; i < 100; i++) {\n" +
                     "     if(a>b){\n" +
@@ -29,11 +30,11 @@ class FragmentTest {
             "}"; // 0
 
 
-/*    @Test
+    @Test
     void clearCodeTest() {
-        assertEquals(codeToTest1, Fragment.clearCode(codeToTest1), "valid code should remain valid");
-        assertEquals("return i;", Fragment.clearCode(codeToTest2), "embedded into braces code be cleared");
-    }*/
+        assertEquals(codeToTest1, clearCode(codeToTest1), "valid code should remain valid");
+        assertEquals("return i;", clearCode(codeToTest2), "embedded into braces code be cleared");
+    }
 
     @Test
     void getNestingDepthTest() {
@@ -47,5 +48,4 @@ class FragmentTest {
         assertEquals(7, getNestingArea(codeToTest1), "simple nesting area should be properly calculated");
         assertEquals(14, getNestingArea(codeToTest3), "full method's nesting area should be properly calculated");
     }
-
 }

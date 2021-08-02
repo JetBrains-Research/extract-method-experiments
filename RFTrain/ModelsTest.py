@@ -1,18 +1,18 @@
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-import numpy as np
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-
-from  sklearn.metrics import recall_score, precision_score, f1_score
-from sklearn.metrics import average_precision_score
-from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
-from sklearn import svm
-from sklearn.neural_network import MLPClassifier
-from scipy.stats import wilcoxon
-import statistics
 from statistics import mean
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.stats import wilcoxon
+from sklearn import svm
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import average_precision_score
 from sklearn.metrics import matthews_corrcoef
+from sklearn.metrics import recall_score, precision_score, f1_score
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB, BernoulliNB
+from sklearn.neural_network import MLPClassifier
+
 
 def important_features(bayes):
     neg_class_prob_sorted = bayes.feature_log_prob_[0, :].argsort()
@@ -20,6 +20,7 @@ def important_features(bayes):
 
     print(neg_class_prob_sorted[:10])
     print(pos_class_prob_sorted[:10])
+
 
 def important_features_rf(rf):
     importances = rf.feature_importances_
@@ -30,21 +31,25 @@ def important_features_rf(rf):
     plt.xlabel('Relative Importance')
     plt.savefig("res.png")
 
+
 def test_bernoulli():
     print("\nBERNOULLI_NB")
     model = BernoulliNB(alpha=1)  # GaussianNB()
     test_model(model)
     important_features(model)
 
+
 def test_gauss():
     print("\nGAUSS_NB")
     model = GaussianNB()
     test_model(model)
 
+
 def test_SVM():
     print("\nSVM")
     model = svm.SVC(gamma='scale')
     test_model(model)
+
 
 def test_RF():
     print("\nRF")
@@ -52,10 +57,12 @@ def test_RF():
     test_model(model)
     important_features_rf(model)
 
+
 def test_NN():
     print("\nNN")
     model = MLPClassifier()
     test_model(model)
+
 
 def test_model(model):
     features = pd.read_csv('res.csv')
@@ -94,11 +101,13 @@ def test_model(model):
     mcc = matthews_corrcoef(test_labels, predictions)
     print("MCC: " + str(mcc))
 
+
 def test_RF_CV():
     print("\nRF")
     model = RandomForestClassifier(n_estimators=1000, random_state=42)
     test_modelCV(model)
     important_features_rf(model)
+
 
 def test_modelCV(model):
     features = pd.read_csv('nonequal.csv')
@@ -120,10 +129,9 @@ def test_modelCV(model):
     mcc_ = []
 
     for i in range(10):
-
         features = np.array(features)
         train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=0.1,
-                                                                                random_state=(i+1) * 7)
+                                                                                    random_state=(i + 1) * 7)
         model.fit(train_features, train_labels)
 
         predictions = model.predict(test_features)
@@ -165,6 +173,7 @@ def test_modelCV(model):
     print("Mean f1: " + str(mean(f1_)))
     print("Mean p-val: " + str(mean(pv_)))
     print("Mean MCC: " + str(mean(mcc_)))
+
 
 def test_model_real(model):
     train_features = pd.read_csv('false_train.csv')
@@ -208,17 +217,19 @@ def test_model_real(model):
     mcc = matthews_corrcoef(test_labels, predictions)
     print("MCC: " + str(mcc))
 
+
 def test_RF_real():
     print("\nRF")
     model = RandomForestClassifier(n_estimators=1000, random_state=42)
     test_model_real(model)
     important_features_rf(model)
 
+
 if __name__ == "__main__":
-    #test_bernoulli()
-    #test_gauss()
-    #test_SVM()
-    #test_RF()
-    #test_NN()
+    # test_bernoulli()
+    # test_gauss()
+    # test_SVM()
+    # test_RF()
+    # test_NN()
     test_RF_CV()
-    #test_RF_real()
+    # test_RF_real()

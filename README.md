@@ -6,17 +6,20 @@ The repository contains the tools and scripts used in [AntiCopyPaster project](h
 
 The `Refactoring Experiments` directory contains the tools that were used to gather the data that was used to train the machine learning models.
 
-### How to use the tool
+### Usage
+There are two possible ways to use the tool:
+* Generate positive-labeles samples using option `generatePositiveSamples`. It will start extraction of already performed Extract Method refactorings in changes history of existing Java projects using [RefactoringMiner](https://github.com/JetBrains-Research/RefactoringMiner).
+* Generate negative-labeles samples using option `generateNegativeSamples`. It will generate all possible sequences of statements in methods, rank it using algorithm suggested by [Haas et al.](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.721.2014&rep=rep1&type=pdf) and get the worse ones as candidates that should not be recommended for extraction.
+
 #### Unix systems
 
 Open `Refactoring Experiments` directory and execute the following command
 
 ```
-./gradlew run --args="-p=data/star_top100.txt -n=data/apache_repos.txt" 
+./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsFilePath=/path/to/file.txt -PgeneratePositiveSamples
 ```
-It will start the extraction of positive-labeled cases from repositories specified in `data/star_top100.txt` file, and negative-labeled cases from `data/apache_repos.txt`. These files can be changed to any other pair of files for any reason.
-
-If you want to collect only one type of cases, just use `--args="-p=data/a.txt"` for positives, and `--args="-n=data/b.txt"` for negatives. 
+It will start the extraction of positive-labeled cases from repositories on your computer specified in `file.txt`.
+To run the generation of negative-labeled cases, you need to use `-PgenerateNegativeSamples` option.
 
 #### Windows systems
 

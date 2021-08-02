@@ -1,0 +1,12 @@
+<idea-plugin>
+    <id>org.jetbrains.research.extractMethodExperiments</id>
+    <name>RefactoringsExperiments</name>
+    <vendor>JetBrains Research</vendor>
+
+    <depends>com.intellij.modules.java</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <appStarter implementation="org.jetbrains.research.extractMethodExperiments.PluginRunner"/>
+    </extensions>
+</idea-plugin>

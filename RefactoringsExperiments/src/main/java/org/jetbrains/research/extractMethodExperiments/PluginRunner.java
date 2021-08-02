@@ -86,7 +86,6 @@ public class PluginRunner implements ApplicationStarter {
             return;
         }
 
-
         if (cmdLine.hasOption("datasetsDirPath")) {
             outputDirBuilder.append(cmdLine.getOptionValue("datasetsDirPath"));
             try {

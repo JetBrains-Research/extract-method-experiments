@@ -29,6 +29,7 @@ public class DepthAnalyzer {
         }
         return depthInLine;
     }
+
     /**
      * Computes nesting area (i.e. line-wise sum of nesting levels) of the given code
      */
@@ -38,6 +39,7 @@ public class DepthAnalyzer {
             area += value;
         return area;
     }
+
     /**
      * Computes nesting depth (i.e. line-wise maximum of nesting levels) of the given code
      */

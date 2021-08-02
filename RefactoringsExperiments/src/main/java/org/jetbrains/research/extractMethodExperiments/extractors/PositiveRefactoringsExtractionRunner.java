@@ -4,8 +4,8 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vfs.VirtualFile;
 import git4idea.GitCommit;
 import git4idea.GitVcs;
@@ -18,49 +18,63 @@ import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+
+import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsSetup;
 
 /**
  * Runs RefactoringMiner and processes discovered "Extract Method" refactorings in project's changes history.
  */
 public class PositiveRefactoringsExtractionRunner {
     private final List<String> repositoriesPaths;
-    private Logger LOG = Logger.getInstance(PositiveRefactoringsExtractionRunner.class);
+    private final FileWriter fileWriter;
+    private final Logger LOG = Logger.getInstance(PositiveRefactoringsExtractionRunner.class);
 
-    public PositiveRefactoringsExtractionRunner(List<String> repositoriesPaths) {
-        this.repositoriesPaths = repositoriesPaths;
+    public PositiveRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
+        this.repositoriesPaths = repositoryPaths;
+        this.fileWriter = fw;
     }
 
     public void run() {
-        for (String repo : repositoriesPaths) {
-            collectSamples(repo);
+        for (String repoPath : repositoriesPaths) {
+            LOG.info("[RefactoringJudge]: Processing repo at: " + repoPath);
+            try {
+                collectSamples(repoPath);
+            } catch (Exception e) {
+                LOG.error("[RefactoringJudge]: Could not parse repository: " + repoPath);
+            }
         }
+        try {
+            this.fileWriter.close();
+        } catch (IOException e) {
+            LOG.error("[RefactoringJudge]: Cannot close the file-writer.");
+        }
+        LOG.info("[RefactoringJudge]: Finished positive extraction");
     }
 
     private void collectSamples(String projectPath) {
         Project project = ProjectUtil.openOrImport(projectPath, null, true);
         if (project == null) {
-            LOG.error("Could not open project " + projectPath);
+            LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
             return;
         }
 
-        ProjectLevelVcsManager vcsManager = ServiceManager.getService(project, ProjectLevelVcsManager.class);
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
-
-        vcsManager.runAfterInitialization(() -> {
-            VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
-            for (VirtualFile root : gitRoots) {
-                GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
-                if (repo != null) {
-                    try {
-                        List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                        gitCommits.forEach(c -> processCommit(c, project));
-                    } catch (VcsException e) {
-                        LOG.error("Error occurred while processing commit in " + projectPath);
-                    }
+        ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, projectPath);
+        VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
+        for (VirtualFile root : gitRoots) {
+            GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
+            if (repo != null) {
+                try {
+                    List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
+                    gitCommits.forEach(c -> processCommit(c, project));
+                } catch (VcsException e) {
+                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + projectPath);
                 }
             }
-        });
+        }
     }
 
     private void processCommit(GitCommit commit, Project project) {
@@ -69,11 +83,11 @@ public class PositiveRefactoringsExtractionRunner {
         try {
             repository = gitService.openRepository(project.getBasePath());
         } catch (Exception e) {
-            LOG.error("Error occurred while opening git repository.");
+            LOG.error("[RefactoringJudge]: Error occurred while opening git repository.");
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
-                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit));
+                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit, fileWriter));
     }
 
 }

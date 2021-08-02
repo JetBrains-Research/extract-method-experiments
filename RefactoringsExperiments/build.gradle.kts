@@ -34,9 +34,12 @@ open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     @get:Input
     val runner: String? by project
 
-    // Path to the file containing paths to the projects for dataset
+    // Path to the directory containing projects for the dataset
     //@get:Input
-    val projectsFilePath: String? by project
+    val projectsDirPath: String? by project
+
+    //Path to the output directory
+    val datasetsDirPath: String? by project
 
     // Runs generation of positive samples
     val generatePositiveSamples: String? by project
@@ -62,7 +65,8 @@ tasks {
         dependsOn("buildPlugin")
         args = listOfNotNull(
                 runner,
-                projectsFilePath?.let { "--projectsFilePath=$it" },
+                projectsDirPath?.let { "--projectsDirPath=$it" },
+                datasetsDirPath?.let { "--datasetsDirPath=$it" },
                 generatePositiveSamples?.let { "--generatePositiveSamples" },
                 generateNegativeSamples?.let { "--generateNegativeSamples" }
         )

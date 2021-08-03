@@ -102,7 +102,6 @@ public class NegativeRefactoringsExtractionRunner {
         for (PsiMethod method : psiMethods) {
             HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
             List<Candidate> candidateList = haasAlgorithm.getCandidateList();
-            //TODO: get the candidates with the lowest score and calculate features only for them!
             writeFeaturesToFile(psiFile, method, candidateList);
         }
     }

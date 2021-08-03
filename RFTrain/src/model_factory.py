@@ -1,29 +1,18 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import SGDClassifier
+from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB
+from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC, LinearSVC, OneClassSVM
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
-from keras.wrappers.scikit_learn import KerasClassifier
+
 from .utils import import_model_args
 
 
-def compile_keras_model(optimizer, loss, hidden_layers_width,
-                        has_dropout, dropout_rate, epoch_count, batch_size):
-    mdl = Sequential()
-    for width in hidden_layers_width:
-        mdl.add(Dense(width, activation='relu'))
-        if has_dropout:
-            mdl.add(Dropout(dropout_rate))
-    mdl.add(Dense(1, activation='sigmoid'))
-    mdl.compile(loss=loss, optimizer=optimizer)
-    return KerasClassifier(build_fn=lambda: mdl, nb_epoch=epoch_count, batch_size=batch_size)
-
-
 class ModelFactory:
-    def __init__(self, model_config_path, model_type):
+    def __init__(self, model_config_path, model_type, cv_folds=5):
         self.model_type = model_type.lower()
         self.model_args = import_model_args(model_config_path, self.model_type)
+        self.cv_folds = cv_folds
 
     def make_model(self):
         type_to_maker = {
@@ -31,7 +20,7 @@ class ModelFactory:
             'svm': self.make_svc,
             'lsvm': self.make_lsvc,
             'sgd': self.make_sgd,
-            'dnn': self.make_dnn,
+            'mlp': self.make_mlp,
             'occ': self.make_occ,
             'gnb': self.make_gnb,
             'cnb': self.make_cnb,
@@ -40,25 +29,25 @@ class ModelFactory:
         return type_to_maker[self.model_type]()
 
     def make_rf(self):
-        return RandomForestClassifier(**self.model_args)
+        return GridSearchCV(RandomForestClassifier(), self.model_args, cv=self.cv_folds, scoring='f1')
 
     def make_svc(self):
-        return SVC(**self.model_args)
+        return GridSearchCV(SVC(), self.model_args, cv=self.cv_folds, scoring='f1')
 
     def make_lsvc(self):
-        return LinearSVC(**self.model_args)
+        return GridSearchCV(LinearSVC(), self.model_args, cv=self.cv_folds, scoring='f1')
 
     def make_sgd(self):
-        return SGDClassifier(**self.model_args)
+        return GridSearchCV(SGDClassifier(), self.model_args, cv=self.cv_folds, scoring='f1')
 
-    def make_dnn(self):
-        return compile_keras_model(**self.model_args)
+    def make_mlp(self):
+        return GridSearchCV(MLPClassifier(), self.model_args, cv=self.cv_folds, scoring='f1')
 
-    def make_occ(self):
+    def make_occ(self):  # TODO: GridSearch with one-class?
         return OneClassSVM(**self.model_args)
 
     def make_gnb(self):
-        return GaussianNB(**self.model_args)
+        return GridSearchCV(GaussianNB(), self.model_args, cv=self.cv_folds, scoring='f1')
 
     def make_cnb(self):
-        return ComplementNB(**self.model_args)
+        return GridSearchCV(ComplementNB(), self.model_args, cv=self.cv_folds, scoring='f1')

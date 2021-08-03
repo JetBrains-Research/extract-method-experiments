@@ -11,7 +11,6 @@ class Preprocessor:
 
         self.df_pos = pd.read_csv(self.path_to_positive, delimiter=';', error_bad_lines=False).dropna()
         self.df_neg = pd.read_csv(self.path_to_negative, delimiter=';', error_bad_lines=False).dropna()
-        self.df_neg = self.df_neg[self.df_neg.Score > 0]
 
     def make_binary(self):
         """
@@ -23,7 +22,7 @@ class Preprocessor:
         negatives = negatives.assign(label=lambda x: 0)  # Set label to zero, meaning negative
         negatives = negatives.drop(columns=['Score'])
 
-        positives = self.df_pos.assign(label=lambda x: 1)
+        positives = self.df_pos.assign(label=lambda x: 1)  # Set label to one, meaning positive
 
         whole_df = pd.concat([positives, negatives])
         X = whole_df.drop(columns=['label'])

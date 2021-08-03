@@ -32,7 +32,7 @@ class Model:
         return joblib.dump(self._model, os.path.join(self.model_train_path, 'trained.sav'))
 
     def save_training_config(self, training_config_path):
-        copyfile(src=training_config_path, dst=os.path.join(self.model_train_path, 'training_settings.ini'))
+        copyfile(src=training_config_path, dst=os.path.join(self.model_train_path, 'training_settings_1.ini'))
 
 
 class OCCModel(Model):

@@ -108,9 +108,9 @@ def import_svc_args(settings):
     args = {
         'C': settings.get('C', fallback='1'),
         'kernel': settings.get('kernel', fallback='rbf'),
-        'degree': settings.getint('degree', fallback='3'),
+        'degree': settings.get('degree', fallback='3'),
         'gamma': settings.get('gamma', fallback='scale'),
-        'tol': settings.getfloat('tol', fallback='1e-3'),
+        'tol': settings.get('tol', fallback='1e-3'),
     }
 
     for key in args.keys():

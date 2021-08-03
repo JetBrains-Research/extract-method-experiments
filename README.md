@@ -16,10 +16,12 @@ There are two possible ways to use the tool:
 Open `Refactoring Experiments` directory and execute the following command
 
 ```
-./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsFilePath=/path/to/file.txt -PgeneratePositiveSamples
+./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath=/absolute/path/to/projects/parent/folder -PdatasetsDirPath=/absolute/path/to/output/folder/ -PgeneratePositiveSamples
 ```
-It will start the extraction of positive-labeled cases from repositories on your computer specified in `file.txt`.
+It will start the extraction of positive-labeled cases from git repositories on your computer located directly in the specified folder.
 To run the generation of negative-labeled cases, you need to use `-PgenerateNegativeSamples` option.
+
+The output of the tool are two datasets labeled `positive.csv` and `negative.csv` located in accordance with `-PdatasetsDirPath` argument.
 
 #### Windows systems
 
@@ -46,7 +48,7 @@ Currently, there are a number of ML algorithms proposed as valid models:
 | OneClassSVM  | `sklearn.ensemble.OneClassSVM` | OCC |
 | GaussianNaiveBayes  | `sklearn.naive_bayes.GaussianNB`   | GNB |
 | ComplementNaiveBayes | `sklearn.naive_bayes.ComplementNB`   |CNB  |
-| DeepNeuralNetwork  | neural network built with `keras` | DNN |
+| MultiLayerPerceptron  | `sklearn.neural_network.MLPClassifier` | MLP|
 
 The `RFTrain` directory contains Python scripts for evaluating machine learning models on the collected datasets. 
 The requirements are specified in `requirements.txt`.

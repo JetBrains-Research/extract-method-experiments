@@ -13,11 +13,13 @@ There are two possible ways to use the tool:
 
 #### Unix systems
 
-Open `Refactoring Experiments` directory and execute the following command
+Open `Refactoring Experiments` directory and execute the following command:
 
 ```
-./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath=/absolute/path/to/projects/parent/folder -PdatasetsDirPath=/absolute/path/to/output/folder/ -PgeneratePositiveSamples
+./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath=/path/to/projects/ -PdatasetsDirPath=/path/to/output/ -PgeneratePositiveSamples
 ```
+*Note:* All paths provided as arguments should be absolute.
+
 It will start the extraction of positive-labeled cases from git repositories on your computer located directly in the specified folder.
 To run the generation of negative-labeled cases, you need to use `-PgenerateNegativeSamples` option.
 

@@ -1,9 +1,9 @@
-from src.model import Model, OCCModel, BinaryModel
+from src.model import OCCModel, BinaryModel
 from src.preprocessor import Preprocessor
 from src.utils import import_train_configuration
 
 if __name__ == "__main__":
-    config_path = "settings/training_settings.ini"
+    config_path = "settings/training_settings_1.ini"
     config = import_train_configuration(config_file=config_path)
     dataset_preprocessor = Preprocessor(config)
 

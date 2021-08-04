@@ -1,5 +1,6 @@
 import configparser
 import os
+import re
 from ast import literal_eval as make_tuple
 
 
@@ -14,7 +15,7 @@ def import_train_configuration(config_file):
         'positive_dataset_name': content['datasets'].get('positive_dataset_name'),
         'negative_dataset_name': content['datasets'].get('negative_dataset_name'),
         'quantile_to_negative': content['datasets'].getfloat('quantile_to_negative'),
-        'random_state': content['datasets'].getint('random_seed'),
+        'random_state': content['datasets'].getint('random_state'),
         'model_type': content['model'].get('model_type'),
         'model_config_path': os.path.join(content['model'].get('model_config_dir'),
                                           content['model'].get('model_config_name')),
@@ -78,7 +79,7 @@ def import_rf_args(settings):
         'max_depth': int,
         'min_samples_split': int,
         'min_samples_leaf': int,
-        'bootstrap': bool,
+        'bootstrap': make_bool,
     }
 
     args = {
@@ -124,7 +125,7 @@ def import_linear_svc_args(settings):
         'C': float,
         'tol': float,
         'loss': str,
-        'dual': bool,
+        'dual': make_bool,
         'penalty': str,
     }
 
@@ -147,9 +148,9 @@ def import_sgd_args(settings):
         'alpha': float,
         'tol': float,
         'loss': str,
-        'max_iter': bool,
+        'max_iter': make_bool,
         'penalty': str,
-        'fit_intercept': bool
+        'fit_intercept': make_bool
     }
 
     args = {
@@ -241,7 +242,7 @@ def import_gnb_args(settings):
 def import_cnb_args(settings):
     types = {
         'alpha': float,
-        'norm': bool,
+        'norm': make_bool,
     }
 
     args = {
@@ -255,5 +256,9 @@ def import_cnb_args(settings):
     return args
 
 
+def make_bool(_string):
+    return _string == 'True'
+
+
 def cast_to_typed_list(_string, _type):
-    return list(map(_type, _string.split(';')))
+    return list(map(_type, re.split('; |;|\s|\s',_string)))

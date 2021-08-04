@@ -7,8 +7,8 @@ from src.utils import import_train_configuration
 if __name__ == "__main__":
     directory = 'settings/'
     for filename in os.listdir(directory):
-        print(f'Training model in accordance with {filename} config')
         config_path = os.path.join(directory, filename)
+        print(f'Training model in accordance with {config_path} config')
         config = import_train_configuration(config_file=config_path)
         dataset_preprocessor = Preprocessor(config)
 

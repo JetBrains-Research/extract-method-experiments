@@ -2,7 +2,6 @@ package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
@@ -12,11 +11,13 @@ import git4idea.GitVcs;
 import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
+import org.apache.logging.log4j.LogManager;
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsS
 public class PositiveRefactoringsExtractionRunner {
     private final List<String> repositoriesPaths;
     private final FileWriter fileWriter;
-    private final Logger LOG = Logger.getInstance(PositiveRefactoringsExtractionRunner.class);
+    private final Logger LOG = LogManager.getLogger(PositiveRefactoringsExtractionRunner.class);
 
     public PositiveRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
         this.repositoriesPaths = repositoryPaths;

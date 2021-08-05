@@ -1,8 +1,9 @@
 package org.jetbrains.research.extractMethodExperiments;
 
 import com.intellij.openapi.application.ApplicationStarter;
-import com.intellij.openapi.diagnostic.Logger;
 import org.apache.commons.cli.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.extractors.NegativeRefactoringsExtractionRunner;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
-    private final Logger LOG = Logger.getInstance(PluginRunner.class);
+    private final Logger LOG = LogManager.getLogger(PluginRunner.class);
     private final int featureCount = 82;
 
     @Override

@@ -1,6 +1,5 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -11,12 +10,15 @@ import git4idea.GitCommit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
+import org.eclipse.osgi.internal.log.LoggerContextTargetMap;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +34,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final GitCommit gitCommit;
     private final String repositoryPath;
     private final FileWriter fileWriter;
-    private final Logger LOG = Logger.getInstance(CustomRefactoringHandler.class);
+    private final Logger LOG = LogManager.getLogger(CustomRefactoringHandler.class);
 
     public CustomRefactoringHandler(Project project,
                                     String repositoryPath,

@@ -1,9 +1,10 @@
 package org.jetbrains.research.extractMethodExperiments.metrics;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -30,7 +31,7 @@ import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnaly
 import static org.jetbrains.research.extractMethodExperiments.utils.StatementListUtil.ListToStr;
 
 public class MetricCalculator {
-    private static final Logger LOG = Logger.getInstance(MetricCalculator.class);
+    private static final Logger LOG = LogManager.getLogger(MetricCalculator.class);
     private final String statementsStr;
     private final PsiMethod method;
     private final int beginLine;

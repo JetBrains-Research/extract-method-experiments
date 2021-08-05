@@ -1,9 +1,7 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
@@ -22,6 +20,9 @@ import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
 import org.jetbrains.research.extractMethodExperiments.haas.HaasAlgorithm;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
@@ -35,7 +36,7 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
  * The "negative" samples are ones pieces of code that have the lowes score in terms of Haas ranking.
  */
 public class NegativeRefactoringsExtractionRunner {
-    private final Logger LOG = Logger.getInstance(NegativeRefactoringsExtractionRunner.class);
+    private final Logger LOG = LogManager.getLogger(NegativeRefactoringsExtractionRunner.class);
     private final List<String> repositoryPaths;
     private final FileWriter fileWriter;
 

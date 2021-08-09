@@ -40,9 +40,10 @@ public class HaasAlgorithm {
         PsiStatement[] psiStatements = codeBlock.getStatements();
         //TODO: take into account minimumNumberOfStatements
         for (int i = 0; i < psiStatements.length; i++) {
-            for (int j = i; j < psiStatements.length; j++) {
+            for (int j = i; j <= psiStatements.length; j++) {
                 Candidate candidate = calculateCandidate(psiMethod, codeBlock, i, j);
-                candidateList.add(candidate);
+                if (candidate != null)
+                    candidateList.add(candidate);
             }
         }
     }
@@ -50,18 +51,13 @@ public class HaasAlgorithm {
     private Candidate calculateCandidate(PsiMethod psiMethod, PsiCodeBlock codeBlock, int i, int j) {
         // make a copy to avoid modifying the original method
         PsiMethod copyMethod = (PsiMethod) psiMethod.copy();
-        PsiCodeBlock copyBlock = null;
+        PsiCodeBlock copyBlock;
         if (copyMethod.getBody() != null && copyMethod.getBody().getText().equals(codeBlock.getText())) {
             copyBlock = copyMethod.getBody();
         } else {
-            List<PsiCodeBlock> block = Arrays.stream(copyMethod.getBody().getStatements())
-                    .filter(s -> s instanceof PsiCodeBlock && s.getText().equals(codeBlock.getText()))
-                    .map(s -> (PsiCodeBlock) s)
-                    .collect(Collectors.toList());
-            if (block.size() > 0 && block.get(0) != null) {
-                copyBlock = block.get(0);
-            }
+            copyBlock = (PsiCodeBlock) codeBlock.copy();
         }
+
         if (copyBlock == null) return null;
         List<PsiStatement> statementList = new ArrayList<>(Arrays.asList(copyBlock.getStatements()).subList(i, j));
         return statementList.size() > 0 ? new Candidate(statementList, copyMethod) : null;

@@ -62,6 +62,7 @@ def import_model_args(model_config_path, model_type):
         'occ': import_occ_args,
         'gnb': import_gnb_args,
         'cnb': import_cnb_args,
+        'lrc': import_lrc_args,
     }
 
     content = configparser.ConfigParser()
@@ -71,7 +72,10 @@ def import_model_args(model_config_path, model_type):
 
 
 def import_rf_args(settings):
-    """Returns parsed config for RandomForest model from provided settings"""
+    """
+    Returns parsed config for RandomForest model from provided settings
+    *Grid-search friendly
+    """
 
     types = {
         'n_estimators': int,
@@ -148,7 +152,7 @@ def import_sgd_args(settings):
         'alpha': float,
         'tol': float,
         'loss': str,
-        'max_iter': make_bool,
+        'max_iter': int,
         'penalty': str,
         'fit_intercept': make_bool
     }
@@ -169,7 +173,10 @@ def import_sgd_args(settings):
 
 
 def import_mlp_args(settings):
-    """Returns parsed config for MultiLayerPerceptron model from provided settings"""
+    """
+    Returns parsed config for MultiLayerPerceptron model from provided settings
+    *Grid-search friendly
+    """
     types = {
         'hidden_layer_sizes': make_tuple,  # Not a type but casting func
         'activation': str,
@@ -202,24 +209,14 @@ def import_mlp_args(settings):
 
 def import_occ_args(settings):
     """Returns parsed config for OneClassClassification with SVM model from provided settings"""
-    types = {
-        'kernel': str,  # Not a type but casting func
-        'degree': int,
-        'gamma': str,
-        'tol': float,
-        'nu': float,
-    }
 
     args = {
         'kernel': settings.get('kernel', fallback='rbf'),
-        'degree': settings.get('degree', fallback='3'),
+        'degree': settings.getint('degree', fallback='3'),
         'gamma': settings.get('gamma', fallback='scale'),
-        'tol': settings.get('tol', fallback='1e-3'),
-        'nu': settings.get('nu', fallback='0.5'),
+        'tol': settings.getfloat('tol', fallback='1e-3'),
+        'nu': settings.getfloat('nu', fallback='0.5'),
     }
-
-    for key in args.keys():
-        args[key] = cast_to_typed_list(args[key], types[key])
 
     return args
 
@@ -248,6 +245,35 @@ def import_cnb_args(settings):
     args = {
         'alpha': settings.get('alpha', fallback='1.0'),
         'norm': settings.get('norm', fallback='False'),
+    }
+
+    for key in args.keys():
+        args[key] = cast_to_typed_list(args[key], types[key])
+
+    return args
+
+
+def import_lrc_args(settings):
+    """
+    Returns parsed config for OneClassClassification with SVM model from provided settings
+    *Grid-search friendly
+    """
+    types = {
+        'penalty': str,
+        'tol': float,
+        'C': float,
+        'fit_intercept': make_bool,
+        'solver': str,
+        'max_iter': int,
+    }
+
+    args = {
+        'penalty': settings.get('penalty', fallback='l2'),
+        'tol': settings.get('tol', fallback='1e-4'),
+        'C': settings.get('C', fallback='1'),
+        'fit_intercept': settings.get('fit_intercept', fallback='True'),
+        'solver': settings.get('solver', fallback='lbfgs'),
+        'max_iter': settings.get('max_iter', fallback='200'),
     }
 
     for key in args.keys():

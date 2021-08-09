@@ -26,6 +26,7 @@ class Preprocessor:
 
         whole_df = pd.concat([positives, negatives])
         X = whole_df.drop(columns=['label'])
+        X[X < 0] = 0
         y = whole_df.label
 
         return X, y

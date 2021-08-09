@@ -1,5 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import SGDClassifier, LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB
 from sklearn.neural_network import MLPClassifier
@@ -21,33 +21,40 @@ class ModelFactory:
             'lsvc': self.make_lsvc,
             'sgd': self.make_sgd,
             'mlp': self.make_mlp,
-            'occ': self.make_occ,
             'gnb': self.make_gnb,
             'cnb': self.make_cnb,
+            'lrc': self.make_lrc,
         }
 
-        return type_to_maker[self.model_type]()
+        if self.model_type != 'occ':
+            return GridSearchCV(type_to_maker[self.model_type](), self.model_args,
+                                cv=self.cv_folds, scoring='f1', verbose=3)
+        else:
+            return self.make_occ()
 
     def make_rf(self):
-        return GridSearchCV(RandomForestClassifier(), self.model_args, cv=self.cv_folds, scoring='f1', verbose=2)
+        return RandomForestClassifier()
 
     def make_svc(self):
-        return GridSearchCV(SVC(), self.model_args, cv=self.cv_folds, scoring='f1', verbose=2)
+        return SVC()
 
     def make_lsvc(self):
-        return GridSearchCV(LinearSVC(), self.model_args, cv=self.cv_folds, scoring='f1', verbose=2)
+        return LinearSVC()
 
     def make_sgd(self):
-        return GridSearchCV(SGDClassifier(), self.model_args, cv=self.cv_folds, scoring='f1', verbose=2)
+        return SGDClassifier()
 
     def make_mlp(self):
-        return GridSearchCV(MLPClassifier(), self.model_args, cv=self.cv_folds, scoring='f1', verbose=2)
+        return MLPClassifier()
+
+    def make_lrc(self):
+        return LogisticRegression()
 
     def make_occ(self):  # TODO: GridSearch with one-class?
         return OneClassSVM(**self.model_args)
 
     def make_gnb(self):
-        return GridSearchCV(GaussianNB(), self.model_args, cv=self.cv_folds, scoring='f1', verbose=2)
+        return GaussianNB()
 
     def make_cnb(self):
-        return GridSearchCV(ComplementNB(), self.model_args, cv=self.cv_folds, scoring='f1', verbose=2)
+        return ComplementNB()

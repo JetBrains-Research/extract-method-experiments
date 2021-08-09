@@ -9,7 +9,8 @@ from sklearn.model_selection import train_test_split
 from .model_factory import ModelFactory
 from .utils import set_train_path
 
-logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
+                    level=logging.DEBUG, filename='training.log')
 
 
 class Model:
@@ -20,6 +21,7 @@ class Model:
         self.model_type = config.get('model_type')
         self.model_config_path = config.get('model_config_path')
         self.model_train_path = set_train_path(config.get('model_train_dir'))
+
         self._model = ModelFactory(self.model_config_path, self.model_type, self.cv_folds).make_model()
         logging.info(f'Created a model with {self.model_config_path} config')
 
@@ -56,6 +58,7 @@ class OCCModel(Model):
             to_print = f'Training error fraction: {self._model.nu,}\n' \
                        f'Test accuracy on positives: {pos_accuracy}\n'
             f.write(to_print)
+
         self.save_model()
 
 
@@ -64,7 +67,7 @@ class BinaryModel(Model):
         return self._model.fit(features, targets)
 
     def train(self, x, y):
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
         self.fit(x_train, y_train)
         with open(os.path.join(self.model_train_path, "cv_results.txt"), 'w') as f:
             to_write = f'mean score: {self._model.cv_results_.get("mean_test_score")[self._model.best_index_]}\n' \
@@ -82,7 +85,7 @@ class BinaryModel(Model):
         copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
         with open(os.path.join(self.model_train_path, "best_params.txt"), 'w') as f:
             f.write(str(self._model.best_params_))
-        joblib.dump(self._model.best_estimator_, 'trained.sav')
+        joblib.dump(self._model.best_estimator_, os.path.join(self.model_train_path, "best_trained.sav"))
         logging.info(f'Saved information about best found estimator')
 
 

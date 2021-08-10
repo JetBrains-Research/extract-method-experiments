@@ -47,12 +47,12 @@ Currently, there are a number of ML algorithms proposed as valid models:
 | SupportVectorMachine      | `sklearn.svm.SVC`      | SVC |
 | LinearSupportVectorMachine | `sklearn.svm.LinearSVC`   | LSVC |
 | SGD over SVM  | `sklearn.ensemble.SGDClassifier` | SGD |
-| OneClassSVM  | `sklearn.ensemble.OneClassSVM` | OCC |
 | GaussianNaiveBayes  | `sklearn.naive_bayes.GaussianNB`   | GNB |
 | ComplementNaiveBayes | `sklearn.naive_bayes.ComplementNB`   |CNB  |
 | MultiLayerPerceptron  | `sklearn.neural_network.MLPClassifier` | MLP|
 
-The `RFTrain` directory contains Python scripts for evaluating machine learning models on the collected datasets. 
+
+The `RFTrain/` directory contains Python scripts for evaluating machine learning models on the collected datasets. 
 The requirements are specified in `requirements.txt`.
 
 ### Training
@@ -61,6 +61,6 @@ To train a model, one has to complete a list of procedures:
 - Obtain datasets from `RefactoringExperiments/`
 - Configure training procedure through config files.
     - Make a model config and specify model's arguments there. 
-    Directory `model_settings/` has example config files with exhaustive lists of mutable arguments.
+    Directory `model_settings/` has example config files with exhaustive lists of mutable arguments (arguments can be passed using `;` delimiter to initiate gridsearch over given parameters).
     - Make a config for training and specify the path to model' config there.
-- Run `trainer.py`
+- Run `main.py` and manually choose config file or `batch_trainer.py` to do so with many configs iteratively

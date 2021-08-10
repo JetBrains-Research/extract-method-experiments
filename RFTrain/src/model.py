@@ -17,57 +17,26 @@ class Model:
     def __init__(self, config):
         self.random_state = config.get('random_state')
         np.random.seed(self.random_state)
-        self.cv_folds = config.get('cv_folds')
-        self.model_type = config.get('model_type')
+
         self.model_config_path = config.get('model_config_path')
         self.model_train_path = set_train_path(config.get('model_train_dir'))
 
-        self._model = ModelFactory(self.model_config_path, self.model_type, self.cv_folds).make_model()
+        self._model = ModelFactory(self.model_config_path,
+                                   config.get('classifier_type'),
+                                   config.get('cv_folds'),
+                                   config.get('scoring_func'),
+                                   self.random_state).make_model()
+
         logging.info(f'Created a model with {self.model_config_path} config')
 
-    def set_model(self, model_config_path, model_type):
-        self._model = ModelFactory(model_config_path, model_type, self.cv_folds).make_model()
-        logging.info(f'Set the model with {self.model_config_path} config')
+    def predict(self, features, threshold=0.5):
+        return self._model.predict_proba(features)[:, 1] >= threshold
 
-    def predict(self, features):
-        return self._model.predict(features)
-
-    def save_model(self):
-        copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
-        logging.info(f'Set the model with {self.model_config_path} config')
-        try:
-            joblib.dump(self._model, os.path.join(self.model_train_path, 'trained.sav'))
-        except:
-            logging.error(f'Failed to save the model at {self.model_train_path}')
-            return 1
-        logging.info(f'Saved the model at {self.model_train_path}')
-        return 0
-
-    def save_training_config(self, training_config_path):
-        copyfile(src=training_config_path, dst=os.path.join(self.model_train_path, 'training_settings.ini'))
-
-
-class OCCModel(Model):
-    def fit(self, neutrals):
-        return self._model.fit(neutrals)
-
-    def train(self, neutral, positive):
-        self.fit(neutral)
-        pos_accuracy = sum(self.predict(positive) == -1) / len(positive)
-        with open(os.path.join(self.model_train_path, "test_report.txt"), 'w') as f:
-            to_print = f'Training error fraction: {self._model.nu,}\n' \
-                       f'Test accuracy on positives: {pos_accuracy}\n'
-            f.write(to_print)
-
-        self.save_model()
-
-
-class BinaryModel(Model):
     def fit(self, features, targets):
         return self._model.fit(features, targets)
 
     def train(self, x, y):
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
         self.fit(x_train, y_train)
         with open(os.path.join(self.model_train_path, "cv_results.txt"), 'w') as f:
             to_write = f'mean score: {self._model.cv_results_.get("mean_test_score")[self._model.best_index_]}\n' \
@@ -76,17 +45,45 @@ class BinaryModel(Model):
                        f'std fit time: {self._model.cv_results_.get("std_fit_time")[self._model.best_index_]}\n'
             f.write(to_write)
 
-        with open(os.path.join(self.model_train_path, "test_report.txt"), 'w') as f:
-            f.write(classification_report(y_test, self.predict(x_test)))
+        with open(os.path.join(self.model_train_path, "test_report_0.5.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.5)))
 
+        with open(os.path.join(self.model_train_path, "test_report_0.4.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.4)))
+
+        with open(os.path.join(self.model_train_path, "test_report_0.3.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.3)))
+
+        self.save_model_config()
         self.save_best()
+        self.save_grid()
 
     def save_best(self):
         copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
         with open(os.path.join(self.model_train_path, "best_params.txt"), 'w') as f:
             f.write(str(self._model.best_params_))
-        joblib.dump(self._model.best_estimator_, os.path.join(self.model_train_path, "best_trained.sav"))
-        logging.info(f'Saved information about best found estimator')
+        try:
+            joblib.dump(self._model.best_estimator_, os.path.join(self.model_train_path, "best_trained.sav"))
+        except:
+            logging.error(f'Failed to save the best model at {self.model_train_path}')
+            return 1
+        logging.info(f'Saved the model at {self.model_train_path}')
+        return 0
+
+    def save_grid(self):
+        try:
+            joblib.dump(self._model, os.path.join(self.model_train_path, 'trained.sav'))
+        except:
+            logging.error(f'Failed to save the grid at {self.model_train_path}')
+            return 1
+        logging.info(f'Saved the grid at {self.model_train_path}')
+        return 0
+
+    def save_training_config(self, training_config_path):
+        copyfile(src=training_config_path, dst=os.path.join(self.model_train_path, 'training_settings.ini'))
+
+    def save_model_config(self):
+        copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
 
 
 class TestModel:

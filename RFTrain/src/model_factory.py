@@ -1,60 +1,92 @@
+import imblearn.combine as combinedsampling
+import imblearn.over_sampling as oversampling
+import sklearn.preprocessing as preprocessing
+from imblearn.pipeline import Pipeline as ImbPipeline
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import SGDClassifier, LogisticRegression
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.naive_bayes import ComplementNB, GaussianNB
 from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC, LinearSVC, OneClassSVM
+from sklearn.svm import SVC, LinearSVC
 
-from .utils import import_model_args
+from .utils import import_gridsearch_args, import_sampler, import_preprocessor
 
 
 class ModelFactory:
-    def __init__(self, model_config_path, model_type, cv_folds=5):
-        self.model_type = model_type.lower()
-        self.model_args = import_model_args(model_config_path, self.model_type)
+    def __init__(self, model_config_path, classifier_type, cv_folds=5, scoring_func='roc_auc', random_state=0):
+        self.classifier_type = classifier_type.lower()
+        self.gridsearch_args = import_gridsearch_args(model_config_path, self.classifier_type)
         self.cv_folds = cv_folds
+        self.sampler_name = import_sampler(model_config_path)
+        self.preprocessor_name = import_preprocessor(model_config_path)
+        self.random_state = random_state
+        self.scoring_func = scoring_func
 
     def make_model(self):
-        type_to_maker = {
-            'rf': self.make_rf,
-            'svc': self.make_svc,
-            'lsvc': self.make_lsvc,
-            'sgd': self.make_sgd,
-            'mlp': self.make_mlp,
-            'gnb': self.make_gnb,
-            'cnb': self.make_cnb,
-            'lrc': self.make_lrc,
+        preprocessor = self.__make_preprocessor()
+        sampler = self.__make_sampler()
+        classifier = self.__make_classifier()
+        stages = []
+
+        if preprocessor is not None:
+            stages.append(['preprocessor', preprocessor])
+        if sampler is not None:
+            stages.append(['sampler', sampler])
+
+        stages.append(['classifier', classifier])
+
+        pipe = ImbPipeline(stages)
+
+        stratified_kfold = StratifiedKFold(n_splits=self.cv_folds,
+                                           shuffle=True,
+                                           random_state=self.random_state)
+
+        return GridSearchCV(estimator=pipe,
+                            param_grid=self.gridsearch_args,
+                            scoring=self.scoring_func,
+                            cv=stratified_kfold,
+                            n_jobs=-1,
+                            verbose=3)
+
+    def __make_preprocessor(self):
+        name_to_implementation = {
+            'MaxAbsScaler': preprocessing.MaxAbsScaler,
+            'MinMaxScaler': preprocessing.MinMaxScaler,
+            'Normalizer': preprocessing.Normalizer,
+            'RobustScaler': preprocessing.RobustScaler,
+            'StandardScaler': preprocessing.StandardScaler,
         }
+        implementation = name_to_implementation.get(self.preprocessor_name, None)
+        if implementation is None:
+            return None
 
-        if self.model_type != 'occ':
-            return GridSearchCV(type_to_maker[self.model_type](), self.model_args,
-                                cv=self.cv_folds, scoring='f1', verbose=3)
-        else:
-            return self.make_occ()
+        return implementation()
 
-    def make_rf(self):
-        return RandomForestClassifier()
+    def __make_sampler(self):
+        name_to_implementation = {
+            'SMOTE': oversampling.SMOTE,
+            'ADASYN': oversampling.ADASYN,
+            'BorderlineSMOTE': oversampling.BorderlineSMOTE,
+            'SMOTETomek': combinedsampling.SMOTETomek,
+            'SMOTEENN': combinedsampling.SMOTEENN
+        }
+        implementation = name_to_implementation.get(self.sampler_name, None)
+        if implementation is None:
+            return None
+        return implementation()
 
-    def make_svc(self):
-        return SVC()
-
-    def make_lsvc(self):
-        return LinearSVC()
-
-    def make_sgd(self):
-        return SGDClassifier()
-
-    def make_mlp(self):
-        return MLPClassifier()
-
-    def make_lrc(self):
-        return LogisticRegression()
-
-    def make_occ(self):  # TODO: GridSearch with one-class?
-        return OneClassSVM(**self.model_args)
-
-    def make_gnb(self):
-        return GaussianNB()
-
-    def make_cnb(self):
-        return ComplementNB()
+    def __make_classifier(self):
+        type_to_implementation = {
+            'rf': RandomForestClassifier,
+            'svc': SVC,
+            'lsvc': LinearSVC,
+            'sgd': SGDClassifier,
+            'mlp': MLPClassifier,
+            'gnb': GaussianNB,
+            'cnb': ComplementNB,
+            'lrc': LogisticRegression,
+        }
+        implementation = type_to_implementation.get(self.classifier_type, None)
+        if implementation is None:
+            return None
+        return implementation()

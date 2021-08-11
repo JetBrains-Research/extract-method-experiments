@@ -16,3 +16,4 @@ def train_by_config(config_path):
         model = Model(config)
         model.train(features, targets)
         model.save_training_config(config_path)
+        # model.save_pmml(model.get_best_estimator())

@@ -5,6 +5,8 @@ import joblib
 import numpy as np
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
+from sklearn2pmml import PMMLPipeline
+from sklearn2pmml import sklearn2pmml
 
 from .model_factory import ModelFactory
 from .utils import set_train_path
@@ -36,6 +38,7 @@ class Model:
         return self._model.fit(features, targets)
 
     def train(self, x, y):
+        logging.info(f'Initiated training sequence for model at {self.model_train_path}')
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
         self.fit(x_train, y_train)
         with open(os.path.join(self.model_train_path, "cv_results.txt"), 'w') as f:
@@ -84,6 +87,16 @@ class Model:
 
     def save_model_config(self):
         copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
+
+    def get_best_estimator(self):
+        return self._model.best_estimator_
+
+    def save_pmml(self, estimator):
+        pmml_pipe = PMMLPipeline([
+            ("pipeline", estimator)
+        ])
+
+        sklearn2pmml(pmml_pipe, os.path.join(self.model_train_path, 'model.pmml'), with_repr=True)
 
 
 class TestModel:

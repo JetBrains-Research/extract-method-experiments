@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 
-from src.utils import set_train_path
+from src.utils import set_model_path
 
 
 class KModel:
@@ -13,7 +13,7 @@ class KModel:
         self.random_state = config.get('random_state')
         np.random.seed(self.random_state)
         self.cv_folds = config.get('cv_folds')
-        self.model_train_path = set_train_path(config.get('model_train_dir'))
+        self.model_train_path = set_model_path(config.get('model_train_dir'))
         checkpoint_filepath = os.path.join(self.model_train_path, 'tmp', 'checkpoint')
         self.callbacks = [keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
                                                           monitor='precision',

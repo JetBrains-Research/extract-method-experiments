@@ -28,13 +28,18 @@ def import_train_configuration(config_file):
 
 
 def import_test_configuration(config_file):
-    """
-    Read the config file regarding the testing and import its content
-    """
-    pass
+    content = configparser.ConfigParser()
+    content.read(config_file)
+
+    config = {
+        'dataset_path': content['testing'].get('dataset_path'),
+        'model_path': content['testing'].get('model_path')
+    }
+
+    return config
 
 
-def set_train_path(model_path_name):
+def set_model_path(model_path_name):
     """
     Create a new classifier path with an incremental integer, also considering previously created classifier paths
     """
@@ -56,13 +61,13 @@ def set_train_path(model_path_name):
 def import_sampler(model_config_path):
     content = configparser.ConfigParser()
     content.read(model_config_path)
-    return content['preprocessing'].get('sampler', fallback='SMOTE'),
+    return content['preprocessing'].get('sampler', fallback='None')
 
 
 def import_preprocessor(model_config_path):
     content = configparser.ConfigParser()
     content.read(model_config_path)
-    return content['preprocessing'].get('preprocessor', fallback='MinMaxScaler')
+    return content['preprocessing'].get('preprocessor', fallback='None')
 
 
 def import_gridsearch_args(model_config_path, classifier_type):

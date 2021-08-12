@@ -29,11 +29,11 @@ class ModelFactory:
         stages = []
 
         if preprocessor is not None:
-            stages.append(['preprocessor', preprocessor])
+            stages.append(('preprocessor', preprocessor))
         if sampler is not None:
-            stages.append(['sampler', sampler])
+            stages.append(('sampler', sampler))
 
-        stages.append(['classifier', classifier])
+        stages.append(('classifier', classifier))
 
         pipe = ImbPipeline(stages)
 

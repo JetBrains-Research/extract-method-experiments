@@ -4,12 +4,9 @@ import logging
 import joblib
 import numpy as np
 from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from sklearn2pmml import PMMLPipeline
-from sklearn2pmml import sklearn2pmml
-
+from pathlib import Path
 from .model_factory import ModelFactory
-from .utils import set_train_path
+from .utils import set_model_path
 
 logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
                     level=logging.DEBUG, filename='training.log')
@@ -21,7 +18,11 @@ class Model:
         np.random.seed(self.random_state)
 
         self.model_config_path = config.get('model_config_path')
-        self.model_train_path = set_train_path(config.get('model_train_dir'))
+        self.model_path = set_model_path(config.get('model_train_dir'))
+
+        copyfile(src=self.model_config_path, dst=os.path.join(self.model_path, 'model_settings.ini'))
+
+        self.train_dir = os.path.join(self.model_path, 'train')
 
         self._model = ModelFactory(self.model_config_path,
                                    config.get('classifier_type'),
@@ -37,66 +38,57 @@ class Model:
     def fit(self, features, targets):
         return self._model.fit(features, targets)
 
-    def train(self, x, y):
-        logging.info(f'Initiated training sequence for model at {self.model_train_path}')
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
+    def train(self, x_train, y_train):
+        logging.info(f'Initiated training sequence for model at {self.model_path}')
         self.fit(x_train, y_train)
-        with open(os.path.join(self.model_train_path, "cv_results.txt"), 'w') as f:
+        with open(os.path.join(self.model_path, "cv_results.txt"), 'w') as f:
             to_write = f'mean score: {self._model.cv_results_.get("mean_test_score")[self._model.best_index_]}\n' \
                        f'std score: {self._model.cv_results_.get("std_test_score")[self._model.best_index_]}\n' \
                        f'mean fit time: {self._model.cv_results_.get("mean_fit_time")[self._model.best_index_]}\n' \
                        f'std fit time: {self._model.cv_results_.get("std_fit_time")[self._model.best_index_]}\n'
             f.write(to_write)
 
-        with open(os.path.join(self.model_train_path, "test_report_0.5.txt"), 'w') as f:
-            f.write(classification_report(y_test, self.predict(x_test, 0.5)))
-
-        with open(os.path.join(self.model_train_path, "test_report_0.4.txt"), 'w') as f:
-            f.write(classification_report(y_test, self.predict(x_test, 0.4)))
-
-        with open(os.path.join(self.model_train_path, "test_report_0.3.txt"), 'w') as f:
-            f.write(classification_report(y_test, self.predict(x_test, 0.3)))
-
-        self.save_model_config()
         self.save_best()
         self.save_grid()
 
+    def validate(self, x_test, y_test):
+        val_dir = os.path.join(self.model_path, 'validate_results')
+        Path(val_dir).mkdir(parents=True, exist_ok=True)
+
+        with open(os.path.join(val_dir, "report_0.5.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.5)))
+
+        with open(os.path.join(val_dir, "report_0.4.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.4)))
+
+        with open(os.path.join(val_dir, "report_0.3.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.3)))
+
     def save_best(self):
-        copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
-        with open(os.path.join(self.model_train_path, "best_params.txt"), 'w') as f:
+        with open(os.path.join(self.model_path, "best_params.txt"), 'w') as f:
             f.write(str(self._model.best_params_))
         try:
-            joblib.dump(self._model.best_estimator_, os.path.join(self.model_train_path, "best_trained.sav"))
+            joblib.dump(self._model.best_estimator_, os.path.join(self.model_path, "best_trained.sav"))
         except:
-            logging.error(f'Failed to save the best model at {self.model_train_path}')
+            logging.error(f'Failed to save the best model at {self.model_path}')
             return 1
-        logging.info(f'Saved the model at {self.model_train_path}')
+        logging.info(f'Saved the model at {self.model_path}')
         return 0
 
     def save_grid(self):
         try:
-            joblib.dump(self._model, os.path.join(self.model_train_path, 'trained.sav'))
+            joblib.dump(self._model, os.path.join(self.model_path, 'trained.sav'))
         except:
-            logging.error(f'Failed to save the grid at {self.model_train_path}')
+            logging.error(f'Failed to save the grid at {self.model_path}')
             return 1
-        logging.info(f'Saved the grid at {self.model_train_path}')
+        logging.info(f'Saved the grid at {self.model_path}')
         return 0
 
     def save_training_config(self, training_config_path):
-        copyfile(src=training_config_path, dst=os.path.join(self.model_train_path, 'training_settings.ini'))
-
-    def save_model_config(self):
-        copyfile(src=self.model_config_path, dst=os.path.join(self.model_train_path, 'model_settings.ini'))
+        copyfile(src=training_config_path, dst=os.path.join(self.model_path, 'training_settings.ini'))
 
     def get_best_estimator(self):
         return self._model.best_estimator_
-
-    def save_pmml(self, estimator):
-        pmml_pipe = PMMLPipeline([
-            ("pipeline", estimator)
-        ])
-
-        sklearn2pmml(pmml_pipe, os.path.join(self.model_train_path, 'model.pmml'), with_repr=True)
 
 
 class TestModel:

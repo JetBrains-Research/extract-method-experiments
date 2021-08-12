@@ -1,3 +1,6 @@
-from src.trainer import train_by_config
+from src.trainer import train_by_config, test_by_config
+import os
 
-train_by_config("settings/training_settings_1.ini")
+train_by_config(os.path.join('settings', 'training_settings_1.ini'))
+
+# test_by_config(os.path.join('test_settings', 'test_settings.ini'))

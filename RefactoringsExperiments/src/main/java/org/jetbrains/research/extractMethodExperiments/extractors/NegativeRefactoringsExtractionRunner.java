@@ -113,9 +113,11 @@ public class NegativeRefactoringsExtractionRunner {
                 List<PsiStatement> statementList = candidate.getStatementList();
                 int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
                 int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
-                MetricCalculator metricCalculator = new MetricCalculator(candidate.getStatementList(), method, beginLine, endLine);
+                MetricCalculator metricCalculator =
+                        new MetricCalculator(StatementListToStr(candidate.getStatementList()), method, beginLine, endLine);
 
                 FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+
                 for (int i = 0; i < featuresVector.getDimension(); i++) {
                     this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
                     this.fileWriter.append(';');
@@ -125,4 +127,15 @@ public class NegativeRefactoringsExtractionRunner {
             }
         }
     }
+
+    public static String StatementListToStr(List<PsiStatement> statementList) {
+        StringBuilder result = new StringBuilder();
+        for (PsiStatement statement : statementList) {
+            result.append(statement.getText());
+            result.append('\n');
+        }
+        return result.toString().strip();
+    }
 }
+
+

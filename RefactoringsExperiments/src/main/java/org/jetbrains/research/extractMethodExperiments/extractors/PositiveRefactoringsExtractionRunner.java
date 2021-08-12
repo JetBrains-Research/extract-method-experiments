@@ -88,7 +88,7 @@ public class PositiveRefactoringsExtractionRunner {
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
-                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit, fileWriter));
+                new CustomRefactoringHandler(project, project.getProjectFilePath().replace(".idea/misc.xml", ""), commit, fileWriter));
     }
 
 }

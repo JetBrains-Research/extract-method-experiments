@@ -47,8 +47,8 @@ public class MetricCalculator {
         computeFeatureVector();
     }
 
-    public MetricCalculator(PsiElement psiElement, int beginLine, int endLine) {
-        this.method = ((PsiMethod) psiElement);
+    public MetricCalculator(PsiMethod psiMethod, int beginLine, int endLine) {
+        this.method = psiMethod;
         this.statementsStr = this.method.getBody().getText();
         this.beginLine = beginLine;
         this.endLine = endLine;

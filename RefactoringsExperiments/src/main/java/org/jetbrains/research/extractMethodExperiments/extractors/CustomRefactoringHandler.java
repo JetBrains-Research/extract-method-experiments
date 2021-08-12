@@ -6,11 +6,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiStatement;
 import git4idea.GitCommit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import org.eclipse.osgi.internal.log.LoggerContextTargetMap;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,27 +78,37 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         for (Refactoring ref : extractMethodRefactorings) {
             ExtractOperationRefactoring extractOperationRefactoring = (ExtractOperationRefactoring) ref;
             UMLOperation extractedOperation = extractOperationRefactoring.getExtractedOperation();
-            LocationInfo locationInfo = extractedOperation.getLocationInfo();
+            UMLOperation sourceOperation = extractOperationRefactoring.getSourceOperationBeforeExtraction();
+            LocationInfo sourceLocationInfo = sourceOperation.getLocationInfo();
+            LocationInfo extractedLocationInfo = extractedOperation.getLocationInfo();
             for (VirtualFile file : changedJavaFiles) {
                 String filePath = file.getCanonicalPath();
                 String cleanRepoPath = repositoryPath.replace(".idea/misc.xml", "");
-                if (filePath != null && locationInfo.getFilePath().equals(filePath.replace(cleanRepoPath, ""))) {
-                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                    if (psiFile != null) {
-                        PsiMethod method = findMethodBySignature(psiFile, calculateSignature(extractedOperation));
-                        if (method != null) {
-                            writeFeaturesToFile(psiFile, method);
-                        }
+                PsiFile sourcePsiFile = null;
+                PsiFile extractedPsiFile = null;
+                if (filePath != null && sourceLocationInfo.getFilePath().equals(filePath.replace(cleanRepoPath, ""))) {
+                    sourcePsiFile = PsiManager.getInstance(project).findFile(file);
+                }
+                if (filePath != null && extractedLocationInfo.getFilePath().equals(filePath.replace(cleanRepoPath, ""))) {
+                    extractedPsiFile = PsiManager.getInstance(project).findFile(file);
+                }
+                if (sourcePsiFile != null && extractedPsiFile != null) {
+                    PsiMethod newMethod = findMethodBySignature(extractedPsiFile, calculateSignature(extractedOperation));
+                    PsiMethod oldMethod = findMethodBySignature(sourcePsiFile, calculateSignature(sourceOperation));
+                    if (oldMethod != null && newMethod != null) {
+                        writeFeaturesToFile(oldMethod, newMethod.getBody().getStatements());
                     }
                 }
             }
         }
     }
 
-    private void writeFeaturesToFile(PsiFile psiFile, PsiMethod psiElement) throws IOException {
-        int beginLine = getNumberOfLine(psiFile, psiElement.getTextRange().getStartOffset());
-        int endLine = getNumberOfLine(psiFile, psiElement.getTextRange().getEndOffset());
-        MetricCalculator metricCalculator = new MetricCalculator(psiElement, beginLine, endLine);
+
+    private void writeFeaturesToFile(PsiMethod sourcePsiMethod, PsiStatement[] statements) throws IOException {
+        PsiFile psiFile = sourcePsiMethod.getContainingFile();
+        int beginLine = getNumberOfLine(psiFile, sourcePsiMethod.getTextRange().getStartOffset());
+        int endLine = getNumberOfLine(psiFile, sourcePsiMethod.getTextRange().getEndOffset());
+        MetricCalculator metricCalculator = new MetricCalculator(Arrays.asList(statements), sourcePsiMethod, beginLine, endLine);
         FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 
         for (int i = 0; i < featuresVector.getDimension(); i++) {

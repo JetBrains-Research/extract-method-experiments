@@ -1,12 +1,11 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiStatement;
+import com.intellij.psi.*;
 import git4idea.GitCommit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
@@ -22,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,11 +69,25 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         List<Refactoring> extractMethodRefactorings = refactorings.stream()
                 .filter(r -> r.getRefactoringType() == RefactoringType.EXTRACT_OPERATION)
                 .collect(Collectors.toList());
+        List<Change> changes = gitCommit.getChanges().stream().filter(f -> f.getVirtualFile().getName().endsWith(".java")).collect(Collectors.toList());
+        List<PsiFile> changedSourceJavaFiles = new ArrayList<>();
+        List<PsiFile> changedExtractedJavaFiles = new ArrayList<>();
 
-        List<VirtualFile> changedJavaFiles = gitCommit.getChanges().stream()
-                .filter(f -> f.getVirtualFile() != null && f.getVirtualFile().getName().endsWith(".java"))
-                .map(Change::getVirtualFile)
-                .collect(Collectors.toList());
+        for(Change change : changes){
+            try {
+                PsiFile sourcePsiFile = PsiFileFactory.getInstance(project).createFileFromText("tmp",
+                        JavaFileType.INSTANCE,
+                        change.getBeforeRevision().getContent());
+                changedSourceJavaFiles.add(sourcePsiFile);
+
+                PsiFile extractedPsiFile = PsiFileFactory.getInstance(project).createFileFromText("tmp",
+                        JavaFileType.INSTANCE,
+                        change.getAfterRevision().getContent());
+                changedExtractedJavaFiles.add(extractedPsiFile);
+            } catch (VcsException e) {
+                e.printStackTrace();
+            }
+        }
 
         for (Refactoring ref : extractMethodRefactorings) {
             ExtractOperationRefactoring extractOperationRefactoring = (ExtractOperationRefactoring) ref;
@@ -81,8 +95,8 @@ public class CustomRefactoringHandler extends RefactoringHandler {
             UMLOperation sourceOperation = extractOperationRefactoring.getSourceOperationBeforeExtraction();
             LocationInfo sourceLocationInfo = sourceOperation.getLocationInfo();
             LocationInfo extractedLocationInfo = extractedOperation.getLocationInfo();
-            for (VirtualFile file : changedJavaFiles) {
-                String filePath = file.getCanonicalPath();
+            for (PsiFile file : changedSourceJavaFiles) {
+                String filePath = file.getVirtualFile().getPath();
                 String cleanRepoPath = repositoryPath.replace(".idea/misc.xml", "");
                 PsiFile sourcePsiFile = null;
                 PsiFile extractedPsiFile = null;
@@ -100,6 +114,9 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                     }
                 }
             }
+
+
+
         }
     }
 

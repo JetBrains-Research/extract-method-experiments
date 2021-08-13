@@ -56,13 +56,13 @@ def set_train_path(model_path_name):
 def import_sampler(model_config_path):
     content = configparser.ConfigParser()
     content.read(model_config_path)
-    return content['preprocessing'].get('sampler', fallback='SMOTE'),
+    return content['preprocessing'].get('sampler', fallback='None'),
 
 
 def import_preprocessor(model_config_path):
     content = configparser.ConfigParser()
     content.read(model_config_path)
-    return content['preprocessing'].get('preprocessor', fallback='MinMaxScaler')
+    return content['preprocessing'].get('preprocessor', fallback='None')
 
 
 def import_gridsearch_args(model_config_path, classifier_type):

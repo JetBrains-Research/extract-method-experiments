@@ -1,4 +1,4 @@
-from .kmodel import KModel
+# from .kmodel import KModel
 from .model import Model
 from .dataset_importer import DatasetImporter
 from .utils import import_train_configuration

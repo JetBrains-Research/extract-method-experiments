@@ -57,6 +57,12 @@ class Model:
         with open(os.path.join(self.model_train_path, "test_report_0.3.txt"), 'w') as f:
             f.write(classification_report(y_test, self.predict(x_test, 0.3)))
 
+        with open(os.path.join(self.model_train_path, "test_report_0.2.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.2)))
+
+        with open(os.path.join(self.model_train_path, "test_report_0.1.txt"), 'w') as f:
+            f.write(classification_report(y_test, self.predict(x_test, 0.1)))
+
         self.save_model_config()
         self.save_best()
         self.save_grid()

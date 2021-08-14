@@ -22,6 +22,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,18 +99,20 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                     PsiMethod dummyMethod = findMethodBySignature(changedSourceJavaFiles.get(path), calculateSignature(sourceOperation));
                     String extractedCode = getMethodSlice(changedSourceJavaFiles.get(path),
                             codeLocation.getStartLine(), codeLocation.getEndLine());
-                    writeFeaturesToFile(dummyMethod, repositoryPath, sourceLocationInfo.getFilePath(),
+                    writeFeaturesToFile(dummyMethod, sourceLocationInfo.getFilePath(),
                             extractedCode, codeLocation.getStartLine(), codeLocation.getEndLine());
                 }
             }
         }
     }
 
-    private void writeFeaturesToFile(PsiMethod dummyPsiMethod, String repoPath, String filePath,
+    private void writeFeaturesToFile(PsiMethod dummyPsiMethod, String filePath,
                                      String code, int beginLine, int endLine) throws IOException {
 
+        Path tmpRepoPath = Paths.get(repositoryPath);
+        String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount()-1).toString();
         MetricCalculator metricCalculator =
-                new MetricCalculator(code, dummyPsiMethod, repoPath, filePath, beginLine, endLine);
+                new MetricCalculator(code, dummyPsiMethod, repositoryPath, filePath, beginLine, endLine);
 
         FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 
@@ -118,6 +122,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                 this.fileWriter.append(';');
         }
 
+        this.fileWriter.append(repoName);
         this.fileWriter.append('\n');
     }
 

@@ -11,6 +11,7 @@ import git4idea.GitVcs;
 import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
+import io.netty.handler.timeout.TimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
@@ -22,6 +23,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsSetup;
 
@@ -57,6 +60,7 @@ public class PositiveRefactoringsExtractionRunner {
 
     private void collectSamples(String projectPath) {
         Project project = ProjectUtil.openOrImport(projectPath, null, true);
+
         if (project == null) {
             LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
             return;
@@ -88,7 +92,9 @@ public class PositiveRefactoringsExtractionRunner {
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
-                new CustomRefactoringHandler(project, project.getProjectFilePath().replace(".idea/misc.xml", ""), commit, fileWriter));
+                new CustomRefactoringHandler(project,
+                        project.getProjectFilePath().replace(".idea/misc.xml", ""),
+                        commit, fileWriter));
     }
 
 }

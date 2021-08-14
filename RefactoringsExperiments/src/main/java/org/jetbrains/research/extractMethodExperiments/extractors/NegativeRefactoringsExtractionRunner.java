@@ -25,6 +25,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
@@ -113,6 +115,10 @@ public class NegativeRefactoringsExtractionRunner {
                 List<PsiStatement> statementList = candidate.getStatementList();
                 int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
                 int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
+
+                Path tmpRepoPath = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
+                String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount()-1).toString();
+
                 MetricCalculator metricCalculator =
                         new MetricCalculator(StatementListToStr(candidate.getStatementList()), method, beginLine, endLine);
 
@@ -122,7 +128,11 @@ public class NegativeRefactoringsExtractionRunner {
                     this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
                     this.fileWriter.append(';');
                 }
+
                 this.fileWriter.append(String.valueOf(candidate.getScore()));
+                this.fileWriter.append(';');
+
+                this.fileWriter.append(repoName);
                 this.fileWriter.append('\n');
             }
         }

@@ -118,8 +118,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
 
         for (int i = 0; i < featuresVector.getDimension(); i++) {
             this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
-            if (i != featuresVector.getDimension() - 1)
-                this.fileWriter.append(';');
+            this.fileWriter.append(';');
         }
 
         this.fileWriter.append(repoName);

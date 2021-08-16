@@ -136,8 +136,7 @@ public class PluginRunner implements ApplicationStarter {
         FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
         for (int i = 0; i < featureCount; i++) {
             positiveFW.append(Feature.fromId(i).getName());
-            if (i != featureCount - 1)
-                positiveFW.append(';');
+            positiveFW.append(';');
         }
         positiveFW.append("RepositoryName\n");
         return positiveFW;

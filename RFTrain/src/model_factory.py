@@ -23,9 +23,9 @@ class ModelFactory:
         self.scoring_func = scoring_func
 
     def make_model(self):
-        preprocessor = self.__make_preprocessor()
-        sampler = self.__make_sampler()
-        classifier = self.__make_classifier()
+        preprocessor = self._make_preprocessor()
+        sampler = self._make_sampler()
+        classifier = self._make_classifier()
         stages = []
 
         if preprocessor is not None:
@@ -48,7 +48,7 @@ class ModelFactory:
                             n_jobs=-1,
                             verbose=3)
 
-    def __make_preprocessor(self):
+    def _make_preprocessor(self):
         name_to_implementation = {
             'MaxAbsScaler': preprocessing.MaxAbsScaler,
             'MinMaxScaler': preprocessing.MinMaxScaler,
@@ -62,7 +62,7 @@ class ModelFactory:
 
         return implementation()
 
-    def __make_sampler(self):
+    def _make_sampler(self):
         name_to_implementation = {
             'SMOTE': oversampling.SMOTE,
             'ADASYN': oversampling.ADASYN,
@@ -75,7 +75,7 @@ class ModelFactory:
             return None
         return implementation()
 
-    def __make_classifier(self):
+    def _make_classifier(self):
         type_to_implementation = {
             'rf': RandomForestClassifier,
             'svc': SVC,

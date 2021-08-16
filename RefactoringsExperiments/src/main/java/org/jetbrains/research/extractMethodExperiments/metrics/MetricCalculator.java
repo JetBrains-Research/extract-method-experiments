@@ -34,25 +34,35 @@ public class MetricCalculator {
     private static final Logger LOG = LogManager.getLogger(MetricCalculator.class);
     private final String statementsStr;
     private final PsiMethod method;
+    private final String repoPath;
+    private final String filePath;
     private final int beginLine;
     private final int endLine;
     private final FeaturesVector featuresVector;
 
-    public MetricCalculator(List<PsiStatement> statements, PsiMethod method, int beginLine, int endLine) {
-        this.statementsStr = ListToStr(statements);
+    public MetricCalculator(String code, PsiMethod method, int beginLine, int endLine) {
+        this.statementsStr = code;
         this.method = method;
+
+        Path tmpRepo = Paths.get(this.method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
+        Path tmpFile = Paths.get(this.method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
+
+        this.repoPath = tmpRepo.toString();
+        this.filePath = tmpRepo.relativize(tmpFile).toString();
         this.beginLine = beginLine;
         this.endLine = endLine;
         this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
         computeFeatureVector();
     }
 
-    public MetricCalculator(PsiMethod psiMethod, int beginLine, int endLine) {
-        this.method = psiMethod;
-        this.statementsStr = this.method.getBody().getText();
+    public MetricCalculator(String code, PsiMethod dummyPsiMethod, String repoPath, String filePath, int beginLine, int endLine) {
+        this.method = dummyPsiMethod;
+        this.statementsStr = code;
         this.beginLine = beginLine;
         this.endLine = endLine;
         this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
+        this.filePath = Path.of(filePath).toString();
+        this.repoPath = Path.of(repoPath).toString();
         computeFeatureVector();
     }
 
@@ -185,12 +195,10 @@ public class MetricCalculator {
 
     }
 
-    private void historicalFeatures() { //Actually no clue if it works
-        Path repoPath = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
-        Path filePath = Paths.get(method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
+    private void historicalFeatures() {
         Repository repository;
         try {
-            repository = openRepository(repoPath.toString());
+            repository = openRepository(repoPath);
         } catch (Exception e) {
             LOG.error("[RefactoringJudge]: Failed to open the project repository.");
             return;
@@ -198,8 +206,7 @@ public class MetricCalculator {
 
         BlameResult result = null;
         try {
-            result = new Git(repository).blame().setFilePath
-                    (repoPath.relativize(filePath).toString())
+            result = new Git(repository).blame().setFilePath(filePath)
                     .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
         } catch (GitAPIException e) {
             LOG.error("[RefactoringJudge]: Failed to get GitBlame.");

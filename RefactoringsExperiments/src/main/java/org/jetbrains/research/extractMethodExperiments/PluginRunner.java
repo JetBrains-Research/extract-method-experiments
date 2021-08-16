@@ -63,7 +63,18 @@ public class PluginRunner implements ApplicationStarter {
                 positiveRefactoringsExtractionRunner.run();
             }
         }
-
+        if (cmdLine.hasOption("generateNegativeSamples")) {
+            FileWriter negativeFW = null;
+            try {
+                negativeFW = makeNegativeHeader(outputDirPath);
+            } catch (IOException e) {
+                LOG.error("[RefactoringJudge]: Failed to make header for negative.csv.");
+            }
+            if (negativeFW != null) {
+                NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths, negativeFW);
+                negativeRefactoringsExtractionRunner.run();
+            }
+        }
         if (cmdLine.hasOption("generateNegativeSamples")) {
             FileWriter negativeFW = null;
             try {
@@ -128,7 +139,7 @@ public class PluginRunner implements ApplicationStarter {
             if (i != featureCount - 1)
                 positiveFW.append(';');
         }
-        positiveFW.append('\n');
+        positiveFW.append("RepositoryName\n");
         return positiveFW;
     }
 
@@ -138,7 +149,7 @@ public class PluginRunner implements ApplicationStarter {
             negativeFW.append(Feature.fromId(i).getName());
             negativeFW.append(';');
         }
-        negativeFW.append("Score\n");
+        negativeFW.append("Score;RepositoryName\n");
 
         return negativeFW;
     }

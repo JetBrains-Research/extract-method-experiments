@@ -1,10 +1,14 @@
-import os
-from shutil import copyfile
 import logging
+import os
+from pathlib import Path
+from shutil import copyfile
+
 import joblib
 import numpy as np
 from sklearn.metrics import classification_report
-from pathlib import Path
+from sklearn2pmml import sklearn2pmml
+from sklearn2pmml.pipeline import PMMLPipeline
+
 from .model_factory import ModelFactory
 from .utils import set_model_path
 
@@ -32,7 +36,10 @@ class Model:
 
         logging.info(f'Created a model with {self.model_config_path} config')
 
-    def predict(self, features, threshold=0.5):
+    def predict(self, features):
+        return self._model.predict(features)
+
+    def predict_threshold(self, features, threshold):
         return self._model.predict_proba(features)[:, 1] >= threshold
 
     def fit(self, features, targets):
@@ -55,14 +62,17 @@ class Model:
         val_dir = os.path.join(self.model_path, 'validate_results')
         Path(val_dir).mkdir(parents=True, exist_ok=True)
 
-        with open(os.path.join(val_dir, "report_0.5.txt"), 'w') as f:
-            f.write(classification_report(y_test, self.predict(x_test, 0.5)))
+        try:
+            with open(os.path.join(val_dir, "report_0.5.txt"), 'w') as f:
+                f.write(classification_report(y_test, self.predict_threshold(x_test, 0.5)))
 
-        with open(os.path.join(val_dir, "report_0.4.txt"), 'w') as f:
-            f.write(classification_report(y_test, self.predict(x_test, 0.4)))
+            with open(os.path.join(val_dir, "report_0.4.txt"), 'w') as f:
+                f.write(classification_report(y_test, self.predict_threshold(x_test, 0.4)))
 
-        with open(os.path.join(val_dir, "report_0.3.txt"), 'w') as f:
-            f.write(classification_report(y_test, self.predict(x_test, 0.3)))
+            with open(os.path.join(val_dir, "report_0.3.txt"), 'w') as f:
+                f.write(classification_report(y_test, self.predict_threshold(x_test, 0.3)))
+        except AttributeError:
+            return
 
     def save_best(self):
         with open(os.path.join(self.model_path, "best_params.txt"), 'w') as f:
@@ -84,11 +94,18 @@ class Model:
         logging.info(f'Saved the grid at {self.model_path}')
         return 0
 
+    def save_pmml(self):
+        pmml_pipeline = PMMLPipeline([
+            ("pipeline", self._model.best_estimator_)
+        ])
+        pmml_pipeline.configure(compact=False)
+
+        sklearn2pmml(pmml_pipeline,
+                     os.path.join(self.model_path, "model_pipeline.pmml"),
+                     with_repr=True)
+
     def save_training_config(self, training_config_path):
         copyfile(src=training_config_path, dst=os.path.join(self.model_path, 'training_settings.ini'))
-
-    def get_best_estimator(self):
-        return self._model.best_estimator_
 
 
 class TestModel:

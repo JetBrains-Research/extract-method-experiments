@@ -74,14 +74,14 @@ def import_gridsearch_args(model_config_path, classifier_type):
     """
     Returns config dict based on classifier type and .ini file at the path
     """
-    
+
     content = configparser.ConfigParser()
     content.read(model_config_path)
 
     classifier_args = import_classifier_args(content['hyperparameters'], classifier_type.lower())
 
     return to_pipeline(classifier_args, attribute_name='classifier')
-    
+
 
 def import_classifier_args(hyperparameters, classifier_type):
     classifier_arg_parsers = {
@@ -94,9 +94,10 @@ def import_classifier_args(hyperparameters, classifier_type):
         'cnb': import_cnb_args,
         'lrc': import_lrc_args,
     }
-    
+
     return classifier_arg_parsers[classifier_type](
         hyperparameters)
+
 
 def import_rf_args(hyperparameters):
     """
@@ -110,7 +111,7 @@ def import_rf_args(hyperparameters):
         'max_depth': int,
         'min_samples_split': int,
         'min_samples_leaf': int,
-        'bootstrap': make_bool,
+        'bootstrap': cast_bool,
     }
 
     args = {
@@ -129,6 +130,10 @@ def import_rf_args(hyperparameters):
 
 
 def import_svc_args(hyperparameters):
+    """
+        Returns parsed config for SupportVectorMachine from provided settings
+        *Grid-search friendly
+    """
     types = {
         'C': float,
         'kernel': str,
@@ -152,11 +157,15 @@ def import_svc_args(hyperparameters):
 
 
 def import_linear_svc_args(hyperparameters):
+    """
+        Returns parsed config for LinearSupportVectorMachine from provided settings
+        *Grid-search friendly
+    """
     types = {
         'C': float,
         'tol': float,
         'loss': str,
-        'dual': make_bool,
+        'dual': cast_bool,
         'penalty': str,
     }
 
@@ -175,13 +184,17 @@ def import_linear_svc_args(hyperparameters):
 
 
 def import_sgd_args(hyperparameters):
+    """
+        Returns parsed config for StochasticGradientDescent over SVM from provided settings
+        *Grid-search friendly
+    """
     types = {
         'alpha': float,
         'tol': float,
         'loss': str,
         'max_iter': int,
         'penalty': str,
-        'fit_intercept': make_bool
+        'fit_intercept': cast_bool
     }
 
     args = {
@@ -205,7 +218,7 @@ def import_mlp_args(hyperparameters):
     *Grid-search friendly
     """
     types = {
-        'hidden_layer_sizes': make_tuple,  # Not a type but casting func
+        'hidden_layer_sizes': make_tuple,
         'activation': str,
         'solver': str,
         'alpha': float,
@@ -235,6 +248,10 @@ def import_mlp_args(hyperparameters):
 
 
 def import_gnb_args(hyperparameters):
+    """
+        Returns parsed config for GaussianNaiveBayes from provided settings
+        *Grid-search friendly
+    """
     types = {
         'var_smoothing': float
     }
@@ -250,9 +267,13 @@ def import_gnb_args(hyperparameters):
 
 
 def import_cnb_args(hyperparameters):
+    """
+        Returns parsed config for ComplementNaiveBayes from provided settings
+        *Grid-search friendly
+    """
     types = {
         'alpha': float,
-        'norm': make_bool,
+        'norm': cast_bool,
     }
 
     args = {
@@ -268,14 +289,14 @@ def import_cnb_args(hyperparameters):
 
 def import_lrc_args(hyperparameters):
     """
-    Returns parsed config for OneClassClassification with SVM classifier from provided settings
+    Returns parsed config for LogisticRegressionClassifier from provided settings
     *Grid-search friendly
     """
     types = {
         'penalty': str,
         'tol': float,
         'C': float,
-        'fit_intercept': make_bool,
+        'fit_intercept': cast_bool,
         'solver': str,
         'max_iter': int,
     }
@@ -295,12 +316,12 @@ def import_lrc_args(hyperparameters):
     return args
 
 
-def make_bool(_string):
-    return _string == 'True'
+def cast_bool(string):
+    return string == 'True'
 
 
-def cast_to_typed_list(_string, _type):
-    return list(map(_type, re.split('; |;|\s|\s', _string)))
+def cast_to_typed_list(string, type_to_cast):
+    return list(map(type_to_cast, re.split('; |;|;\s', string)))
 
 
 def to_pipeline(config, attribute_name='classifier'):

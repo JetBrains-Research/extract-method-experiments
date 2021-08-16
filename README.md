@@ -8,8 +8,8 @@ The `Refactoring Experiments` directory contains the tools that were used to gat
 
 ### Usage
 There are two possible ways to use the tool:
-* Generate positive-labeles samples using option `generatePositiveSamples`. It will start extraction of already performed Extract Method refactorings in changes history of existing Java projects using [RefactoringMiner](https://github.com/JetBrains-Research/RefactoringMiner).
-* Generate negative-labeles samples using option `generateNegativeSamples`. It will generate all possible sequences of statements in methods, rank it using algorithm suggested by [Haas et al.](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.721.2014&rep=rep1&type=pdf) and get the worse ones as candidates that should not be recommended for extraction.
+* Generate positive-labeled samples using option `generatePositiveSamples`. It will start extraction of already performed Extract Method refactorings in changes history of existing Java projects using [RefactoringMiner](https://github.com/JetBrains-Research/RefactoringMiner).
+* Generate negative-labeled samples using option `generateNegativeSamples`. It will generate all possible sequences of statements in methods, rank it using algorithm suggested by [Haas et al.](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.721.2014&rep=rep1&type=pdf) and get the worse ones as candidates that should not be recommended for extraction.
 
 #### Unix systems
 
@@ -46,6 +46,7 @@ Currently, there are a number of ML algorithms proposed as valid models:
 | RandomForest  | `sklearn.ensemble.RandomForest` | RF |
 | SupportVectorMachine      | `sklearn.svm.SVC`      | SVC |
 | LinearSupportVectorMachine | `sklearn.svm.LinearSVC`   | LSVC |
+| LogisticRegression | `sklearn.linear_model.LogisticRegression`   | LRC |
 | SGD over SVM  | `sklearn.ensemble.SGDClassifier` | SGD |
 | GaussianNaiveBayes  | `sklearn.naive_bayes.GaussianNB`   | GNB |
 | ComplementNaiveBayes | `sklearn.naive_bayes.ComplementNB`   |CNB  |
@@ -62,5 +63,12 @@ To train a model, one has to complete a list of procedures:
 - Configure training procedure through config files.
     - Make a model config and specify model's arguments there. 
     Directory `model_settings/` has example config files with exhaustive lists of mutable arguments (arguments can be passed using `;` delimiter to initiate gridsearch over given parameters).
-    - Make a config for training and specify the path to model' config there.
-- Run `main.py` and manually choose config file or `batch_trainer.py` to do so with many configs iteratively
+    - Make a config for training (see `settings/` directory).
+- Use `train_by_config()` function specified in `trainer.py`. Examples of usage can be obtained in scripts `main.py` and `batch_training.py` 
+
+
+### Testing
+
+After having trained a model, one may configure a testing procedure(see `test_settings/` directory). 
+Similarly to the training, function `test_by_config()` specified in `trainer.py` is used to test the model.
+

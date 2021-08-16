@@ -1,7 +1,6 @@
 import os
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
 
 
 class TrainImporter:
@@ -14,7 +13,7 @@ class TrainImporter:
         self.df_pos = pd.read_csv(self.path_to_positive, delimiter=';', error_bad_lines=False).dropna()
         self.df_neg = pd.read_csv(self.path_to_negative, delimiter=';', error_bad_lines=False).dropna()
 
-    def make_binary(self, test_size=0.25):
+    def make_binary(self):
         """
         Makes and returns  a pair x, y which correspond to features(x) and targets(y) dataframe,
         each sample has target label of 1 or 0, suitable for binary classification.
@@ -32,9 +31,7 @@ class TrainImporter:
         y = whole_df.label
         x[x < 0] = 0
 
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size)
-
-        return x_train, x_test, y_train, y_test
+        return x, y
 
 
 class TestImporter:

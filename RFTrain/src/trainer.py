@@ -1,23 +1,21 @@
-from .model import Model, TestModel
-from .dataset_importer import TrainImporter, TestImporter
-from .utils import import_train_configuration, import_test_configuration
 from sklearn.metrics import classification_report
+
+from .dataset_importer import TrainImporter, TestImporter
+from .model import Model, TestModel
+from .utils import import_train_configuration, import_test_configuration
 
 
 def train_by_config(config_path):
     config = import_train_configuration(config_file=config_path)
     dataset_importer = TrainImporter(config)
 
-    if config.get('classifier_type').lower() == 'k-dnn':
-        pass
+    x, y = dataset_importer.make_binary()
+    model = Model(config)
+    model.train(x, y)
+    model.save_training_config(config_path)
 
-    else:
-        x_train, x_test, y_train, y_test = dataset_importer.make_binary()
-        model = Model(config)
-        model.train(x_train, y_train)
-        model.save_training_config(config_path)
-        model.validate(x_test, y_test)
-        # model.save_pmml(model.get_best_estimator())
+    # saving model in pmml can cause errors, use with care
+    # model.save_pmml()
 
 
 def test_by_config(config_path):

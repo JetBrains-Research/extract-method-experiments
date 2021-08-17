@@ -2,9 +2,22 @@
 
 The repository contains the tools and scripts used in [AntiCopyPaster project](https://github.com/JetBrains-Research/anti-copy-paster) to recommend extract method refactoring.
 
+## Repository cloning
+
+The tools provided in this repository depend on having cloned repositories directly on the local machine. 
+For the purposes of automatization and simplification of work pipeline we provide a simple Python script written with `gitpython` for cloning large quantities of Git repositories. 
+
+Usage: 
+```
+python gitcloner/main.py <input_file> <output_directory>
+```
+`<input_file>` has to consist of names of GitHub repositories, one name in a line (see directory `data/` for examples).
+
+It is recommended to use this script to clone repositories, however, it is not mandatory.
+
 ## Data gathering
 
-The `Refactoring Experiments` directory contains the tools that were used to gather the data that was used to train the machine learning models.
+The `RefactoringsExperiments` directory contains the tools that were used to gather the data that was used to train the machine learning models.
 
 ### Usage
 There are two possible ways to use the tool:
@@ -13,7 +26,7 @@ There are two possible ways to use the tool:
 
 #### Unix systems
 
-Open `Refactoring Experiments` directory and execute the following command:
+Open `RefactoringsExperiments` directory and execute the following command:
 
 ```
 ./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath=/path/to/projects/ -PdatasetsDirPath=/path/to/output/ -PgeneratePositiveSamples
@@ -28,10 +41,6 @@ The output of the tool are two datasets labeled `positive.csv` and `negative.csv
 #### Windows systems
 
 The procedure is identical with one key difference, use command `gradlew.bat` instead of `./gradlew`
-
-### Data directory
-
-The `data/` directory is used for storing text files with lists of repositories for processing, for instance, file `apache_repos.txt` consists of small list of Apache repositories, and `star_top100.txt` includes list of 100 most starred java repositories on GitHub. 
 
 ### Output directory
 
@@ -53,8 +62,8 @@ Currently, there are a number of ML algorithms proposed as valid models:
 | MultiLayerPerceptron  | `sklearn.neural_network.MLPClassifier` | MLP|
 
 
-The `RFTrain/` directory contains Python scripts for evaluating machine learning models on the collected datasets. 
-The requirements are specified in `requirements.txt`.
+The `ml-framework/` directory contains Python scripts for creation, training and evaluation of machine learning models on the collected datasets. 
+The requirements are specified in `requirements.txt`, and can be built with `pip install -r requirements.txt`.
 
 ### Training
 
@@ -71,4 +80,7 @@ To train a model, one has to complete a list of procedures:
 
 After having trained a model, one may configure a testing procedure(see `test_settings/` directory). 
 Similarly to the training, function `test_by_config()` specified in `trainer.py` is used to test the model.
+
+### Additional information
+For more on the ml-framework we recommend to visit GitHub wiki page of this repository
 

@@ -129,7 +129,8 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         String[] fileLines = psiFile.getText().split("\n");
         List<String> resultingLines = new ArrayList<>();
         for (int i = 0; i < fileLines.length; i++){
-            if (i+1 >= beginLine && i+1 <= endLine) resultingLines.add(fileLines[i]);
+            if (i+1 >= beginLine && i+1 <= endLine)
+                resultingLines.add(fileLines[i]);
         }
         return String.join("\n", resultingLines);
     }

@@ -10,7 +10,6 @@ import java.util.Set;
 public class MemberSets {
     public Set<String> methods = new HashSet<>();
     public Set<String> fields = new HashSet<>();
-    public Set<String> total = new HashSet<>();
 
     public static MemberSets extractAllMethodsAndFields(PsiElement root) {
         final MemberSets result = new MemberSets();
@@ -23,13 +22,11 @@ public class MemberSets {
                 if (elementSplit[0].equals("PsiMethod")) {
                     String methodName = elementSplit[1];
                     result.methods.add(methodName);
-                    result.total.add(methodName);
                 }
 
                 if (elementSplit[0].equals("PsiField")) {
                     String fieldName = elementSplit[1];
                     result.fields.add(fieldName);
-                    result.total.add(fieldName);
                 }
 
             }

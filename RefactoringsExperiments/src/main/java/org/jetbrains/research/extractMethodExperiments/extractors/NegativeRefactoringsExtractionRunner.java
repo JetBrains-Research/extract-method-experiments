@@ -27,6 +27,8 @@ import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
@@ -118,8 +120,15 @@ public class NegativeRefactoringsExtractionRunner {
 
                 String repoName = psiFile.getProject().getName();
 
+                Path tmpRepo = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
+                Path tmpFile = Paths.get(method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
+
+                String repoPath = tmpRepo.toString();
+                String filePath = tmpRepo.relativize(tmpFile).toString();
+
+
                 MetricCalculator metricCalculator =
-                        new MetricCalculator(statementsAsStr(candidate.getStatementList()), method, beginLine, endLine);
+                        new MetricCalculator(statementsAsStr(candidate.getStatementList()), method, repoPath, filePath, beginLine, endLine);
 
                 FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 

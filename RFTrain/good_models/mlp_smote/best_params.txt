@@ -1,1 +1,0 @@
-{'classifier__activation': 'relu', 'classifier__alpha': 0.0001, 'classifier__batch_size': 200, 'classifier__hidden_layer_sizes': (100,), 'classifier__learning_rate': 'adaptive', 'classifier__learning_rate_init': 0.001, 'classifier__max_iter': 500, 'classifier__solver': 'adam', 'classifier__tol': 1e-05}

@@ -5,7 +5,7 @@ The repository contains the tools and scripts used in [AntiCopyPaster project](h
 ## Repository cloning
 
 The tools provided in this repository depend on having cloned repositories directly on the local machine. 
-For the purposes of automatization and simplification of work pipeline we provide a simple Python script written with `gitpython` for cloning large quantities of Git repositories. 
+For the purposes of automatization and simplification of work pipeline we provide a simple Python script written with [GitPython](https://github.com/gitpython-developers/GitPython) for cloning large quantities of Git repositories. 
 
 Usage: 
 ```

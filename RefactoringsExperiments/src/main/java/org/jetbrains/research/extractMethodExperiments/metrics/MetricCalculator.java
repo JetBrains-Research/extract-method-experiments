@@ -28,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
-import static org.jetbrains.research.extractMethodExperiments.utils.StatementListUtil.ListToStr;
 
 public class MetricCalculator {
     private static final Logger LOG = LogManager.getLogger(MetricCalculator.class);
@@ -39,21 +38,6 @@ public class MetricCalculator {
     private final int beginLine;
     private final int endLine;
     private final FeaturesVector featuresVector;
-
-    public MetricCalculator(String code, PsiMethod method, int beginLine, int endLine) {
-        this.statementsStr = code;
-        this.method = method;
-
-        Path tmpRepo = Paths.get(this.method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
-        Path tmpFile = Paths.get(this.method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
-
-        this.repoPath = tmpRepo.toString();
-        this.filePath = tmpRepo.relativize(tmpFile).toString();
-        this.beginLine = beginLine;
-        this.endLine = endLine;
-        this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
-        computeFeatureVector();
-    }
 
     public MetricCalculator(String code, PsiMethod dummyPsiMethod, String repoPath, String filePath, int beginLine, int endLine) {
         this.method = dummyPsiMethod;
@@ -106,8 +90,6 @@ public class MetricCalculator {
 
         PsiFileFactory factory = PsiFileFactory.getInstance(thisFile.getProject());
         @Nullable PsiFile psiFromText = factory.createFileFromText(statementsStr, thisFile);
-        PsiElement psiElement = factory.createFileFromText(statementsStr, thisFile);
-        psiElement.getText();
         // search for all identifiers (methods and variables) in the code fragment
         @NotNull Collection<PsiIdentifier> identifiers = PsiTreeUtil.collectElementsOfType(psiFromText,
                 PsiIdentifier.class);

@@ -2,11 +2,8 @@ package org.jetbrains.research.extractMethodExperiments.haas;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
-import com.intellij.psi.impl.source.JavaDummyHolder;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +46,7 @@ public class Candidate implements Comparable<Candidate> {
         ApplicationManager.getApplication().invokeAndWait(() -> {
             WriteCommandAction.runWriteCommandAction(originalMethod.getProject(), () -> {
                 for (PsiStatement statement : statementList) {
-                    PsiTreeUtil.getParentOfType(statement, PsiCodeBlock.class).deleteChildRange(statementList.get(0), statementList.get(statementList.size() - 1));
+                    statement.getParent().deleteChildRange(statementList.get(0), statementList.get(statementList.size() - 1));
                 }
                 remainderAsString = originalMethod.getText();
             });

@@ -6,22 +6,24 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiStatement;
 import com.intellij.psi.util.PsiTreeUtil;
 import git4idea.GitCommit;
 import git4idea.GitVcs;
 import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.haas.Candidate;
 import org.jetbrains.research.extractMethodExperiments.haas.HaasAlgorithm;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -116,11 +118,17 @@ public class NegativeRefactoringsExtractionRunner {
                 int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
                 int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
 
-                Path tmpRepoPath = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
-                String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount()-1).toString();
+                String repoName = psiFile.getProject().getName();
+
+                Path tmpRepo = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
+                Path tmpFile = Paths.get(method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
+
+                String repoPath = tmpRepo.toString();
+                String filePath = tmpRepo.relativize(tmpFile).toString();
+
 
                 MetricCalculator metricCalculator =
-                        new MetricCalculator(StatementListToStr(candidate.getStatementList()), method, beginLine, endLine);
+                        new MetricCalculator(statementsAsStr(candidate.getStatementList()), method, repoPath, filePath, beginLine, endLine);
 
                 FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 
@@ -138,7 +146,7 @@ public class NegativeRefactoringsExtractionRunner {
         }
     }
 
-    public static String StatementListToStr(List<PsiStatement> statementList) {
+    public static String statementsAsStr(List<PsiStatement> statementList) {
         StringBuilder result = new StringBuilder();
         for (PsiStatement statement : statementList) {
             result.append(statement.getText());
@@ -147,5 +155,3 @@ public class NegativeRefactoringsExtractionRunner {
         return result.toString().strip();
     }
 }
-
-

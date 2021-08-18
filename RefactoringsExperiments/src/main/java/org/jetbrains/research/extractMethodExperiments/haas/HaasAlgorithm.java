@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HaasAlgorithm {
-    private final int minimumNumberOfStatements = 3;
     private final List<Candidate> candidateList;
 
     public HaasAlgorithm(PsiMethod psiMethod) {
@@ -41,7 +40,7 @@ public class HaasAlgorithm {
         //TODO: take into account minimumNumberOfStatements
         for (int i = 0; i < psiStatements.length; i++) {
             for (int j = i; j < psiStatements.length; j++) {
-                Candidate candidate = calculateCandidate(psiMethod, codeBlock, i, j);
+                Candidate candidate = calculateCandidate(psiMethod, codeBlock, i, j + 1);
                 candidateList.add(candidate);
             }
         }

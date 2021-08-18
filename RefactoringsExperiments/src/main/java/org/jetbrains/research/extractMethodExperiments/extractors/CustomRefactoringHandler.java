@@ -4,31 +4,34 @@ import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.PsiMethod;
 import git4idea.GitCommit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.findMethodBySignature;
-import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getNumberOfLine;
 import static org.jetbrains.research.extractMethodExperiments.utils.StringUtil.calculateSignature;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
@@ -78,14 +81,14 @@ public class CustomRefactoringHandler extends RefactoringHandler {
 
         if (changes.size() == 0) return;
 
-        for(Change change : changes){
+        for (Change change : changes) {
             try {
                 PsiFile sourcePsiFile = PsiFileFactory.getInstance(project).createFileFromText("tmp",
                         JavaFileType.INSTANCE,
                         change.getBeforeRevision().getContent());
                 changedSourceJavaFiles.put(change.getBeforeRevision().getFile().getPath(), sourcePsiFile);
             } catch (VcsException e) {
-                e.printStackTrace();
+                LOG.error("[RefactoringJudge]: Cannot extract changes from commit: " + gitCommit.getId());
             }
         }
 
@@ -110,7 +113,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                                      String code, int beginLine, int endLine) throws IOException {
 
         Path tmpRepoPath = Paths.get(repositoryPath);
-        String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount()-1).toString();
+        String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount() - 1).toString();
         MetricCalculator metricCalculator =
                 new MetricCalculator(code, dummyPsiMethod, repositoryPath, filePath, beginLine, endLine);
 
@@ -129,10 +132,9 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private static String getMethodSlice(PsiFile psiFile, int beginLine, int endLine) {
         String[] fileLines = psiFile.getText().split("\n");
         List<String> resultingLines = new ArrayList<>();
-        for (int i = 0; i < fileLines.length; i++){
-            if (i+1 >= beginLine && i+1 <= endLine) resultingLines.add(fileLines[i]);
+        for (int i = 0; i < fileLines.length; i++) {
+            if (i + 1 >= beginLine && i + 1 <= endLine) resultingLines.add(fileLines[i]);
         }
         return String.join("\n", resultingLines);
     }
-
 }

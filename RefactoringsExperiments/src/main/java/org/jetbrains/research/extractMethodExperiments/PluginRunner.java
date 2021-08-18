@@ -77,7 +77,7 @@ public class PluginRunner implements ApplicationStarter {
         }
     }
 
-    private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine){
+    private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine) {
         if (cmdLine.hasOption("projectsDirPath")) {
             String projectsFilePath = cmdLine.getOptionValue("projectsDirPath");
             inRepoPaths.addAll(extractProjectsPaths(projectsFilePath));

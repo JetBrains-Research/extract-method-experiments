@@ -28,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
-import static org.jetbrains.research.extractMethodExperiments.utils.StatementListUtil.ListToStr;
 
 public class MetricCalculator {
     private static final Logger LOG = LogManager.getLogger(MetricCalculator.class);

@@ -1,9 +1,10 @@
 package org.jetbrains.research.extractMethodExperiments.metrics;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -27,31 +28,25 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.jetbrains.research.extractMethodExperiments.metrics.DepthAnalyzer.getNestingArea;
-import static org.jetbrains.research.extractMethodExperiments.utils.StatementListUtil.ListToStr;
 
 public class MetricCalculator {
-    private static final Logger LOG = Logger.getInstance(MetricCalculator.class);
+    private static final Logger LOG = LogManager.getLogger(MetricCalculator.class);
     private final String statementsStr;
     private final PsiMethod method;
+    private final String repoPath;
+    private final String filePath;
     private final int beginLine;
     private final int endLine;
     private final FeaturesVector featuresVector;
 
-    public MetricCalculator(List<PsiStatement> statements, PsiMethod method, int beginLine, int endLine) {
-        this.statementsStr = ListToStr(statements);
-        this.method = method;
+    public MetricCalculator(String code, PsiMethod dummyPsiMethod, String repoPath, String filePath, int beginLine, int endLine) {
+        this.method = dummyPsiMethod;
+        this.statementsStr = code;
         this.beginLine = beginLine;
         this.endLine = endLine;
         this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
-        computeFeatureVector();
-    }
-
-    public MetricCalculator(PsiElement psiElement, int beginLine, int endLine) {
-        this.method = ((PsiMethod) psiElement);
-        this.statementsStr = this.method.getBody().getText();
-        this.beginLine = beginLine;
-        this.endLine = endLine;
-        this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
+        this.filePath = Path.of(filePath).toString();
+        this.repoPath = Path.of(repoPath).toString();
         computeFeatureVector();
     }
 
@@ -95,8 +90,6 @@ public class MetricCalculator {
 
         PsiFileFactory factory = PsiFileFactory.getInstance(thisFile.getProject());
         @Nullable PsiFile psiFromText = factory.createFileFromText(statementsStr, thisFile);
-        PsiElement psiElement = factory.createFileFromText(statementsStr, thisFile);
-        psiElement.getText();
         // search for all identifiers (methods and variables) in the code fragment
         @NotNull Collection<PsiIdentifier> identifiers = PsiTreeUtil.collectElementsOfType(psiFromText,
                 PsiIdentifier.class);
@@ -184,12 +177,10 @@ public class MetricCalculator {
 
     }
 
-    private void historicalFeatures() { //Actually no clue if it works
-        Path repoPath = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
-        Path filePath = Paths.get(method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
+    private void historicalFeatures() {
         Repository repository;
         try {
-            repository = openRepository(repoPath.toString());
+            repository = openRepository(repoPath);
         } catch (Exception e) {
             LOG.error("[RefactoringJudge]: Failed to open the project repository.");
             return;
@@ -197,8 +188,7 @@ public class MetricCalculator {
 
         BlameResult result = null;
         try {
-            result = new Git(repository).blame().setFilePath
-                    (repoPath.relativize(filePath).toString())
+            result = new Git(repository).blame().setFilePath(filePath)
                     .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
         } catch (GitAPIException e) {
             LOG.error("[RefactoringJudge]: Failed to get GitBlame.");

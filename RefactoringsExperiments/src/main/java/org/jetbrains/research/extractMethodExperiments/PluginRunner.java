@@ -1,8 +1,9 @@
 package org.jetbrains.research.extractMethodExperiments;
 
 import com.intellij.openapi.application.ApplicationStarter;
-import com.intellij.openapi.diagnostic.Logger;
 import org.apache.commons.cli.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.extractors.NegativeRefactoringsExtractionRunner;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
-    private final Logger LOG = Logger.getInstance(PluginRunner.class);
+    private final Logger LOG = LogManager.getLogger(PluginRunner.class);
     private final int featureCount = 82;
 
     @Override
@@ -62,7 +63,6 @@ public class PluginRunner implements ApplicationStarter {
                 positiveRefactoringsExtractionRunner.run();
             }
         }
-
         if (cmdLine.hasOption("generateNegativeSamples")) {
             FileWriter negativeFW = null;
             try {
@@ -77,7 +77,7 @@ public class PluginRunner implements ApplicationStarter {
         }
     }
 
-    private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine){
+    private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine) {
         if (cmdLine.hasOption("projectsDirPath")) {
             String projectsFilePath = cmdLine.getOptionValue("projectsDirPath");
             inRepoPaths.addAll(extractProjectsPaths(projectsFilePath));
@@ -124,10 +124,9 @@ public class PluginRunner implements ApplicationStarter {
         FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
         for (int i = 0; i < featureCount; i++) {
             positiveFW.append(Feature.fromId(i).getName());
-            if (i != featureCount - 1)
-                positiveFW.append(';');
+            positiveFW.append(';');
         }
-        positiveFW.append('\n');
+        positiveFW.append("RepositoryName\n");
         return positiveFW;
     }
 
@@ -137,7 +136,7 @@ public class PluginRunner implements ApplicationStarter {
             negativeFW.append(Feature.fromId(i).getName());
             negativeFW.append(';');
         }
-        negativeFW.append("Score\n");
+        negativeFW.append("Score;RepositoryName\n");
 
         return negativeFW;
     }

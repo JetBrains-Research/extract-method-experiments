@@ -1,20 +1,23 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiStatement;
 import com.intellij.psi.util.PsiTreeUtil;
 import git4idea.GitCommit;
 import git4idea.GitVcs;
 import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
@@ -24,6 +27,8 @@ import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,7 +40,7 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
  * The "negative" samples are ones pieces of code that have the lowes score in terms of Haas ranking.
  */
 public class NegativeRefactoringsExtractionRunner {
-    private final Logger LOG = Logger.getInstance(NegativeRefactoringsExtractionRunner.class);
+    private final Logger LOG = LogManager.getLogger(NegativeRefactoringsExtractionRunner.class);
     private final List<String> repositoryPaths;
     private final FileWriter fileWriter;
 
@@ -112,16 +117,41 @@ public class NegativeRefactoringsExtractionRunner {
                 List<PsiStatement> statementList = candidate.getStatementList();
                 int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
                 int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
-                MetricCalculator metricCalculator = new MetricCalculator(candidate.getStatementList(), method, beginLine, endLine);
+
+                String repoName = psiFile.getProject().getName();
+
+                Path tmpRepo = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
+                Path tmpFile = Paths.get(method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
+
+                String repoPath = tmpRepo.toString();
+                String filePath = tmpRepo.relativize(tmpFile).toString();
+
+
+                MetricCalculator metricCalculator =
+                        new MetricCalculator(statementsAsStr(candidate.getStatementList()), method, repoPath, filePath, beginLine, endLine);
 
                 FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+
                 for (int i = 0; i < featuresVector.getDimension(); i++) {
                     this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
                     this.fileWriter.append(';');
                 }
+
                 this.fileWriter.append(String.valueOf(candidate.getScore()));
+                this.fileWriter.append(';');
+
+                this.fileWriter.append(repoName);
                 this.fileWriter.append('\n');
             }
         }
+    }
+
+    public static String statementsAsStr(List<PsiStatement> statementList) {
+        StringBuilder result = new StringBuilder();
+        for (PsiStatement statement : statementList) {
+            result.append(statement.getText());
+            result.append('\n');
+        }
+        return result.toString().strip();
     }
 }

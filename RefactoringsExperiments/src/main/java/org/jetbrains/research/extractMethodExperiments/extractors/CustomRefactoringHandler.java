@@ -1,16 +1,19 @@
 package org.jetbrains.research.extractMethodExperiments.extractors;
 
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiMethod;
 import git4idea.GitCommit;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.research.extractMethodExperiments.features.Feature;
 import org.jetbrains.research.extractMethodExperiments.features.FeaturesVector;
 import org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator;
@@ -20,11 +23,15 @@ import org.refactoringminer.api.RefactoringType;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.findMethodBySignature;
-import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.getNumberOfLine;
 import static org.jetbrains.research.extractMethodExperiments.utils.StringUtil.calculateSignature;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
@@ -32,7 +39,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     private final GitCommit gitCommit;
     private final String repositoryPath;
     private final FileWriter fileWriter;
-    private final Logger LOG = Logger.getInstance(CustomRefactoringHandler.class);
+    private final Logger LOG = LogManager.getLogger(CustomRefactoringHandler.class);
 
     public CustomRefactoringHandler(Project project,
                                     String repositoryPath,
@@ -66,45 +73,68 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         List<Refactoring> extractMethodRefactorings = refactorings.stream()
                 .filter(r -> r.getRefactoringType() == RefactoringType.EXTRACT_OPERATION)
                 .collect(Collectors.toList());
+        if (extractMethodRefactorings.size() == 0) return;
 
-        List<VirtualFile> changedJavaFiles = gitCommit.getChanges().stream()
-                .filter(f -> f.getVirtualFile() != null && f.getVirtualFile().getName().endsWith(".java"))
-                .map(Change::getVirtualFile)
-                .collect(Collectors.toList());
+        List<Change> changes = gitCommit.getChanges().stream().filter(f -> f.getVirtualFile() != null &&
+                f.getVirtualFile().getName().endsWith(".java")).collect(Collectors.toList());
+        Map<String, PsiFile> changedSourceJavaFiles = new HashMap<>();
+
+        if (changes.size() == 0) return;
+
+        for (Change change : changes) {
+            try {
+                PsiFile sourcePsiFile = PsiFileFactory.getInstance(project).createFileFromText("tmp",
+                        JavaFileType.INSTANCE,
+                        change.getBeforeRevision().getContent());
+                changedSourceJavaFiles.put(change.getBeforeRevision().getFile().getPath(), sourcePsiFile);
+            } catch (VcsException e) {
+                LOG.error("[RefactoringJudge]: Cannot extract changes from commit: " + gitCommit.getId());
+            }
+        }
 
         for (Refactoring ref : extractMethodRefactorings) {
             ExtractOperationRefactoring extractOperationRefactoring = (ExtractOperationRefactoring) ref;
-            UMLOperation extractedOperation = extractOperationRefactoring.getExtractedOperation();
-            LocationInfo locationInfo = extractedOperation.getLocationInfo();
-            for (VirtualFile file : changedJavaFiles) {
-                String filePath = file.getCanonicalPath();
-                String cleanRepoPath = repositoryPath.replace(".idea/misc.xml", "");
-                if (filePath != null && locationInfo.getFilePath().equals(filePath.replace(cleanRepoPath, ""))) {
-                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                    if (psiFile != null) {
-                        PsiMethod method = findMethodBySignature(psiFile, calculateSignature(extractedOperation));
-                        if (method != null) {
-                            writeFeaturesToFile(psiFile, method);
-                        }
-                    }
+            UMLOperation sourceOperation = extractOperationRefactoring.getSourceOperationBeforeExtraction();
+            LocationInfo sourceLocationInfo = sourceOperation.getLocationInfo();
+            CodeRange codeLocation = extractOperationRefactoring.getExtractedCodeRangeFromSourceOperation();
+            for (String path : changedSourceJavaFiles.keySet()) {
+                if (path.endsWith(sourceLocationInfo.getFilePath())) {
+                    PsiMethod dummyMethod = findMethodBySignature(changedSourceJavaFiles.get(path), calculateSignature(sourceOperation));
+                    String extractedCode = getMethodSlice(changedSourceJavaFiles.get(path),
+                            codeLocation.getStartLine(), codeLocation.getEndLine());
+                    writeFeaturesToFile(dummyMethod, sourceLocationInfo.getFilePath(),
+                            extractedCode, codeLocation.getStartLine(), codeLocation.getEndLine());
                 }
             }
         }
     }
 
-    private void writeFeaturesToFile(PsiFile psiFile, PsiMethod psiElement) throws IOException {
-        int beginLine = getNumberOfLine(psiFile, psiElement.getTextRange().getStartOffset());
-        int endLine = getNumberOfLine(psiFile, psiElement.getTextRange().getEndOffset());
-        MetricCalculator metricCalculator = new MetricCalculator(psiElement, beginLine, endLine);
+    private void writeFeaturesToFile(PsiMethod dummyPsiMethod, String filePath,
+                                     String code, int beginLine, int endLine) throws IOException {
+
+        Path tmpRepoPath = Paths.get(repositoryPath);
+        String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount() - 1).toString();
+        MetricCalculator metricCalculator =
+                new MetricCalculator(code, dummyPsiMethod, repositoryPath, filePath, beginLine, endLine);
+
         FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 
         for (int i = 0; i < featuresVector.getDimension(); i++) {
             this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
-            if (i != featuresVector.getDimension() - 1)
-                this.fileWriter.append(';');
+            this.fileWriter.append(';');
         }
 
+        this.fileWriter.append(repoName);
         this.fileWriter.append('\n');
     }
 
+    private static String getMethodSlice(PsiFile psiFile, int beginLine, int endLine) {
+        String[] fileLines = psiFile.getText().split("\n");
+        List<String> resultingLines = new ArrayList<>();
+        for (int i = 0; i < fileLines.length; i++)
+            if (i + 1 >= beginLine && i + 1 <= endLine)
+                resultingLines.add(fileLines[i]);
+
+        return String.join("\n", resultingLines);
+    }
 }

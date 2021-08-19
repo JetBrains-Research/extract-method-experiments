@@ -22,6 +22,7 @@ public class DepthAnalyzer {
                     currentDepth--;
                 }
             }
+            currentDepth = Math.max(currentDepth, 0);
             depthInLine[i] = currentDepth;
             for (int j = 0; j < lines[i].length(); j++) {
                 if (lines[i].charAt(j) == '{') currentDepth++;

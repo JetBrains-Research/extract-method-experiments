@@ -2,7 +2,6 @@ package org.jetbrains.research.extractMethodExperiments.extractors;
 
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
@@ -12,6 +11,8 @@ import git4idea.GitVcs;
 import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
@@ -30,7 +31,7 @@ import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.vcsS
 public class PositiveRefactoringsExtractionRunner {
     private final List<String> repositoriesPaths;
     private final FileWriter fileWriter;
-    private final Logger LOG = Logger.getInstance(PositiveRefactoringsExtractionRunner.class);
+    private final Logger LOG = LogManager.getLogger(PositiveRefactoringsExtractionRunner.class);
 
     public PositiveRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
         this.repositoriesPaths = repositoryPaths;
@@ -56,6 +57,7 @@ public class PositiveRefactoringsExtractionRunner {
 
     private void collectSamples(String projectPath) {
         Project project = ProjectUtil.openOrImport(projectPath, null, true);
+
         if (project == null) {
             LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
             return;
@@ -87,7 +89,9 @@ public class PositiveRefactoringsExtractionRunner {
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
-                new CustomRefactoringHandler(project, project.getProjectFilePath(), commit, fileWriter));
+                new CustomRefactoringHandler(project,
+                        project.getProjectFilePath().replace(".idea/misc.xml", ""),
+                        commit, fileWriter));
     }
 
 }

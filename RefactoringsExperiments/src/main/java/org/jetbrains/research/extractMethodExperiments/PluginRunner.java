@@ -75,24 +75,6 @@ public class PluginRunner implements ApplicationStarter {
                 negativeRefactoringsExtractionRunner.run();
             }
         }
-
-        int a = 10;
-        int s = 2;
-        for(int i = 0; i < a; i++) {
-            if (s > 2)
-                s = (s+1) * (s-1);
-            else
-                s++;
-        }
-        System.out.println(s);
-
-        for(int i = 0; i < a; i++) {
-            if (s > 2)
-                s = (s+1) * (s-1);
-            else
-                s++;
-        }
-        System.out.println(s);
     }
 
     private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine) {

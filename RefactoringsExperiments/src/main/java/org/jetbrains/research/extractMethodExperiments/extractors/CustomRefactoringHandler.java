@@ -116,6 +116,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount() - 1).toString();
 
         writeFeaturesToFile(dummyPsiMethod, code, repoName, beginLine, endLine, this.fileWriter);
+        this.fileWriter.append('\n');
     }
 
     private static String getMethodSlice(PsiFile psiFile, int beginLine, int endLine) {

@@ -20,7 +20,7 @@ import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
     private final Logger LOG = LogManager.getLogger(PluginRunner.class);
-    private final int featureCount = 82;
+    private final int featureCount = 78;
 
     @Override
     public @NonNls
@@ -131,7 +131,7 @@ public class PluginRunner implements ApplicationStarter {
     private FileWriter makeNegativeHeader(String outputDir) throws IOException {
         FileWriter negativeFW = makeDefaultHeader(Paths.get(outputDir, "negative.csv").toString());
 
-        negativeFW.append("Score\n");
+        negativeFW.append(";Score\n");
 
         return negativeFW;
     }
@@ -142,7 +142,7 @@ public class PluginRunner implements ApplicationStarter {
             fw.append(Feature.fromId(i).getName());
             fw.append(';');
         }
-        fw.append("RepositoryName;");
+        fw.append("RepositoryName");
         return fw;
     }
 }

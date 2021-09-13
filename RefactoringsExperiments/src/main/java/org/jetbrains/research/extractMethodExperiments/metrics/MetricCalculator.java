@@ -172,6 +172,5 @@ public class MetricCalculator {
         }
 
         fileWriter.append(sourceRepoName);
-        fileWriter.append('\n');
     }
 }

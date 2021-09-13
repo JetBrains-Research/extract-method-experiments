@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator.writeFeaturesToFile;
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.findMethodBySignature;
 import static org.jetbrains.research.extractMethodExperiments.utils.StringUtil.calculateSignature;
 
@@ -100,32 +101,21 @@ public class CustomRefactoringHandler extends RefactoringHandler {
             for (String path : changedSourceJavaFiles.keySet()) {
                 if (path.endsWith(sourceLocationInfo.getFilePath())) {
                     PsiMethod dummyMethod = findMethodBySignature(changedSourceJavaFiles.get(path), calculateSignature(sourceOperation));
-                    String extractedCode = getMethodSlice(changedSourceJavaFiles.get(path),
+                    String extractedFragment = getMethodSlice(changedSourceJavaFiles.get(path),
                             codeLocation.getStartLine(), codeLocation.getEndLine());
-                    writeFeaturesToFile(dummyMethod, sourceLocationInfo.getFilePath(),
-                            extractedCode, codeLocation.getStartLine(), codeLocation.getEndLine());
+                    handleFragment(dummyMethod, extractedFragment, codeLocation.getStartLine(), codeLocation.getEndLine());
                 }
             }
         }
     }
 
-    private void writeFeaturesToFile(PsiMethod dummyPsiMethod, String filePath,
-                                     String code, int beginLine, int endLine) throws IOException {
+    private void handleFragment(PsiMethod dummyPsiMethod, String code,
+                                     int beginLine, int endLine) throws IOException {
 
         Path tmpRepoPath = Paths.get(repositoryPath);
         String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount() - 1).toString();
-        MetricCalculator metricCalculator =
-                new MetricCalculator(code, dummyPsiMethod, repositoryPath, filePath, beginLine, endLine);
 
-        FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
-
-        for (int i = 0; i < featuresVector.getDimension(); i++) {
-            this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
-            this.fileWriter.append(';');
-        }
-
-        this.fileWriter.append(repoName);
-        this.fileWriter.append('\n');
+        writeFeaturesToFile(dummyPsiMethod, code, repoName, beginLine, endLine, this.fileWriter);
     }
 
     private static String getMethodSlice(PsiFile psiFile, int beginLine, int endLine) {

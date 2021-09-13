@@ -23,6 +23,8 @@ import org.jetbrains.research.extractMethodExperiments.utils.MemberSets;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -33,37 +35,18 @@ public class MetricCalculator {
     private static final Logger LOG = LogManager.getLogger(MetricCalculator.class);
     private final String statementsStr;
     private final PsiMethod method;
-    private final String repoPath;
-    private final String filePath;
+
     private final int beginLine;
     private final int endLine;
     private final FeaturesVector featuresVector;
 
-    public MetricCalculator(String code, PsiMethod dummyPsiMethod, String repoPath, String filePath, int beginLine, int endLine) {
+    public MetricCalculator(String code, PsiMethod dummyPsiMethod, int beginLine, int endLine) {
         this.method = dummyPsiMethod;
         this.statementsStr = code;
         this.beginLine = beginLine;
         this.endLine = endLine;
-        this.featuresVector = new FeaturesVector(82); // TODO: Make dimension changeable outside
-        this.filePath = Path.of(filePath).toString();
-        this.repoPath = Path.of(repoPath).toString();
+        this.featuresVector = new FeaturesVector(78); // TODO: Make dimension changeable outside
         computeFeatureVector();
-    }
-
-    private static Repository openRepository(String repositoryPath) throws Exception {
-        File folder = new File(repositoryPath);
-        Repository repository;
-        if (folder.exists()) {
-            RepositoryBuilder builder = new RepositoryBuilder();
-            repository = builder
-                    .setGitDir(new File(folder, ".git"))
-                    .readEnvironment()
-                    .findGitDir()
-                    .build();
-        } else {
-            throw new FileNotFoundException(repositoryPath);
-        }
-        return repository;
     }
 
     private void computeFeatureVector() {
@@ -71,7 +54,6 @@ public class MetricCalculator {
         keywordFeatures();
         methodFeatures();
         metaFeatures();
-        historicalFeatures();
     }
 
     public FeaturesVector getFeaturesVector() {
@@ -139,7 +121,7 @@ public class MetricCalculator {
 
         int linesCount = endLine - beginLine + 1;
 
-        int id = 20; // initialized with 20 to account for shift in Keyword-Features begin id.
+        int id = 16; // initialized with 16 to account for shift in Keyword-Features begin id.
         for (String keyword : allKeywords) {
             Integer count = counts.get(keyword);
             featuresVector.addFeature(new FeatureItem(Feature.fromId(id++), count));
@@ -177,69 +159,19 @@ public class MetricCalculator {
 
     }
 
-    private void historicalFeatures() {
-        Repository repository;
-        try {
-            repository = openRepository(repoPath);
-        } catch (Exception e) {
-            LOG.error("[RefactoringJudge]: Failed to open the project repository.");
-            return;
+    public static void writeFeaturesToFile(PsiMethod dummyPsiMethod, String code, String sourceRepoName,
+                                           int beginLine, int endLine, FileWriter fileWriter) throws IOException {
+        MetricCalculator metricCalculator =
+                new MetricCalculator(code, dummyPsiMethod, beginLine, endLine);
+
+        FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+
+        for (int i = 0; i < featuresVector.getDimension(); i++) {
+            fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
+            fileWriter.append(';');
         }
 
-        BlameResult result = null;
-        try {
-            result = new Git(repository).blame().setFilePath(filePath)
-                    .setTextComparator(RawTextComparator.WS_IGNORE_ALL).call();
-        } catch (GitAPIException e) {
-            LOG.error("[RefactoringJudge]: Failed to get GitBlame.");
-        }
-
-        ArrayList<Integer> creationDates = new ArrayList<>();
-        Set<String> commits = new HashSet<>();
-        Set<String> authors = new HashSet<>();
-        if (result != null) {
-            final RawText rawText = result.getResultContents();
-            for (int i = beginLine; i < Math.min(rawText.size(), endLine + 1); i++) {
-                final PersonIdent sourceAuthor = result.getSourceAuthor(i);
-                final RevCommit sourceCommit = result.getSourceCommit(i);
-                if (sourceCommit != null) {
-                    creationDates.add(sourceCommit.getCommitTime());
-                    commits.add(sourceCommit.getName());
-                    authors.add(sourceAuthor.getName());
-                }
-            }
-        }
-
-        featuresVector.addFeature(
-                new FeatureItem(Feature.TotalCommitsInFragment, commits.size()));
-        featuresVector.addFeature(
-                new FeatureItem(Feature.TotalAuthorsInFragment, authors.size()));
-
-        int minTime = Integer.MAX_VALUE;
-        int maxTime = Integer.MIN_VALUE;
-
-        for (Integer time : creationDates) {
-            if (minTime > time) {
-                minTime = time;
-            }
-            if (maxTime < time) {
-                maxTime = time;
-            }
-        }
-
-        if (minTime != Integer.MAX_VALUE) {
-            int totalTime = 0;
-            for (Integer time : creationDates) {
-                totalTime += time - minTime;
-            }
-
-            featuresVector.addFeature(new FeatureItem(Feature.LiveTimeOfFragment, maxTime - minTime));
-            featuresVector.addFeature(
-                    new FeatureItem(Feature.LiveTimePerLine, (double) totalTime / creationDates.size()));
-        } else {
-            featuresVector.addFeature(new FeatureItem(Feature.LiveTimeOfFragment, 0));
-            featuresVector.addFeature(
-                    new FeatureItem(Feature.LiveTimePerLine, 0));
-        }
+        fileWriter.append(sourceRepoName);
+        fileWriter.append('\n');
     }
 }

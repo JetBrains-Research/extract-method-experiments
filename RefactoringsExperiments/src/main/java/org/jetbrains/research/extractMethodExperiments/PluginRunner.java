@@ -75,6 +75,24 @@ public class PluginRunner implements ApplicationStarter {
                 negativeRefactoringsExtractionRunner.run();
             }
         }
+
+        int a = 10;
+        int s = 2;
+        for(int i = 0; i < a; i++) {
+            if (s > 2)
+                s = (s+1) * (s-1);
+            else
+                s++;
+        }
+        System.out.println(s);
+
+        for(int i = 0; i < a; i++) {
+            if (s > 2)
+                s = (s+1) * (s-1);
+            else
+                s++;
+        }
+        System.out.println(s);
     }
 
     private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine) {
@@ -121,23 +139,28 @@ public class PluginRunner implements ApplicationStarter {
     }
 
     private FileWriter makePositiveHeader(String outputDir) throws IOException {
-        FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
-        for (int i = 0; i < featureCount; i++) {
-            positiveFW.append(Feature.fromId(i).getName());
-            positiveFW.append(';');
-        }
-        positiveFW.append("RepositoryName\n");
+        FileWriter positiveFW = makeDefaultHeader(Paths.get(outputDir, "positive.csv").toString());
+
+        positiveFW.append("\n");
+
         return positiveFW;
     }
 
     private FileWriter makeNegativeHeader(String outputDir) throws IOException {
-        FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
-        for (int i = 0; i < featureCount; i++) {
-            negativeFW.append(Feature.fromId(i).getName());
-            negativeFW.append(';');
-        }
-        negativeFW.append("Score;RepositoryName\n");
+        FileWriter negativeFW = makeDefaultHeader(Paths.get(outputDir, "negative.csv").toString());
+
+        negativeFW.append("Score\n");
 
         return negativeFW;
+    }
+
+    private FileWriter makeDefaultHeader(String filePath) throws IOException {
+        FileWriter fw = new FileWriter(filePath);
+        for (int i = 0; i < featureCount; i++) {
+            fw.append(Feature.fromId(i).getName());
+            fw.append(';');
+        }
+        fw.append("RepositoryName;");
+        return fw;
     }
 }

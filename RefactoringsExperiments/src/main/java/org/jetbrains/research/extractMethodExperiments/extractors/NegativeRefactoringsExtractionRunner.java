@@ -124,7 +124,7 @@ public class NegativeRefactoringsExtractionRunner {
                 String statementsString = statementsAsStr(candidate.getStatementList());
 
                 writeFeaturesToFile(method, statementsString, repoName, beginLine, endLine, this.fileWriter);
-                this.fileWriter.append(String.format(";%s\n"));
+                this.fileWriter.append(String.format(";%f\n", candidate.getScore()));
             }
         }
     }

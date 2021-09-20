@@ -4,6 +4,7 @@ version = rootProject.version
 plugins {
     java
 }
+
 repositories {
     // Necessary for psiMiner
 //    maven(url = "https://dl.bintray.com/egor-bogomolov/astminer")
@@ -40,11 +41,6 @@ open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     }
 }
 
-dependencies {
-    implementation(project(":extract-methods-core"))
-    implementation(project(":extract-methods-metrics"))
-}
-
 tasks {
     register<IOCliTask>("runRefactoringsExperiments") {
         dependsOn("buildPlugin")
@@ -56,4 +52,9 @@ tasks {
             generateNegativeSamples?.let { "--generateNegativeSamples" }
         )
     }
+}
+
+dependencies {
+    implementation(project(":extract-methods-core"))
+    implementation(project(":extract-methods-metrics"))
 }

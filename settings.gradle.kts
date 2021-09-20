@@ -1,7 +1,2 @@
-rootProject.name = "extract-methods"
-
-include(
-    "extract-methods-core",
-    "extract-methods-plugin",
-    "extract-methods-metrics"
-)
+rootProject.name = "extract-methods-reloaded"
+include("extract-methods-core", "extract-methods-metrics", "extract-methods-plugin")

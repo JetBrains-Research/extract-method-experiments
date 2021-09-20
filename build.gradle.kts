@@ -1,4 +1,4 @@
-group = "org.jetbrains.research.extractMethodsReloaded"
+group = "org.jetbrains.research.extractMethods"
 version = "1.0-SNAPSHOT"
 
 plugins {
@@ -27,50 +27,6 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.14.1")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
-}
-
-open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
-    // Name of the runner
-    @get:Input
-    val runner: String? by project
-
-    // Path to the directory containing projects for the dataset
-    //@get:Input
-    val projectsDirPath: String? by project
-
-    //Path to the output directory
-    val datasetsDirPath: String? by project
-
-    // Runs generation of positive samples
-    val generatePositiveSamples: String? by project
-
-    // Runs generation of negative samples
-    val generateNegativeSamples: String? by project
-
-    init {
-        jvmArgs = listOf(
-                "-Djava.awt.headless=true",
-                "--add-exports",
-                "java.base/jdk.internal.vm=ALL-UNNAMED",
-                "-Djdk.module.illegalAccess.silent=true"
-        )
-        maxHeapSize = "20g"
-        standardInput = System.`in`
-        standardOutput = System.`out`
-    }
-}
-
-tasks {
-    register<IOCliTask>("runRefactoringsExperiments") {
-        dependsOn("buildPlugin")
-        args = listOfNotNull(
-                runner,
-                projectsDirPath?.let { "--projectsDirPath=$it" },
-                datasetsDirPath?.let { "--datasetsDirPath=$it" },
-                generatePositiveSamples?.let { "--generatePositiveSamples" },
-                generateNegativeSamples?.let { "--generateNegativeSamples" }
-        )
-    }
 }
 
 tasks.withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()

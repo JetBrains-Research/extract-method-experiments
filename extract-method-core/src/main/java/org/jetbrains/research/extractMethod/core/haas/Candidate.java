@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static org.jetbrains.research.extractMethod.core.utils.StatementListUtil.listToString;
+import static org.jetbrains.research.extractMethod.metrics.utils.DepthAnalyzer.getNestingArea;
+import static org.jetbrains.research.extractMethod.metrics.utils.DepthAnalyzer.getNestingDepth;
 
 /**
  * Candidate for extraction by Haas definition.

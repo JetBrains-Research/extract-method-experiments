@@ -6,4 +6,5 @@ dependencies {
     implementation('com.github.tsantalis:refactoring-miner:2.1.0')
     implementation("org.eclipse.jgit:org.eclipse.jgit:5.4.3.201909031940-r")
     implementation("commons-cli:commons-cli:20040117.000000")
+    implementation(project(":extract-method-metrics"))
 }

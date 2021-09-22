@@ -11,12 +11,9 @@ dependencies {
 }
 
 open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
-    // Name of the runner
-    @get:Input
-    val runner: String? by project
 
     // Path to the directory containing projects for the dataset
-    //@get:Input
+    @get:Input
     val projectsDirPath: String? by project
 
     //Path to the output directory
@@ -45,7 +42,6 @@ tasks {
     register<IOCliTask>("runRefactoringsExperiments") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
-            runner,
             projectsDirPath?.let { "--projectsDirPath=$it" },
             datasetsDirPath?.let { "--datasetsDirPath=$it" },
             generatePositiveSamples?.let { "--generatePositiveSamples" },

@@ -2,3 +2,7 @@
 *.iml
 idea/
 .gradle/
+build
+extract-method-core/build
+extract-method-metrics/build
+extract-method-plugin/build

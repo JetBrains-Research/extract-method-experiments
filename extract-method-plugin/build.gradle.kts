@@ -8,7 +8,6 @@ plugins {
 dependencies {
     implementation(project(":extract-method-core"))
     implementation(project(":extract-method-metrics"))
-    implementation("commons-cli:commons-cli:1.4")
 }
 
 open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {

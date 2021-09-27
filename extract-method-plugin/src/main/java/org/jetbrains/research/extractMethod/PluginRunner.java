@@ -101,11 +101,12 @@ public class PluginRunner implements ApplicationStarter {
 
     private Options configureOptionsForCLI() {
         Options options = new Options();
-        options.addOption("runner", false, "Runner name.");
+        options.addOption("runner", true, "Runner name.");
         options.addRequiredOption("paths", "projectsDirPath", true, "Path to the file containing paths to the projects for dataset.");
         options.addRequiredOption("out", "datasetsDirPath", true, "Desired path to the output directory.");
         options.addOption("p", "generatePositiveSamples", false, "Runs generation of positive samples for dataset.");
         options.addOption("n", "generateNegativeSamples", false, "Runs generation of negative samples for dataset.");
+
         return options;
     }
 

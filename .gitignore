@@ -1,7 +1,7 @@
 *.idea
 *.iml
-idea/
-.gradle/
+*.idea/
+*.gradle/
 *build/
 clones/
 out/

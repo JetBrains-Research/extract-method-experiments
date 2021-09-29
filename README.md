@@ -17,7 +17,7 @@ It is recommended to use this script to clone repositories, however, it is not m
 
 ## Data gathering
 
-The `RefactoringsExperiments` directory contains the tools that were used to gather the data that was used to train the machine learning models.
+The `extract-method-plugin` contains gradle module that is responsible for initiation of the data gathering plugin.
 
 ### Usage
 There are two possible ways to use the tool:

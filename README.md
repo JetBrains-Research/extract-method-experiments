@@ -26,8 +26,8 @@ There are two possible ways to use the tool:
 
 #### Unix systems
 
-Open `RefactoringsExperiments` directory and execute the following command:
-
+Execution of the following command from the root directory 
+of the repository will initiate the collection of data.
 ```
 ./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath=/path/to/projects/ -PdatasetsDirPath=/path/to/output/ -PgeneratePositiveSamples
 ```
@@ -41,10 +41,6 @@ The output of the tool are two datasets labeled `positive.csv` and `negative.csv
 #### Windows systems
 
 The procedure is identical with one key difference, use command `gradlew.bat` instead of `./gradlew`
-
-### Output directory
-
-The `output/` directory holds the `true.csv` and `false.csv`, obtained by running the extraction.
 
 ## Machine Learning
 
@@ -68,7 +64,7 @@ The requirements are specified in `requirements.txt`, and can be built with `pip
 ### Training
 
 To train a model, one has to complete a list of procedures:
-- Obtain datasets from `RefactoringExperiments/`
+- Obtain datasets by running the gradle task `runRefactoringsExperiments`
 - Configure training procedure through config files.
     - Make a model config and specify model's arguments there. 
     Directory `model_settings/` has example config files with exhaustive lists of mutable arguments (arguments can be passed using `;` delimiter to initiate gridsearch over given parameters).
@@ -82,5 +78,5 @@ After having trained a model, one may configure a testing procedure(see `test_se
 Similarly to the training, function `test_by_config()` specified in `trainer.py` is used to test the model.
 
 ### Additional information
-For more on the ml-framework we recommend to visit GitHub wiki page of this repository
+For more on the ml-framework we recommend visiting GitHub wiki page of this repository
 

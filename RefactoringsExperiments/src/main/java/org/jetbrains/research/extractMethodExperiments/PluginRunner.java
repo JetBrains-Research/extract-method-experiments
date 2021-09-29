@@ -20,7 +20,7 @@ import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
     private final Logger LOG = LogManager.getLogger(PluginRunner.class);
-    private final int featureCount = 82;
+    private final int featureCount = 78;
 
     @Override
     public @NonNls
@@ -121,23 +121,28 @@ public class PluginRunner implements ApplicationStarter {
     }
 
     private FileWriter makePositiveHeader(String outputDir) throws IOException {
-        FileWriter positiveFW = new FileWriter(Paths.get(outputDir, "positive.csv").toString());
-        for (int i = 0; i < featureCount; i++) {
-            positiveFW.append(Feature.fromId(i).getName());
-            positiveFW.append(';');
-        }
-        positiveFW.append("RepositoryName\n");
+        FileWriter positiveFW = makeDefaultHeader(Paths.get(outputDir, "positive.csv").toString());
+
+        positiveFW.append("\n");
+
         return positiveFW;
     }
 
     private FileWriter makeNegativeHeader(String outputDir) throws IOException {
-        FileWriter negativeFW = new FileWriter(Paths.get(outputDir, "negative.csv").toString());
-        for (int i = 0; i < featureCount; i++) {
-            negativeFW.append(Feature.fromId(i).getName());
-            negativeFW.append(';');
-        }
-        negativeFW.append("Score;RepositoryName\n");
+        FileWriter negativeFW = makeDefaultHeader(Paths.get(outputDir, "negative.csv").toString());
+
+        negativeFW.append(";Score\n");
 
         return negativeFW;
+    }
+
+    private FileWriter makeDefaultHeader(String filePath) throws IOException {
+        FileWriter fw = new FileWriter(filePath);
+        for (int i = 0; i < featureCount; i++) {
+            fw.append(Feature.fromId(i).getName());
+            fw.append(';');
+        }
+        fw.append("RepositoryName");
+        return fw;
     }
 }

@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.research.extractMethodExperiments.metrics.MetricCalculator.writeFeaturesToFile;
 import static org.jetbrains.research.extractMethodExperiments.utils.PsiUtil.*;
 
 /**
@@ -107,11 +108,11 @@ public class NegativeRefactoringsExtractionRunner {
         for (PsiMethod method : psiMethods) {
             HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
             List<Candidate> candidateList = haasAlgorithm.getCandidateList();
-            writeFeaturesToFile(psiFile, method, candidateList);
+            handleCandidates(psiFile, method, candidateList);
         }
     }
 
-    private void writeFeaturesToFile(PsiFile psiFile, PsiMethod method, List<Candidate> candidateList) throws IOException {
+    private void handleCandidates(PsiFile psiFile, PsiMethod method, List<Candidate> candidateList) throws IOException {
         for (Candidate candidate : candidateList) {
             if (candidate != null) {
                 List<PsiStatement> statementList = candidate.getStatementList();
@@ -120,28 +121,10 @@ public class NegativeRefactoringsExtractionRunner {
 
                 String repoName = psiFile.getProject().getName();
 
-                Path tmpRepo = Paths.get(method.getContainingFile().getProject().getBasePath()).toAbsolutePath();
-                Path tmpFile = Paths.get(method.getContainingFile().getVirtualFile().getCanonicalPath()).toAbsolutePath();
+                String statementsString = statementsAsStr(candidate.getStatementList());
 
-                String repoPath = tmpRepo.toString();
-                String filePath = tmpRepo.relativize(tmpFile).toString();
-
-
-                MetricCalculator metricCalculator =
-                        new MetricCalculator(statementsAsStr(candidate.getStatementList()), method, repoPath, filePath, beginLine, endLine);
-
-                FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
-
-                for (int i = 0; i < featuresVector.getDimension(); i++) {
-                    this.fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
-                    this.fileWriter.append(';');
-                }
-
-                this.fileWriter.append(String.valueOf(candidate.getScore()));
-                this.fileWriter.append(';');
-
-                this.fileWriter.append(repoName);
-                this.fileWriter.append('\n');
+                writeFeaturesToFile(method, statementsString, repoName, beginLine, endLine, this.fileWriter);
+                this.fileWriter.append(String.format(";%f\n", candidate.getScore()));
             }
         }
     }

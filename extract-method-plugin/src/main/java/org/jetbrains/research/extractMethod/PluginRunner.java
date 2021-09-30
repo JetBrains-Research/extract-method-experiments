@@ -75,6 +75,19 @@ public class PluginRunner implements ApplicationStarter {
                 negativeRefactoringsExtractionRunner.run();
             }
         }
+
+        if (cmdLine.hasOption("generateNegativeSamples")) {
+            FileWriter negativeFW = null;
+            try {
+                negativeFW = makeNegativeHeader(outputDirPath);
+            } catch (IOException e) {
+                LOG.error("[RefactoringJudge]: Failed to make header for negative.csv.");
+            }
+            if (negativeFW != null) {
+                NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths, negativeFW);
+                negativeRefactoringsExtractionRunner.run();
+            }
+        }
     }
 
     private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine) {

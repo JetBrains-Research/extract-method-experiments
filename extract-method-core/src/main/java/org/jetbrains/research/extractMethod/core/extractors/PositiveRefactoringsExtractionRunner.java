@@ -19,6 +19,8 @@ import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
+import org.jetbrains.research.pluginUtilities.openRepository.RepositoryOpener;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -57,7 +59,6 @@ public class PositiveRefactoringsExtractionRunner {
 
     private void collectSamples(String projectPath) {
         Project project = ProjectUtil.openOrImport(projectPath, null, true);
-
         if (project == null) {
             LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
             return;

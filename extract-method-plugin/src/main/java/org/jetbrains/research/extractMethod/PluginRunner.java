@@ -18,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.research.extractMethod.InputPreprocessorKt.run;
+
 public class PluginRunner implements ApplicationStarter {
     private final Logger LOG = LogManager.getLogger(PluginRunner.class);
     private final int featureCount = 78;
@@ -50,6 +52,10 @@ public class PluginRunner implements ApplicationStarter {
 
         String outputDirPath = outputDirPathBuilder.toString();
 
+        run(Paths.get(cmdLine.getOptionValue("projectsDirPath")));
+
+        //        preprocessInputs()
+
         if (cmdLine.hasOption("generatePositiveSamples")) {
             FileWriter positiveFW = null;
             try {
@@ -63,19 +69,6 @@ public class PluginRunner implements ApplicationStarter {
                 positiveRefactoringsExtractionRunner.run();
             }
         }
-        if (cmdLine.hasOption("generateNegativeSamples")) {
-            FileWriter negativeFW = null;
-            try {
-                negativeFW = makeNegativeHeader(outputDirPath);
-            } catch (IOException e) {
-                LOG.error("[RefactoringJudge]: Failed to make header for negative.csv.");
-            }
-            if (negativeFW != null) {
-                NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths, negativeFW);
-                negativeRefactoringsExtractionRunner.run();
-            }
-        }
-
         if (cmdLine.hasOption("generateNegativeSamples")) {
             FileWriter negativeFW = null;
             try {

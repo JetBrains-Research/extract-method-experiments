@@ -11,7 +11,7 @@ plugins {
 dependencies {
     implementation(project(":extract-method-core"))
     implementation(project(":extract-method-metrics"))
-    implementation(kotlin("stdlib"))
+    implementation(kotlin("stdlib-jdk8"))
     implementation(platform("org.jetbrains.kotlin:kotlin-reflect:1.5.10"))
     val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
     dependencies {

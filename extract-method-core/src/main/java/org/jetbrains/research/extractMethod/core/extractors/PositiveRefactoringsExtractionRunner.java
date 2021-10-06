@@ -19,8 +19,6 @@ import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
-import org.jetbrains.research.pluginUtilities.openRepository.RepositoryOpener;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;

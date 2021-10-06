@@ -10,8 +10,6 @@ repositories {
     mavenCentral()
 }
 
-val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
-
 allprojects {
     apply {
         plugin("java")
@@ -26,11 +24,6 @@ allprojects {
     dependencies {
         implementation("org.apache.logging.log4j:log4j-api:2.14.1")
         implementation("org.apache.logging.log4j:log4j-core:2.14.1")
-        implementation("$utilitiesProjectName:plugin-utilities-core") {
-            version {
-                branch = "main"
-            }
-        }
     }
 
     intellij {

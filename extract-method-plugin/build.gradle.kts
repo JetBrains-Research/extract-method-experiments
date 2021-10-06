@@ -13,6 +13,14 @@ dependencies {
     implementation(project(":extract-method-metrics"))
     implementation(kotlin("stdlib"))
     implementation(platform("org.jetbrains.kotlin:kotlin-reflect:1.5.10"))
+    val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
+    dependencies {
+        implementation("$utilitiesProjectName:plugin-utilities-core") {
+            version {
+                branch = "main"
+            }
+        }
+    }
 }
 
 open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {

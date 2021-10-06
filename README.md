@@ -42,6 +42,12 @@ The output of the tool are two datasets labeled `positive.csv` and `negative.csv
 
 The procedure is identical with one key difference, use command `gradlew.bat` instead of `./gradlew`
 
+For convenience purposes, we also included a bash script `generateDataset.sh`, that can be used as a shorthand form of calling the gradle task, with flags for both positive, and negative labels:
+
+```
+bash generateDataset.sh /relative/path/to/projects/ /relative/path/to/output/
+```
+
 ## Machine Learning
 
 Currently, there are a number of ML algorithms proposed as valid models:

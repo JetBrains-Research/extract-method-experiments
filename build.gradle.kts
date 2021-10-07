@@ -9,16 +9,12 @@ plugins {
     java
     kotlin("jvm") version "1.5.21" apply true
     id("org.jetbrains.intellij") version "1.1.3" apply true
-    id("org.jetbrains.dokka") version "1.4.30" apply true
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0" apply true
 }
 allprojects {
     apply {
         plugin("java")
         plugin("kotlin")
         plugin("org.jetbrains.intellij")
-        plugin("org.jetbrains.dokka")
-        plugin("org.jlleitschuh.gradle.ktlint")
     }
 
     repositories {
@@ -47,13 +43,6 @@ allprojects {
         downloadSources.set(properties("platformDownloadSources").toBoolean())
         updateSinceUntilBuild.set(true)
         plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
-    }
-
-    ktlint {
-        enableExperimentalRules.set(true)
-        filter {
-            exclude("**/resources/**")
-        }
     }
 
     tasks {

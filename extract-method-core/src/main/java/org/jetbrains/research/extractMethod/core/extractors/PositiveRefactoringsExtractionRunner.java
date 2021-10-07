@@ -29,41 +29,21 @@ import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.vcsSetup;
  * Runs RefactoringMiner and processes discovered "Extract Method" refactorings in project's changes history.
  */
 public class PositiveRefactoringsExtractionRunner {
-    private final List<String> repositoriesPaths;
     private final FileWriter fileWriter;
     private final Logger LOG = LogManager.getLogger(PositiveRefactoringsExtractionRunner.class);
 
-    public PositiveRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
-        this.repositoriesPaths = repositoryPaths;
+    public PositiveRefactoringsExtractionRunner(FileWriter fw) {
         this.fileWriter = fw;
     }
 
-    public void run() {
-        for (String repoPath : repositoriesPaths) {
-            LOG.info("[RefactoringJudge]: Processing repo at: " + repoPath);
-            try {
-                collectSamples(repoPath);
-            } catch (Exception e) {
-                LOG.error("[RefactoringJudge]: Could not parse repository: " + repoPath);
-            }
-        }
-        try {
-            this.fileWriter.close();
-        } catch (IOException e) {
-            LOG.error("[RefactoringJudge]: Cannot close the file-writer.");
-        }
-        LOG.info("[RefactoringJudge]: Finished positive extraction");
-    }
-
-    private void collectSamples(String projectPath) {
-        Project project = ProjectUtil.openOrImport(projectPath, null, true);
+    public void collectSamples(Project project) {
         if (project == null) {
-            LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
+            LOG.error("[RefactoringJudge]: Could not open project");
             return;
         }
 
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
-        ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, projectPath);
+        ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, project.getProjectFilePath());
         VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
         for (VirtualFile root : gitRoots) {
             GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
@@ -72,7 +52,7 @@ public class PositiveRefactoringsExtractionRunner {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
                     gitCommits.forEach(c -> processCommit(c, project));
                 } catch (VcsException e) {
-                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + projectPath);
+                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + project.getProjectFilePath());
                 }
             }
         }

@@ -52,10 +52,6 @@ public class PluginRunner implements ApplicationStarter {
 
         String outputDirPath = outputDirPathBuilder.toString();
 
-        run(Paths.get(cmdLine.getOptionValue("projectsDirPath")));
-
-        //        preprocessInputs()
-
         if (cmdLine.hasOption("generatePositiveSamples")) {
             FileWriter positiveFW = null;
             try {
@@ -65,8 +61,7 @@ public class PluginRunner implements ApplicationStarter {
             }
 
             if (positiveFW != null) {
-                PositiveRefactoringsExtractionRunner positiveRefactoringsExtractionRunner = new PositiveRefactoringsExtractionRunner(projectPaths, positiveFW);
-                positiveRefactoringsExtractionRunner.run();
+                run(Paths.get(cmdLine.getOptionValue("projectsDirPath")), positiveFW);
             }
         }
         if (cmdLine.hasOption("generateNegativeSamples")) {

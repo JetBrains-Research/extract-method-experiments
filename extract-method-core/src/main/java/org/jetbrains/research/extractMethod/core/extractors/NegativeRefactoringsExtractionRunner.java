@@ -38,39 +38,14 @@ import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.getNumberO
  */
 public class NegativeRefactoringsExtractionRunner {
     private final Logger LOG = LogManager.getLogger(NegativeRefactoringsExtractionRunner.class);
-    private final List<String> repositoryPaths;
     private final FileWriter fileWriter;
 
-    public NegativeRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
-        this.repositoryPaths = repositoryPaths;
+    public NegativeRefactoringsExtractionRunner(FileWriter fw) {
         this.fileWriter = fw;
     }
 
-    public void run() {
-        for (String repoPath : repositoryPaths) {
-            LOG.info("[RefactoringJudge]: Processing repo at: " + repoPath);
-            try {
-                collectSamples(repoPath);
-            } catch (Exception e) {
-                LOG.error("[RefactoringJudge]: Could not parse repository: " + repoPath);
-            }
-        }
-        try {
-            this.fileWriter.close();
-        } catch (IOException e) {
-            LOG.error("[RefactoringJudge]: Cannot close the file-writer.");
-        }
-        LOG.info("[RefactoringJudge]: Finished negative extraction");
-    }
-
-    private void collectSamples(String projectPath) {
-        Project project = ProjectUtil.openOrImport(projectPath, null, true);
-        if (project == null) {
-            LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
-            return;
-        }
-
-        ProjectLevelVcsManager vcsManager = vcsSetup(project, projectPath);
+    public void collectSamples(Project project) {
+        ProjectLevelVcsManager vcsManager = vcsSetup(project, project.getProjectFilePath());
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
 
         VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
@@ -81,7 +56,7 @@ public class NegativeRefactoringsExtractionRunner {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
                     gitCommits.forEach(c -> processCommit(c, project));
                 } catch (VcsException e) {
-                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + projectPath);
+                    LOG.error("Error occurred while processing commit in " + project.getName());
                 }
             }
         }
@@ -94,7 +69,7 @@ public class NegativeRefactoringsExtractionRunner {
             try {
                 handleMethods(javaFile);
             } catch (IOException e) {
-                LOG.error("[RefactoringJudge]: Cannot handle commit with ID: " + commit.getId());
+                LOG.error(String.format("Cannot handle commit with ID: %s, project %s", commit.getId(), project.getName()));
             }
         }
     }

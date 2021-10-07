@@ -7,18 +7,18 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethod.core.extractors.NegativeRefactoringsExtractionRunner;
-import org.jetbrains.research.extractMethod.core.extractors.PositiveRefactoringsExtractionRunner;
 import org.jetbrains.research.extractMethod.metrics.features.Feature;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.research.extractMethod.InputPreprocessorKt.run;
+import org.jetbrains.research.extractMethod.BaseRunnerKt;
 
 public class PluginRunner implements ApplicationStarter {
     private final Logger LOG = LogManager.getLogger(PluginRunner.class);
@@ -37,7 +37,7 @@ public class PluginRunner implements ApplicationStarter {
         try {
             line = parser.parse(configureOptionsForCLI(), args.toArray(new String[0]));
         } catch (ParseException e) {
-            LOG.error("[RefactoringJudge]: Failed to parse command-line arguments.");
+            LOG.error("Failed to parse command-line arguments.");
         }
         if (line == null) return;
 
@@ -45,10 +45,23 @@ public class PluginRunner implements ApplicationStarter {
     }
 
     private void runExtractions(CommandLine cmdLine) {
-        List<String> projectPaths = new ArrayList<>();
         StringBuilder outputDirPathBuilder = new StringBuilder();
 
-        configureIO(projectPaths, outputDirPathBuilder, cmdLine);
+        BaseRunner runner = new BaseRunner();
+        try{
+            configureOutput(outputDirPathBuilder, cmdLine);
+        } catch (MissingArgumentException e) {
+            LOG.error("<datasetsDirPath> is a required argument.");
+            return;
+        }
+
+        Path inputDir = null;
+        try {
+            inputDir = Paths.get(cmdLine.getOptionValue("projectsDirPath"));
+        } catch (java.nio.file.InvalidPathException e) {
+            LOG.error("<projectsDirPath> has to be a valid path.");
+            return;
+        }
 
         String outputDirPath = outputDirPathBuilder.toString();
 
@@ -57,11 +70,11 @@ public class PluginRunner implements ApplicationStarter {
             try {
                 positiveFW = makePositiveHeader(outputDirPath);
             } catch (Exception e) {
-                LOG.error("[RefactoringJudge]: Failed to make header for positive.csv.");
+                LOG.error("Failed to make header for positive.csv.");
             }
 
             if (positiveFW != null) {
-                run(Paths.get(cmdLine.getOptionValue("projectsDirPath")), positiveFW);
+                runner.runPositives(inputDir, positiveFW);
             }
         }
         if (cmdLine.hasOption("generateNegativeSamples")) {
@@ -69,33 +82,24 @@ public class PluginRunner implements ApplicationStarter {
             try {
                 negativeFW = makeNegativeHeader(outputDirPath);
             } catch (IOException e) {
-                LOG.error("[RefactoringJudge]: Failed to make header for negative.csv.");
+                LOG.error("Failed to make header for negative.csv.");
             }
             if (negativeFW != null) {
-                NegativeRefactoringsExtractionRunner negativeRefactoringsExtractionRunner = new NegativeRefactoringsExtractionRunner(projectPaths, negativeFW);
-                negativeRefactoringsExtractionRunner.run();
+                runner.runNegatives(inputDir, negativeFW);
             }
         }
     }
 
-    private void configureIO(List<String> inRepoPaths, StringBuilder outputDirBuilder, CommandLine cmdLine) {
-        if (cmdLine.hasOption("projectsDirPath")) {
-            String projectsFilePath = cmdLine.getOptionValue("projectsDirPath");
-            inRepoPaths.addAll(extractProjectsPaths(projectsFilePath));
-        } else {
-            LOG.error("[RefactoringJudge]: Projects directory is mandatory.");
-            return;
-        }
-
+    private void configureOutput(StringBuilder outputDirBuilder, CommandLine cmdLine) throws MissingArgumentException{
         if (cmdLine.hasOption("datasetsDirPath")) {
             outputDirBuilder.append(cmdLine.getOptionValue("datasetsDirPath"));
             try {
                 Files.createDirectories(Paths.get(outputDirBuilder.toString()));
             } catch (IOException e) {
-                LOG.error("[RefactoringJudge]: Failed to create output directory.");
+                LOG.error("Failed to create the output directory.");
             }
         } else {
-            LOG.error("[RefactoringJudge]: Output directory is mandatory.");
+            throw new MissingArgumentException("Missing <datasetsDirPath>.");
         }
 
     }

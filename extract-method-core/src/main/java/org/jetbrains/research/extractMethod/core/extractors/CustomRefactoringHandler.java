@@ -64,7 +64,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     public void handleException(String commitId, Exception e) {
-        LOG.error("[RefactoringJudge]: Cannot handle commit with ID: " + commitId);
+        LOG.error("Cannot handle commit with ID: " + commitId);
     }
 
     private void handleCommit(List<Refactoring> refactorings) throws IOException {
@@ -86,7 +86,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                         change.getBeforeRevision().getContent());
                 changedSourceJavaFiles.put(change.getBeforeRevision().getFile().getPath(), sourcePsiFile);
             } catch (VcsException e) {
-                LOG.error("[RefactoringJudge]: Cannot extract changes from commit: " + gitCommit.getId());
+                LOG.error("Cannot extract changes from commit: " + gitCommit.getId());
             }
         }
 

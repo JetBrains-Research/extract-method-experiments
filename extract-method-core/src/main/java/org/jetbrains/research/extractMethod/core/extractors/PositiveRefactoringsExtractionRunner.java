@@ -37,11 +37,6 @@ public class PositiveRefactoringsExtractionRunner {
     }
 
     public void collectSamples(Project project) {
-        if (project == null) {
-            LOG.error("[RefactoringJudge]: Could not open project");
-            return;
-        }
-
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
         ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, project.getProjectFilePath());
         VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
@@ -52,7 +47,7 @@ public class PositiveRefactoringsExtractionRunner {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
                     gitCommits.forEach(c -> processCommit(c, project));
                 } catch (VcsException e) {
-                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + project.getProjectFilePath());
+                    LOG.error("Error occurred while processing commit in " + project.getProjectFilePath());
                 }
             }
         }
@@ -64,7 +59,7 @@ public class PositiveRefactoringsExtractionRunner {
         try {
             repository = gitService.openRepository(project.getBasePath());
         } catch (Exception e) {
-            LOG.error("[RefactoringJudge]: Error occurred while opening git repository.");
+            LOG.error("Error occurred while opening git repository.");
         }
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),

@@ -1,26 +1,9 @@
 group = rootProject.group
 version = rootProject.version
 
-plugins {
-    java
-    kotlin("jvm") version "1.5.21" apply true
-    id("org.jetbrains.dokka") version "1.4.30" apply true
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0" apply true
-}
-
 dependencies {
     implementation(project(":extract-method-core"))
     implementation(project(":extract-method-metrics"))
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(platform("org.jetbrains.kotlin:kotlin-reflect:1.5.10"))
-    val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
-    dependencies {
-        implementation("$utilitiesProjectName:plugin-utilities-core") {
-            version {
-                branch = "main"
-            }
-        }
-    }
 }
 
 open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {

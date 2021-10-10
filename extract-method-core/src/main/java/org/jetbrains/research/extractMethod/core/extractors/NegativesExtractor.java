@@ -1,6 +1,5 @@
 package org.jetbrains.research.extractMethod.core.extractors;
 
-import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -27,23 +26,23 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.*;
-import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.getNumberOfLine;
+import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
  * and processes all methods to generate "negative" samples for dataset.
  * The "negative" samples are ones pieces of code that have the lowes score in terms of Haas ranking.
  */
-public class NegativeRefactoringsExtractionRunner {
-    private final Logger LOG = LogManager.getLogger(NegativeRefactoringsExtractionRunner.class);
+public class NegativesExtractor implements RefactoringsExtractor {
+    private final Logger LOG = LogManager.getLogger(NegativesExtractor.class);
     private final FileWriter fileWriter;
 
-    public NegativeRefactoringsExtractionRunner(FileWriter fw) {
+    public NegativesExtractor(FileWriter fw) {
         this.fileWriter = fw;
     }
 
+    @Override
     public void collectSamples(Project project) {
         ProjectLevelVcsManager vcsManager = vcsSetup(project, project.getProjectFilePath());
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);

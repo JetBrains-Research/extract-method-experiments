@@ -1,11 +1,9 @@
 package org.jetbrains.research.extractMethod
 
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.research.extractMethod.core.extractors.NegativeRefactoringsExtractionRunner
-import org.jetbrains.research.extractMethod.core.extractors.PositiveRefactoringsExtractionRunner
+import org.jetbrains.research.extractMethod.core.extractors.RefactoringsExtractor
 import org.jetbrains.research.pluginUtilities.openRepository.getKotlinJavaRepositoryOpener
 import org.jetbrains.research.pluginUtilities.preprocessing.getKotlinJavaPreprocessorManager
-import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.streams.toList
@@ -22,24 +20,12 @@ class BaseRunner {
             .toList()
     }
 
-    fun runPositives(inputDir : Path, fw : FileWriter) {
-        val runner = PositiveRefactoringsExtractionRunner(fw);
+    fun runExtractions(inputDir: Path, extractor: RefactoringsExtractor) {
         preprocessor.preprocessDatasetInplace(inputDir.toFile())
         getSubdirectories(inputDir).forEach { repositoryRoot ->
             repositoryOpener.openRepository(repositoryRoot.toFile()) { project ->
                 logger.info("Project ${project.name} is opened, starting processing")
-                runner.collectSamples(project)
-            }
-        }
-    }
-
-    fun runNegatives(inputDir : Path, fw : FileWriter) {
-        val runner = NegativeRefactoringsExtractionRunner(fw);
-        preprocessor.preprocessDatasetInplace(inputDir.toFile())
-        getSubdirectories(inputDir).forEach { repositoryRoot ->
-            repositoryOpener.openRepository(repositoryRoot.toFile()) { project ->
-                logger.info("Project ${project.name} is opened, starting processing")
-                runner.collectSamples(project)
+                extractor.collectSamples(project)
             }
         }
     }

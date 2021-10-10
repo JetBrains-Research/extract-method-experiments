@@ -6,7 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.research.extractMethod.core.extractors.NegativeRefactoringsExtractionRunner;
+import org.jetbrains.research.extractMethod.core.extractors.NegativesExtractor;
+import org.jetbrains.research.extractMethod.core.extractors.PositivesExtractor;
+import org.jetbrains.research.extractMethod.core.extractors.RefactoringsExtractor;
 import org.jetbrains.research.extractMethod.metrics.features.Feature;
 
 import java.io.File;
@@ -17,8 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jetbrains.research.extractMethod.BaseRunnerKt;
 
 public class PluginRunner implements ApplicationStarter {
     private final Logger LOG = LogManager.getLogger(PluginRunner.class);
@@ -48,7 +48,7 @@ public class PluginRunner implements ApplicationStarter {
         StringBuilder outputDirPathBuilder = new StringBuilder();
 
         BaseRunner runner = new BaseRunner();
-        try{
+        try {
             configureOutput(outputDirPathBuilder, cmdLine);
         } catch (MissingArgumentException e) {
             LOG.error("<datasetsDirPath> is a required argument.");
@@ -66,31 +66,42 @@ public class PluginRunner implements ApplicationStarter {
         String outputDirPath = outputDirPathBuilder.toString();
 
         if (cmdLine.hasOption("generatePositiveSamples")) {
-            FileWriter positiveFW = null;
+            FileWriter positiveFW;
+            RefactoringsExtractor extractor;
             try {
                 positiveFW = makePositiveHeader(outputDirPath);
+                extractor = new PositivesExtractor(positiveFW);
             } catch (Exception e) {
                 LOG.error("Failed to make header for positive.csv.");
+                return;
             }
-
-            if (positiveFW != null) {
-                runner.runPositives(inputDir, positiveFW);
+            try {
+                runner.runExtractions(inputDir, extractor);
+            } catch (Exception e) {
+                LOG.error("Unexpected error in positive" +
+                        " samples' procedure. \n" + e.getMessage());
             }
         }
         if (cmdLine.hasOption("generateNegativeSamples")) {
-            FileWriter negativeFW = null;
+            FileWriter negativeFW;
+            RefactoringsExtractor extractor;
             try {
                 negativeFW = makeNegativeHeader(outputDirPath);
-            } catch (IOException e) {
+                extractor = new NegativesExtractor(negativeFW);
+            } catch (Exception e) {
                 LOG.error("Failed to make header for negative.csv.");
+                return;
             }
-            if (negativeFW != null) {
-                runner.runNegatives(inputDir, negativeFW);
+            try {
+                runner.runExtractions(inputDir, extractor);
+            } catch (Exception e) {
+                LOG.error("Unexpected error in negative" +
+                        " samples' procedure. \n" + e.getMessage());
             }
         }
     }
 
-    private void configureOutput(StringBuilder outputDirBuilder, CommandLine cmdLine) throws MissingArgumentException{
+    private void configureOutput(StringBuilder outputDirBuilder, CommandLine cmdLine) throws MissingArgumentException {
         if (cmdLine.hasOption("datasetsDirPath")) {
             outputDirBuilder.append(cmdLine.getOptionValue("datasetsDirPath"));
             try {
@@ -101,7 +112,6 @@ public class PluginRunner implements ApplicationStarter {
         } else {
             throw new MissingArgumentException("Missing <datasetsDirPath>.");
         }
-
     }
 
     private Options configureOptionsForCLI() {

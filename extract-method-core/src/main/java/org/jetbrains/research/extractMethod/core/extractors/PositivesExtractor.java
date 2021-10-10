@@ -1,6 +1,5 @@
 package org.jetbrains.research.extractMethod.core.extractors;
 
-import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
@@ -20,7 +19,6 @@ import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.vcsSetup;
@@ -28,14 +26,15 @@ import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.vcsSetup;
 /**
  * Runs RefactoringMiner and processes discovered "Extract Method" refactorings in project's changes history.
  */
-public class PositiveRefactoringsExtractionRunner {
+public class PositivesExtractor implements RefactoringsExtractor {
     private final FileWriter fileWriter;
-    private final Logger LOG = LogManager.getLogger(PositiveRefactoringsExtractionRunner.class);
+    private final Logger LOG = LogManager.getLogger(PositivesExtractor.class);
 
-    public PositiveRefactoringsExtractionRunner(FileWriter fw) {
+    public PositivesExtractor(FileWriter fw) {
         this.fileWriter = fw;
     }
 
+    @Override
     public void collectSamples(Project project) {
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
         ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, project.getProjectFilePath());

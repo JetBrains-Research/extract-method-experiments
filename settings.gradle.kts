@@ -1,7 +1,7 @@
 import java.net.URI
 
 rootProject.name = "extract-method-experiments"
-include("extract-method-core",
+include( "extract-method-core",
         "extract-method-metrics",
         "extract-method-plugin")
 
@@ -11,13 +11,5 @@ val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
 sourceControl{
     gitRepository(URI.create(utilitiesRepo)) {
         producesModule("$utilitiesProjectName:plugin-utilities-core")
-    }
-}
-
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        jcenter()
-        maven(url = "https://nexus.gluonhq.com/nexus/content/repositories/releases")
     }
 }

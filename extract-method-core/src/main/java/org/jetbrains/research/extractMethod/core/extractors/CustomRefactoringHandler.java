@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.findMethodBySignature;
 import static org.jetbrains.research.extractMethod.core.utils.StringUtil.calculateSignature;
+import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
@@ -107,7 +107,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     private void handleFragment(PsiMethod dummyPsiMethod, String code,
-                                     int beginLine, int endLine) throws IOException {
+                                int beginLine, int endLine) throws IOException {
 
         Path tmpRepoPath = Paths.get(repositoryPath);
         String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount() - 1).toString();

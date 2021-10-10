@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = rootProject.group
-version = rootProject.version
+group = "org.jetbrains.research"
+version = "1.0.0"
 
 fun properties(key: String) = project.findProperty(key).toString()
 
@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm") version "1.5.21" apply true
     id("org.jetbrains.intellij") version "1.1.3" apply true
 }
+
 allprojects {
     apply {
         plugin("java")

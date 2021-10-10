@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "org.jetbrains.research"
-version = "1.0.0"
+group = "org.jetbrains.research.extractMethod"
+version = "1.0"
 
 fun properties(key: String) = project.findProperty(key).toString()
 

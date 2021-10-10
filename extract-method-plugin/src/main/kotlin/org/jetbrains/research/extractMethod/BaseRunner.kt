@@ -24,7 +24,7 @@ class BaseRunner {
         preprocessor.preprocessDatasetInplace(inputDir.toFile())
         getSubdirectories(inputDir).forEach { repositoryRoot ->
             repositoryOpener.openRepository(repositoryRoot.toFile()) { project ->
-                logger.info("Project ${project.name} is opened, starting processing")
+                logger.info("Project ${project.name} is opened")
                 extractor.collectSamples(project)
             }
         }

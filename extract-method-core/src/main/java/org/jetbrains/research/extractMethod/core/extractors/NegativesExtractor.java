@@ -44,31 +44,12 @@ public class NegativesExtractor implements RefactoringsExtractor {
 
     @Override
     public void collectSamples(Project project) {
-        ProjectLevelVcsManager vcsManager = vcsSetup(project, project.getProjectFilePath());
-        GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
-
-        VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
-        for (VirtualFile root : gitRoots) {
-            GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
-            if (repo != null) {
-                try {
-                    List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                    processCommit(gitCommits.get(0), project); // Process the last commit (0-th element is the last)
-                } catch (VcsException e) {
-                    LOG.error(String.format("Error occurred while processing %s,\nmore: %s", project.getName(), e.getMessage()));
-                }
-            }
-        }
-    }
-
-    private void processCommit(GitCommit commit, Project project) {
-        LOG.error("Processing commit ID " + commit.getId());
         List<PsiJavaFile> javaFiles = extractFiles(project);
         for (PsiJavaFile javaFile : javaFiles) {
             try {
                 handleMethods(javaFile);
             } catch (IOException e) {
-                LOG.error(String.format("Cannot handle commit with ID: %s, project %s", commit.getId(), project.getName()));
+                LOG.error("Cannot process file " + javaFile.getName());
             }
         }
     }

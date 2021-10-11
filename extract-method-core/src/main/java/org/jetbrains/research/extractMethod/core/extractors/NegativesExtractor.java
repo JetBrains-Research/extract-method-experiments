@@ -62,8 +62,8 @@ public class NegativesExtractor implements RefactoringsExtractor {
     }
 
     private void processCommit(GitCommit commit, Project project) {
+        LOG.error("Processing commit ID " + commit.getId());
         List<PsiJavaFile> javaFiles = extractFiles(project);
-
         for (PsiJavaFile javaFile : javaFiles) {
             try {
                 handleMethods(javaFile);

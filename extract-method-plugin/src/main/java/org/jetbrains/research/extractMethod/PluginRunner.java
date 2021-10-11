@@ -11,13 +11,11 @@ import org.jetbrains.research.extractMethod.core.extractors.PositivesExtractor;
 import org.jetbrains.research.extractMethod.core.extractors.RefactoringsExtractor;
 import org.jetbrains.research.extractMethod.metrics.features.Feature;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PluginRunner implements ApplicationStarter {
@@ -66,15 +64,14 @@ public class PluginRunner implements ApplicationStarter {
         String outputDirPath = outputDirPathBuilder.toString();
 
         if (cmdLine.hasOption("generatePositiveSamples")) {
-            FileWriter positiveFW;
-            RefactoringsExtractor extractor;
-            try {
-                positiveFW = makePositiveHeader(outputDirPath);
-                extractor = new PositivesExtractor(positiveFW);
-            } catch (Exception e) {
-                LOG.error("Failed to make header for positive.csv.");
+            FileWriter positiveFW = null;
+            positiveFW = makePositiveHeader(outputDirPath);
+
+            if (positiveFW == null)
                 return;
-            }
+
+            RefactoringsExtractor extractor = new PositivesExtractor(positiveFW);
+
             try {
                 runner.runExtractions(inputDir, extractor);
             } catch (Exception e) {
@@ -83,15 +80,14 @@ public class PluginRunner implements ApplicationStarter {
             }
         }
         if (cmdLine.hasOption("generateNegativeSamples")) {
-            FileWriter negativeFW;
-            RefactoringsExtractor extractor;
-            try {
-                negativeFW = makeNegativeHeader(outputDirPath);
-                extractor = new NegativesExtractor(negativeFW);
-            } catch (Exception e) {
-                LOG.error("Failed to make header for negative.csv.");
+            FileWriter negativeFW = null;
+            negativeFW = makeNegativeHeader(outputDirPath);
+
+            if (negativeFW == null)
                 return;
-            }
+
+            RefactoringsExtractor extractor = new NegativesExtractor(negativeFW);
+
             try {
                 runner.runExtractions(inputDir, extractor);
             } catch (Exception e) {
@@ -125,29 +121,28 @@ public class PluginRunner implements ApplicationStarter {
         return options;
     }
 
-    private List<String> extractProjectsPaths(String path) {
-        ArrayList<String> paths = new ArrayList<>();
-        File reposDir = new File(path);
-
-        for (File repoFile : reposDir.listFiles()) {
-            paths.add(repoFile.getAbsolutePath());
+    private FileWriter makePositiveHeader(String outputDir) {
+        FileWriter positiveFW = null;
+        try {
+            positiveFW = makeDefaultHeader(Paths.get(outputDir
+                    , "positive.csv").toString());
+            positiveFW.append("\n");
+        } catch (IOException e) {
+            LOG.error("Failed to make header for positive.csv");
         }
-
-        return paths;
-    }
-
-    private FileWriter makePositiveHeader(String outputDir) throws IOException {
-        FileWriter positiveFW = makeDefaultHeader(Paths.get(outputDir, "positive.csv").toString());
-
-        positiveFW.append("\n");
 
         return positiveFW;
     }
 
-    private FileWriter makeNegativeHeader(String outputDir) throws IOException {
-        FileWriter negativeFW = makeDefaultHeader(Paths.get(outputDir, "negative.csv").toString());
-
-        negativeFW.append(";Score\n");
+    private FileWriter makeNegativeHeader(String outputDir) {
+        FileWriter negativeFW = null;
+        try {
+            negativeFW = makeDefaultHeader(Paths.get(outputDir
+                    , "negative.csv").toString());
+            negativeFW.append(";Score\n");
+        } catch (IOException e) {
+            LOG.error("Failed to make header for negative.csv");
+        }
 
         return negativeFW;
     }

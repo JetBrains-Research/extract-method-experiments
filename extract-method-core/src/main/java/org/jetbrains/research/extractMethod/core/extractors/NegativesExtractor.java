@@ -53,9 +53,9 @@ public class NegativesExtractor implements RefactoringsExtractor {
             if (repo != null) {
                 try {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                    gitCommits.forEach(c -> processCommit(c, project));
+                    processCommit(gitCommits.get(0), project); // Process the last commit (0-th element is the last)
                 } catch (VcsException e) {
-                    LOG.error("Error occurred while processing commit in " + project.getName());
+                    LOG.error(String.format("Error occurred while processing %s,\nmore: %s", project.getName(), e.getMessage()));
                 }
             }
         }

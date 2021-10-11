@@ -8,11 +8,10 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.streams.toList
 
-private val preprocessor = getKotlinJavaPreprocessorManager(null)
-private val repositoryOpener = getKotlinJavaRepositoryOpener()
-
 class BaseRunner {
     private val logger = LogManager.getLogger(BaseRunner::class)
+    private val preprocessor = getKotlinJavaPreprocessorManager(null)
+    private val repositoryOpener = getKotlinJavaRepositoryOpener()
 
     private fun getSubdirectories(path: Path): List<Path> {
         return Files.walk(path, 1)
@@ -26,6 +25,7 @@ class BaseRunner {
             repositoryOpener.openRepository(repositoryRoot.toFile()) { project ->
                 logger.info("Project ${project.name} is opened")
                 extractor.collectSamples(project)
+                logger.info("Finished processing ${project.name}")
             }
         }
     }

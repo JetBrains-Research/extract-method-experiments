@@ -34,13 +34,10 @@ class ExtractionRunner {
 
         openRunAndClose(0, projectPath, wrapperFunction);
     }
-
-    private fun standardRepositoryOpener(path: Path, action: (Project) -> Unit) {
-        getSubdirectories(path).forEachIndexed { projectIndex, projectPath ->
-            openRunAndClose(projectIndex, projectPath, action)
-        }
-    }
-
+    /**
+     * Opens a project at the given path, assigns it an index,
+     * runs an action on it, and closes it afterwards.
+     */
     private fun openRunAndClose(projectIndex: Int, projectPath: Path, action: (Project) -> Unit) {
         ApplicationManager.getApplication().invokeAndWait {
             ProjectManagerEx.getInstanceEx().openProject(
@@ -61,9 +58,21 @@ class ExtractionRunner {
         }
     }
 
+    /**
+     * Executes openRunAndClose on all projects inside the given directory
+     */
+    private fun standardRepositoryOpener(path: Path, action: (Project) -> Unit) {
+        getSubdirectories(path).forEachIndexed { projectIndex, projectPath ->
+            openRunAndClose(projectIndex, projectPath, action)
+        }
+    }
+
+    /**
+     * Performs an action on the given project
+     */
     private fun runAction(project: Project, projectIndex: Int, action: (Project) -> Unit) {
-        logger.info("Start action on project ${project.name} index=$projectIndex")
+        logger.info("Started action on project ${project.name} index=$projectIndex")
         action(project)
-        logger.info("Finish action on project ${project.name} index=$projectIndex")
+        logger.info("Finished action on project ${project.name} index=$projectIndex")
     }
 }

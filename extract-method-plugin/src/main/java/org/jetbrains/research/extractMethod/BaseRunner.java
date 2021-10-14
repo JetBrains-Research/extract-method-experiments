@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Base abstract class for the runners
+ */
 public abstract class BaseRunner implements ApplicationStarter {
     protected final Logger LOG = LogManager.getLogger(PositivesRunner.class);
     protected final int featureCount = 78;

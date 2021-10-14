@@ -13,6 +13,9 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Plugin starter for extraction of negative refactorings
+ */
 public class PositivesRunner extends BaseRunner {
     @Override
     public @NonNls
@@ -23,8 +26,10 @@ public class PositivesRunner extends BaseRunner {
     @Override
     Options configureOptionsForCLI() {
         Options options = new Options();
-        options.addRequiredOption("paths", "projectsDirPath", true, "Path to the file containing paths to the projects for dataset.");
-        options.addRequiredOption("out", "datasetsDirPath", true, "Desired path to the output directory.");
+        options.addRequiredOption("paths", "projectsDirPath",
+                true, "Path to the directory containing the projects.");
+        options.addRequiredOption("out", "outputFilePath",
+                true, "Path to the desired output destination.");
 
         return options;
     }

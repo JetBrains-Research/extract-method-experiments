@@ -7,10 +7,6 @@ dependencies {
 }
 
 open class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
-    // Name of the runner
-    @get:Input
-    val runner: String? by project
-
     // Path to the directory containing projects for the dataset
     val projectsDirPath: String? by project
 
@@ -31,10 +27,6 @@ open class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
 }
 
 open class RunNegativesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
-    // Name of the runner
-    @get:Input
-    val runner: String? by project
-
     // Path to the directory containing projects for the dataset
     val inputProjectPath: String? by project
 

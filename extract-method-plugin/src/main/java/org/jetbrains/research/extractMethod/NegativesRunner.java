@@ -13,6 +13,9 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Plugin starter for extraction of negative refactorings
+ */
 public class NegativesRunner extends BaseRunner {
     @Override
     public @NonNls

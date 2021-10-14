@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public abstract class BaseRunner implements ApplicationStarter {
@@ -20,7 +21,7 @@ public abstract class BaseRunner implements ApplicationStarter {
 
     @Override
     public void main(@NotNull List<String> args) {
-        CommandLineParser parser =  new DefaultParser();
+        CommandLineParser parser = new DefaultParser();
         CommandLine line = null;
         try {
             line = parser.parse(configureOptionsForCLI(), args.toArray(new String[0]));

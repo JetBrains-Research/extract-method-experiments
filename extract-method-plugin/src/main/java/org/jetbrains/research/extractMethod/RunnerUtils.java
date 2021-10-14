@@ -2,8 +2,6 @@ package org.jetbrains.research.extractMethod;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.MissingArgumentException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.research.extractMethod.metrics.features.Feature;
 
 import java.io.FileWriter;
@@ -14,7 +12,7 @@ import java.nio.file.Paths;
 public class RunnerUtils {
     /**
      * Creates the output directory to avoid 'FileNotFoundException' later
-     * */
+     */
     public static void configureOutput(CommandLine cmdLine) throws MissingArgumentException, IOException {
         if (cmdLine.hasOption("outputFilePath")) {
             Files.createDirectories(Paths.get(cmdLine.getOptionValue("outputFilePath")).getParent());

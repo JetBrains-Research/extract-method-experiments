@@ -1,11 +1,9 @@
 package org.jetbrains.research.extractMethod;
 
-import com.intellij.openapi.application.ApplicationStarter;
-import org.apache.commons.cli.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.Options;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethod.core.extractors.PositivesExtractor;
 import org.jetbrains.research.extractMethod.core.extractors.RefactoringsExtractor;
 

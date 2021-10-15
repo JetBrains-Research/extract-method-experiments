@@ -153,14 +153,12 @@ public class MetricCalculator {
                                            int beginLine, int endLine, FileWriter fileWriter) throws IOException {
         MetricCalculator metricCalculator =
                 new MetricCalculator(code, dummyPsiMethod, beginLine, endLine);
-
         FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 
         for (int i = 0; i < featuresVector.getDimension(); i++) {
             fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
             fileWriter.append(';');
         }
-
         fileWriter.append(sourceRepoName);
     }
 }

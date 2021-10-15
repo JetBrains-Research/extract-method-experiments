@@ -20,6 +20,7 @@ It is recommended to use this script to clone repositories, however, it is not m
 The `extract-method` gradle modules contain driving Intellij Idea plugin, logic and code metrics implementations, that are 
 used for collection of positive and negative labeled samples of refactorings from Java git repositories.
 
+
 ### Usage
 There are two possible ways to use the tool, for which two gradle tasks are implemented:
 * For generation of positive labeled samples, one can use gradle task `runPositiveRefactorings`, which requires 
@@ -40,6 +41,12 @@ of the repository will initiate the collection of data.
 #### Windows systems
 
 The procedure is identical with one key difference, use command `gradlew.bat` instead of `./gradlew`
+
+For convenience purposes, we also included a bash script `generateDataset.sh`, that can be used as a shorthand form of calling the gradle task, with flags for both positive, and negative labels:
+
+```
+bash generateDataset.sh /relative/path/to/projects/ /relative/path/to/output/
+```
 
 ## Machine Learning
 

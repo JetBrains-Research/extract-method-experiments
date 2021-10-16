@@ -21,4 +21,5 @@ url_collection = parse_in_file(args.infile)
 Path(args.outdir).mkdir(parents=True, exist_ok=True)
 
 for url in url_collection:
+    print(f'Cloning repository at {url}')
     git.Git(args.outdir).clone(url)

@@ -9,6 +9,7 @@
     <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <appStarter implementation="org.jetbrains.research.extractMethod.PluginRunner"/>
+        <appStarter implementation="org.jetbrains.research.extractMethod.PositivesRunner"/>
+        <appStarter implementation="org.jetbrains.research.extractMethod.NegativesRunner"/>
     </extensions>
 </idea-plugin>

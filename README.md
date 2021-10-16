@@ -17,30 +17,36 @@ It is recommended to use this script to clone repositories, however, it is not m
 
 ## Data gathering
 
-The `RefactoringsExperiments` directory contains the tools that were used to gather the data that was used to train the machine learning models.
+The `extract-method` gradle modules contain driving Intellij Idea plugin, logic and code metrics implementations, that are 
+used for collection of positive and negative labeled samples of refactorings from Java git repositories.
+
 
 ### Usage
-There are two possible ways to use the tool:
-* Generate positive-labeled samples using option `generatePositiveSamples`. It will start extraction of already performed Extract Method refactorings in changes history of existing Java projects using [RefactoringMiner](https://github.com/JetBrains-Research/RefactoringMiner).
-* Generate negative-labeled samples using option `generateNegativeSamples`. It will generate all possible sequences of statements in methods, rank it using algorithm suggested by [Haas et al.](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.721.2014&rep=rep1&type=pdf) and get the worse ones as candidates that should not be recommended for extraction.
+There are two possible ways to use the tool, for which two gradle tasks are implemented:
+* For generation of positive labeled samples, one can use gradle task `runPositiveRefactorings`, which requires 
+two arguments passed, namely
+    - `<projectsDirPath>` - absolute path to the directory containing cloned git repositories.
+    - `<outputFilePath>` - absolute path to the desired output destination.
+* Similarly, for generation of negative labeled samples the gradle task is `runNegativeRefactorings`, 
+with two arguments
+    - `<inputProjectPath>` - absolute path to the project that should be analyzed.
+    - `<outputFilePath>` - absolute path to the desired output destination.
 
-#### Unix systems
-
-Execution of the following command from the root directory 
+For example, the execution of the following command from the root
 of the repository will initiate the collection of data.
 ```
-./gradlew runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath=/path/to/projects/ -PdatasetsDirPath=/path/to/output/ -PgeneratePositiveSamples
+./gradlew runPositiveRefactorings -PprojectsDirPath=/path/to/projects/ -PoutputFilePath=/path/to/output/
 ```
-*Note:* All paths provided as arguments should be absolute.
-
-It will start the extraction of positive-labeled cases from git repositories on your computer located directly in the specified folder.
-To run the generation of negative-labeled cases, you need to use `-PgenerateNegativeSamples` option.
-
-The output of the tool are two datasets labeled `positive.csv` and `negative.csv` located in accordance with `-PdatasetsDirPath` argument.
 
 #### Windows systems
 
 The procedure is identical with one key difference, use command `gradlew.bat` instead of `./gradlew`
+
+For convenience purposes, we also included a bash script `generateDataset.sh`, that can be used as a shorthand form of calling the gradle task, with flags for both positive, and negative labels:
+
+```
+bash generateDataset.sh /relative/path/to/projects/ /relative/path/to/output/
+```
 
 ## Machine Learning
 

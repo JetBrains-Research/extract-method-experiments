@@ -9,4 +9,5 @@ fi
 
 "$DIR/gradlew" --stop
 "$DIR/gradlew" clean
-"$DIR/gradlew" -p "$DIR" runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath="$1" -PdatasetsDirPath="$2" -PgeneratePositiveSamples
+"$DIR/gradlew" runRefactoringsExperiments -Prunner=RefactoringsExperiments -PprojectsDirPath="$PWD/$1" -PdatasetsDirPath="$PWD/$2" -PgenerateNegativeSamples
+

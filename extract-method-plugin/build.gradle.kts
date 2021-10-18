@@ -1,31 +1,37 @@
 group = rootProject.group
 version = rootProject.version
 
-plugins {
-    java
-}
-
 dependencies {
     implementation(project(":extract-method-core"))
     implementation(project(":extract-method-metrics"))
 }
 
-open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
-    // Name of the runner
-    @get:Input
-    val runner: String? by project
-
+open class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Path to the directory containing projects for the dataset
     val projectsDirPath: String? by project
 
     //Path to the output directory
-    val datasetsDirPath: String? by project
+    val outputFilePath: String? by project
 
-    // Runs generation of positive samples
-    val generatePositiveSamples: String? by project
+    init {
+        jvmArgs = listOf(
+            "-Djava.awt.headless=true",
+            "--add-exports",
+            "java.base/jdk.internal.vm=ALL-UNNAMED",
+            "-Djdk.module.illegalAccess.silent=true"
+        )
+        maxHeapSize = "20g"
+        standardInput = System.`in`
+        standardOutput = System.`out`
+    }
+}
 
-    // Runs generation of negative samples
-    val generateNegativeSamples: String? by project
+open class RunNegativesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
+    // Path to the directory containing projects for the dataset
+    val inputProjectPath: String? by project
+
+    //Path to the output directory
+    val outputFilePath: String? by project
 
     init {
         jvmArgs = listOf(
@@ -41,14 +47,21 @@ open class IOCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
 }
 
 tasks {
-    register<IOCliTask>("runRefactoringsExperiments") {
+    register<RunPositivesCLITask>("runPositiveRefactorings") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
-            runner,
+            "PositiveRefactorings",
             projectsDirPath?.let { "--projectsDirPath=$it" },
-            datasetsDirPath?.let { "--datasetsDirPath=$it" },
-            generatePositiveSamples?.let { "--generatePositiveSamples" },
-            generateNegativeSamples?.let { "--generateNegativeSamples" }
+            outputFilePath?.let { "--outputFilePath=$it" }
+        )
+    }
+
+    register<RunNegativesCLITask>("runNegativeRefactorings") {
+        dependsOn("buildPlugin")
+        args = listOfNotNull(
+            "NegativeRefactorings",
+            inputProjectPath?.let { "--inputProjectPath=$it" },
+            outputFilePath?.let { "--outputFilePath=$it" }
         )
     }
 }

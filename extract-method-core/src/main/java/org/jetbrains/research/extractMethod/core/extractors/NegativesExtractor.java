@@ -1,6 +1,5 @@
 package org.jetbrains.research.extractMethod.core.extractors;
 
-import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -27,74 +26,30 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.*;
-import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.getNumberOfLine;
+import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
  * and processes all methods to generate "negative" samples for dataset.
  * The "negative" samples are ones pieces of code that have the lowes score in terms of Haas ranking.
  */
-public class NegativeRefactoringsExtractionRunner {
-    private final Logger LOG = LogManager.getLogger(NegativeRefactoringsExtractionRunner.class);
-    private final List<String> repositoryPaths;
+public class NegativesExtractor implements RefactoringsExtractor {
+    private final Logger LOG = LogManager.getLogger(NegativesExtractor.class);
     private final FileWriter fileWriter;
 
-    public NegativeRefactoringsExtractionRunner(List<String> repositoryPaths, FileWriter fw) {
-        this.repositoryPaths = repositoryPaths;
+    public NegativesExtractor(FileWriter fw) {
         this.fileWriter = fw;
     }
 
-    public void run() {
-        for (String repoPath : repositoryPaths) {
-            LOG.info("[RefactoringJudge]: Processing repo at: " + repoPath);
-            try {
-                collectSamples(repoPath);
-            } catch (Exception e) {
-                LOG.error("[RefactoringJudge]: Could not parse repository: " + repoPath);
-            }
-        }
-        try {
-            this.fileWriter.close();
-        } catch (IOException e) {
-            LOG.error("[RefactoringJudge]: Cannot close the file-writer.");
-        }
-        LOG.info("[RefactoringJudge]: Finished negative extraction");
-    }
-
-    private void collectSamples(String projectPath) {
-        Project project = ProjectUtil.openOrImport(projectPath, null, true);
-        if (project == null) {
-            LOG.error("[RefactoringJudge]: Could not open project " + projectPath);
-            return;
-        }
-
-        ProjectLevelVcsManager vcsManager = vcsSetup(project, projectPath);
-        GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
-
-        VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
-        for (VirtualFile root : gitRoots) {
-            GitRepository repo = gitRepoManager.getRepositoryForRoot(root);
-            if (repo != null) {
-                try {
-                    List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                    gitCommits.forEach(c -> processCommit(c, project));
-                } catch (VcsException e) {
-                    LOG.error("[RefactoringJudge]: Error occurred while processing commit in " + projectPath);
-                }
-            }
-        }
-    }
-
-    private void processCommit(GitCommit commit, Project project) {
+    @Override
+    public void collectSamples(Project project) {
         List<PsiJavaFile> javaFiles = extractFiles(project);
-
         for (PsiJavaFile javaFile : javaFiles) {
             try {
                 handleMethods(javaFile);
             } catch (IOException e) {
-                LOG.error("[RefactoringJudge]: Cannot handle commit with ID: " + commit.getId());
+                LOG.error("Cannot process file " + javaFile.getName());
             }
         }
     }

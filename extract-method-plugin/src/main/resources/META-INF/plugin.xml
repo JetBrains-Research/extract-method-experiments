@@ -3,10 +3,13 @@
     <name>RefactoringsExperiments</name>
     <vendor>JetBrains Research</vendor>
 
-    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+    <depends>org.jetbrains.kotlin</depends>
     <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <appStarter implementation="org.jetbrains.research.extractMethod.PluginRunner"/>
+        <appStarter implementation="org.jetbrains.research.extractMethod.PositivesRunner"/>
+        <appStarter implementation="org.jetbrains.research.extractMethod.NegativesRunner"/>
     </extensions>
 </idea-plugin>

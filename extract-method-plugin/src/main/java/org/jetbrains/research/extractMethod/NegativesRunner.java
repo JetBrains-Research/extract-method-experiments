@@ -56,7 +56,8 @@ public class NegativesRunner extends BaseRunner {
             runner.runSingleExtraction(projectPath, extractor);
         } catch (Exception e) {
             LOG.error("Unexpected error in negative" +
-                    " samples' procedure. \n" + e.getMessage());
+                    " samples' procedure. \n");
+            e.printStackTrace();
         }
     }
 

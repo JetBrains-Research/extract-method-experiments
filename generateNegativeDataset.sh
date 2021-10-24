@@ -5,7 +5,7 @@ if uname -s | grep -iq cygwin ; then
 fi
 
 for d in $1/*/ ; do # iterating through all directories in $1
-	"$DIR/gradlew" runNegativeRefactorings -PinputProjectPath="$d" -PoutputFilePath="$PWD/out/$(basename $1)/$(basename $d).csv" & sleep 10m;	"$DIR/gradlew" --stop & sleep 10
+	"$DIR/gradlew" runNegativeRefactorings -PinputProjectPath="$PWD/$d" -PoutputFilePath="$PWD/out/$(basename $1)/$(basename $d).csv" & sleep 40m;	"$DIR/gradlew" --stop & sleep 10
 done
 
 "$DIR/gradlew" --stop

@@ -40,7 +40,7 @@ public class PositivesRunner extends BaseRunner {
         try {
             RunnerUtils.configureOutput(cmdLine);
         } catch (MissingArgumentException e) {
-            LOG.error("<datasetsDirPath> is a required argument.");
+            LOG.error("<outputFilePath> is a required argument.");
             return;
         } catch (IOException e) {
             LOG.error("Failed to create output directory.");

@@ -17,7 +17,7 @@ public class RunnerUtils {
         if (cmdLine.hasOption("outputFilePath")) {
             Files.createDirectories(Paths.get(cmdLine.getOptionValue("outputFilePath")).getParent());
         } else {
-            throw new MissingArgumentException("Missing <outFilePath>.");
+            throw new MissingArgumentException("Missing <outputFilePath>.");
         }
     }
 

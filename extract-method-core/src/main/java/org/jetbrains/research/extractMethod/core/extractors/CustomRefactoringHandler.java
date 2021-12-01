@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.findMethodBySignature;
 import static org.jetbrains.research.extractMethod.core.utils.StringUtil.calculateSignature;
+import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
@@ -58,16 +58,16 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     public void handle(String commitId, List<Refactoring> refactorings) {
         try {
             handleCommit(refactorings);
-        } catch (IOException e) {
+        } catch (Exception e) {
             handleException(commitId, e);
         }
     }
 
     public void handleException(String commitId, Exception e) {
-        LOG.error("[RefactoringJudge]: Cannot handle commit with ID: " + commitId);
+        LOG.error("Cannot handle commit with ID: " + commitId);
     }
 
-    private void handleCommit(List<Refactoring> refactorings) throws IOException {
+    private void handleCommit(List<Refactoring> refactorings) throws Exception {
         List<Refactoring> extractMethodRefactorings = refactorings.stream()
                 .filter(r -> r.getRefactoringType() == RefactoringType.EXTRACT_OPERATION)
                 .collect(Collectors.toList());
@@ -85,8 +85,8 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                         JavaFileType.INSTANCE,
                         change.getBeforeRevision().getContent());
                 changedSourceJavaFiles.put(change.getBeforeRevision().getFile().getPath(), sourcePsiFile);
-            } catch (VcsException e) {
-                LOG.error("[RefactoringJudge]: Cannot extract changes from commit: " + gitCommit.getId());
+            } catch (NullPointerException e) {
+                LOG.error("Cannot extract changes from commit: " + gitCommit.getId());
             }
         }
 
@@ -107,7 +107,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     private void handleFragment(PsiMethod dummyPsiMethod, String code,
-                                     int beginLine, int endLine) throws IOException {
+                                int beginLine, int endLine) throws IOException {
 
         Path tmpRepoPath = Paths.get(repositoryPath);
         String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount() - 1).toString();

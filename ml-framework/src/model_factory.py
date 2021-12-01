@@ -2,12 +2,11 @@ import imblearn.combine as combinedsampling
 import imblearn.over_sampling as oversampling
 import sklearn.preprocessing as preprocessing
 from imblearn.pipeline import Pipeline as ImbPipeline
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import SGDClassifier, LogisticRegression
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.naive_bayes import ComplementNB, GaussianNB
 from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC, LinearSVC
 
 from .utils import import_gridsearch_args, import_sampler, import_preprocessor
 
@@ -45,7 +44,7 @@ class ModelFactory:
                             param_grid=self.gridsearch_args,
                             scoring=self.scoring_func,
                             cv=stratified_kfold,
-                            n_jobs=-1,
+                            n_jobs=1,
                             verbose=3)
 
     def _make_preprocessor(self):
@@ -76,15 +75,15 @@ class ModelFactory:
         return implementation()
 
     def _make_classifier(self):
+
         type_to_implementation = {
             'rf': RandomForestClassifier,
-            'svc': SVC,
-            'lsvc': LinearSVC,
             'sgd': SGDClassifier,
             'mlp': MLPClassifier,
             'gnb': GaussianNB,
             'cnb': ComplementNB,
             'lrc': LogisticRegression,
+            'gbc': GradientBoostingClassifier,
         }
         implementation = type_to_implementation.get(self.classifier_type, None)
         if implementation is None:

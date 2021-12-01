@@ -2,6 +2,8 @@
 *.iml
 *.gradle/
 *build/
+*__pycache__/
+*.py[cod]
 ml-framework/datasets/
 ml-framework/models/
 ml-framework/n_models/

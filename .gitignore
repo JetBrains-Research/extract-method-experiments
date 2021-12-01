@@ -1,7 +1,8 @@
-*.idea
+*.idea/
 *.iml
-idea/
-.gradle/
+*.gradle/
 *build/
-clones/
-out/
+ml-framework/datasets/
+ml-framework/models/
+ml-framework/n_models/
+ml-framework/*_raw/

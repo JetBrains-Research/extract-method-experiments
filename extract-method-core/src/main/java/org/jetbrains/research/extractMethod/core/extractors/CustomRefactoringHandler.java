@@ -58,7 +58,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     public void handle(String commitId, List<Refactoring> refactorings) {
         try {
             handleCommit(refactorings);
-        } catch (IOException e) {
+        } catch (Exception e) {
             handleException(commitId, e);
         }
     }
@@ -67,7 +67,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         LOG.error("Cannot handle commit with ID: " + commitId);
     }
 
-    private void handleCommit(List<Refactoring> refactorings) throws IOException {
+    private void handleCommit(List<Refactoring> refactorings) throws Exception {
         List<Refactoring> extractMethodRefactorings = refactorings.stream()
                 .filter(r -> r.getRefactoringType() == RefactoringType.EXTRACT_OPERATION)
                 .collect(Collectors.toList());
@@ -85,7 +85,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                         JavaFileType.INSTANCE,
                         change.getBeforeRevision().getContent());
                 changedSourceJavaFiles.put(change.getBeforeRevision().getFile().getPath(), sourcePsiFile);
-            } catch (VcsException e) {
+            } catch (NullPointerException e) {
                 LOG.error("Cannot extract changes from commit: " + gitCommit.getId());
             }
         }

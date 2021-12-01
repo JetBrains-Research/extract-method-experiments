@@ -1,11 +1,14 @@
 import os
-
+import logging
 from src.trainer import train_by_config
 
-directory = 'settings/'
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+directory = 'train_settings/'
 for filename in os.listdir(directory):
     config_path = os.path.join(directory, filename)
-    print(f'Training model in accordance with {config_path} config')
+    logging.info(f'Training model in accordance with {config_path} config')
 
-    train_by_config(config_path)
-
+    try:
+        train_by_config(config_path)
+    except Exception as err:
+        print(err)

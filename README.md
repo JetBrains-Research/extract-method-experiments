@@ -50,6 +50,7 @@ bash generatePositiveDataset.sh /relative/path/to/project/ /relative/path/to/out
 
 ```
 bash generateNegativeDataset.sh /relative/path/to/projects_dir/ 
+```
 
 ## Machine Learning
 

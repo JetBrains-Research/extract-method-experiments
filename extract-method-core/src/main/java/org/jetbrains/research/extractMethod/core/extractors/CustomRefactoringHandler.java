@@ -110,6 +110,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                     String extractedFragment = getMethodSlice(changedSourceJavaFiles.get(path),
                             codeLocation.getStartLine(), codeLocation.getEndLine());
                     handleFragment(dummyMethod, extractedFragment, sourceLocationInfo.getFilePath(), codeLocation.getStartLine(), codeLocation.getEndLine());
+                    // TODO: check uniformity of the file-paths between neg and pos
                 }
             }
         }

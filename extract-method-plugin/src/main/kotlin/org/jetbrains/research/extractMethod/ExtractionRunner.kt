@@ -6,52 +6,63 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.research.extractMethod.core.extractors.RefactoringsExtractor
-import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.streams.toList
+import java.nio.file.Paths
 
 class ExtractionRunner {
     private val logger = LogManager.getLogger(ExtractionRunner::class)
 
-    private fun getSubdirectories(path: Path): List<Path> {
-        return Files.walk(path, 1)
-            .filter { Files.isDirectory(it) && !it.equals(path) }
-            .toList()
-    }
-
-    fun runMultipleExtractions(inputDir: Path, extractor: RefactoringsExtractor) {
-        val wrapperFunction = {
-                project: Project -> extractor.collectSamples(project)
+    fun runMultipleExtractions(mappingPath: Path, extractor: RefactoringsExtractor) {
+        val wrapperFunction = { project: Project, s1: String, s2: String ->
+            extractor.collectSamples(project, s1, s2)
         }
 
-        standardRepositoryOpener(inputDir, wrapperFunction)
-    }
-
-    fun runSingleExtraction(projectPath: Path, extractor: RefactoringsExtractor) {
-        val wrapperFunction = {
-                project: Project -> extractor.collectSamples(project)
+        val lines = mappingPath.toFile().readLines()
+        val index = 0;
+        for (line: String in lines) {
+            val components = line.split(';')
+            val path = Paths.get(components[0])
+            val projectName = components[1]
+            val sha = components[2]
+            openRunAndClose(index, path, wrapperFunction, projectName, sha)
         }
-
-        openRunAndClose(0, projectPath, wrapperFunction);
     }
+
+    fun runSingleExtraction(mappingPath: Path, extractor: RefactoringsExtractor, index: Int) {
+        val wrapperFunction = { project: Project, s1: String, s2: String ->
+            extractor.collectSamples(project, s1, s2)
+        }
+        val components = mappingPath.toFile().readLines()[index].split(';');
+        val path = Paths.get(components[0])
+        val projectName = components[1]
+        val sha = components[2]
+        openRunAndClose(index, path, wrapperFunction, projectName, sha);
+    }
+
     /**
      * Opens a project at the given path, assigns it an index,
      * runs an action on it, and closes it afterwards.
      */
-    private fun openRunAndClose(projectIndex: Int, projectPath: Path, action: (Project) -> Unit) {
+    private fun openRunAndClose(
+        projectIndex: Int,
+        projectPath: Path,
+        action: (Project, String, String) -> Unit,
+        projectName: String,
+        commitID: String
+    ) {
         ApplicationManager.getApplication().invokeAndWait {
             ProjectManagerEx.getInstanceEx().openProject(
                 projectPath,
                 OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
             )?.let { project ->
                 try {
-                    runAction(project, projectIndex, action)
+                    runAction(project, projectIndex, action, projectName, commitID)
                 } catch (ex: Exception) {
                     logger.error(ex)
                 } finally {
                     ApplicationManager.getApplication().invokeAndWait {
                         val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
-                        logger.info("Project ${project.name} is closed = $closeStatus")
+                        logger.info("Project $projectName is closed = $closeStatus")
                     }
                 }
             }
@@ -59,20 +70,17 @@ class ExtractionRunner {
     }
 
     /**
-     * Executes openRunAndClose on all projects inside the given directory
-     */
-    private fun standardRepositoryOpener(path: Path, action: (Project) -> Unit) {
-        getSubdirectories(path).forEachIndexed { projectIndex, projectPath ->
-            openRunAndClose(projectIndex, projectPath, action)
-        }
-    }
-
-    /**
      * Performs an action on the given project
      */
-    private fun runAction(project: Project, projectIndex: Int, action: (Project) -> Unit) {
-        logger.info("Started action on project ${project.name} index=$projectIndex")
-        action(project)
-        logger.info("Finished action on project ${project.name} index=$projectIndex")
+    private fun runAction(
+        project: Project,
+        projectIndex: Int,
+        action: (Project, String, String) -> Unit,
+        projectName: String,
+        commitID: String
+    ) {
+        logger.info("Started action on project $projectName index=$projectIndex")
+        action(project, projectName, commitID)
+        logger.info("Finished action on project $projectName index=$projectIndex")
     }
 }

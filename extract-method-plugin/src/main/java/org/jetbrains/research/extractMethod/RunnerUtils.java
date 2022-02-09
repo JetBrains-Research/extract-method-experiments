@@ -21,25 +21,14 @@ public class RunnerUtils {
         }
     }
 
-    public static FileWriter makePositiveHeader(String filePath, int featureCount) throws IOException {
+    public static FileWriter makeHeader(String filePath, int featureCount) throws IOException {
         FileWriter fw = new FileWriter(filePath);
         for (int i = 0; i < featureCount; i++) {
             fw.append(Feature.fromId(i).getName());
             fw.append(';');
         }
-        fw.append("RepositoryName");
+        fw.append("RepositoryName;CommitHash;PathToFile;BeginLine;EndLine;Score");
         fw.append("\n");
-        return fw;
-    }
-
-    public static FileWriter makeNegativeHeader(String filePath, int featureCount) throws IOException {
-        FileWriter fw = new FileWriter(filePath);
-        for (int i = 0; i < featureCount; i++) {
-            fw.append(Feature.fromId(i).getName());
-            fw.append(';');
-        }
-        fw.append("RepositoryName");
-        fw.append(";Score\n");
         return fw;
     }
 }

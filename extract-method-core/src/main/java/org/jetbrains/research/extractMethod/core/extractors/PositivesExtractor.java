@@ -35,7 +35,7 @@ public class PositivesExtractor implements RefactoringsExtractor {
     }
 
     @Override
-    public void collectSamples(Project project) {
+    public void collectSamples(Project project, String repoFullName, String headCommitHash) {
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
         ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, project.getProjectFilePath());
         VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
@@ -44,7 +44,7 @@ public class PositivesExtractor implements RefactoringsExtractor {
             if (repo != null) {
                 try {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                    gitCommits.forEach(c -> processCommit(c, project));
+                    gitCommits.forEach(c -> processCommit(c, project, repoFullName));
                 } catch (VcsException e) {
                     LOG.error("Error occurred while processing commit in " + project.getProjectFilePath());
                 }
@@ -52,7 +52,7 @@ public class PositivesExtractor implements RefactoringsExtractor {
         }
     }
 
-    private void processCommit(GitCommit commit, Project project) {
+    private void processCommit(GitCommit commit, Project project, String repoFullName) {
         GitService gitService = new GitServiceImpl();
         Repository repository = null;
         try {

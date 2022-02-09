@@ -24,6 +24,15 @@ public class NegativesRunner extends BaseRunner {
     }
 
     @Override
+    Options configureOptionsForCLI() {
+        Options options = new Options();
+        options.addRequiredOption("input", "inputMappingPath", true, "Path to the input mapping.");
+        options.addRequiredOption("output", "outputFilePath", true, "Path to the desired output destination.");
+        options.addRequiredOption("i", "index", true, "Index of project in the mapping to process.");
+        return options;
+    }
+
+    @Override
     void extractRefactorings(CommandLine cmdLine) {
         ExtractionRunner runner = new ExtractionRunner();
         try {
@@ -37,36 +46,31 @@ public class NegativesRunner extends BaseRunner {
 
         FileWriter negativeFW = null;
         try {
-            negativeFW = RunnerUtils.makeNegativeHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
+            negativeFW = RunnerUtils.makeHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
         } catch (IOException e) {
             LOG.error("Failed to make header for output file");
             return;
         }
 
         RefactoringsExtractor extractor = new NegativesExtractor(negativeFW);
-        Path projectPath;
+        Path mappingPath;
         try {
-            projectPath = Paths.get(cmdLine.getOptionValue("inputProjectPath"));
+            mappingPath = Paths.get(cmdLine.getOptionValue("inputMappingPath"));
         } catch (InvalidPathException e) {
-            LOG.error("<inputProjectPath> has to be a valid path");
+            LOG.error("<inputMappingPath> has to be a valid path");
             return;
         }
 
+        int index;
+
+        index = Integer.parseInt(cmdLine.getOptionValue("index"));
+
         try {
-            runner.runSingleExtraction(projectPath, extractor);
+            runner.runSingleExtraction(mappingPath, extractor, index);
         } catch (Exception e) {
             LOG.error("Unexpected error in negative" +
                     " samples' procedure. \n");
             e.printStackTrace();
         }
-    }
-
-
-    @Override
-    Options configureOptionsForCLI() {
-        Options options = new Options();
-        options.addRequiredOption("input", "inputProjectPath", true, "Path to the input project.");
-        options.addRequiredOption("output", "outputFilePath", true, "Path to the desired output destination.");
-        return options;
     }
 }

@@ -20,7 +20,6 @@ It is recommended to use this script to clone repositories, however, it is not m
 The `extract-method` gradle modules contain driving Intellij Idea plugin, logic and code metrics implementations, that are 
 used for collection of positive and negative labeled samples of refactorings from Java git repositories.
 
-
 ### Usage
 There are two possible ways to use the tool, for which two gradle tasks are implemented:
 * For generation of positive labeled samples, one can use gradle task `runPositiveRefactorings`, which requires 
@@ -42,21 +41,25 @@ of the repository will initiate the collection of data.
 
 The procedure is identical with one key difference, use command `gradlew.bat` instead of `./gradlew`
 
-For convenience purposes, we also included a bash script `generateDataset.sh`, that can be used as a shorthand form of calling the gradle task, with flags for both positive, and negative labels:
+For convenience purposes, we also included a bash scripts `generatePositiveDataset.sh` and
+`generateNegativeDatataset.sh`, that can be used as a shorthand form of calling the gradle tasks.
 
 ```
-bash generateDataset.sh /relative/path/to/projects/ /relative/path/to/output/
+bash generatePositiveDataset.sh /relative/path/to/project/ /relative/path/to/output/
+```
+
+```
+bash generateNegativeDataset.sh /relative/path/to/projects_dir/ 
 ```
 
 ## Machine Learning
 
-Currently, there are a number of ML algorithms proposed as valid models:
+Currently, there are a number of ML algorithms implemented in the experiments' pipeline:
 
 | classifier name    | implementation source | shortcut name  |
 |:-------------|:-------------| :-----:|
 | RandomForest  | `sklearn.ensemble.RandomForest` | RF |
-| SupportVectorMachine      | `sklearn.svm.SVC`      | SVC |
-| LinearSupportVectorMachine | `sklearn.svm.LinearSVC`   | LSVC |
+| GradientBoostingClassifier  | `sklearn.ensemble.GradientBoostingClassifier` | GBC |
 | LogisticRegression | `sklearn.linear_model.LogisticRegression`   | LRC |
 | SGD over SVM  | `sklearn.ensemble.SGDClassifier` | SGD |
 | GaussianNaiveBayes  | `sklearn.naive_bayes.GaussianNB`   | GNB |

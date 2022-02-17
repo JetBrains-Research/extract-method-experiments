@@ -6,6 +6,5 @@ fi
 
 for i in $(seq 0 1 $3) ; do # iterating through 20 rows of
   "$DIR/gradlew" runNegativeRefactorings -PinputMappingPath="$PWD/$1" -PoutputFilePath="$PWD/$2/$i.csv" -Pindex=$i
-done
 
 "$DIR/gradlew" --stop

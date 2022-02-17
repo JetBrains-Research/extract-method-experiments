@@ -10,8 +10,8 @@ class TrainImporter:
 
         self.quantile_to_negative = config.get('quantile_to_negative')
 
-        self.df_pos = pd.read_csv(self.path_to_positive, delimiter=';', error_bad_lines=False).dropna()
-        self.df_neg = pd.read_csv(self.path_to_negative, delimiter=';', error_bad_lines=False).dropna()
+        self.df_pos = pd.read_csv(self.path_to_positive, delimiter=';').dropna()
+        self.df_neg = pd.read_csv(self.path_to_negative, delimiter=';').dropna()
 
     def make_binary(self):
         """
@@ -22,22 +22,25 @@ class TrainImporter:
             self.quantile_to_negative)]  # Filter only lower part, up to specified quantile
 
         negatives = negatives.assign(label=lambda value: 0)  # Set label to zero, meaning negative
-        negatives = negatives.drop(columns=['Score', 'RepositoryName'])
-
         positives = self.df_pos.assign(label=lambda value: 1)  # Set label to one, meaning positive
 
-        whole_df = pd.concat([positives, negatives]).drop(columns='RepositoryName')
+
+        whole_df = pd.concat([positives, negatives], ignore_index=True).drop(columns=['RepositoryName', 'Score').sample(frac=1)
+
         x = whole_df.drop(columns=['label'])
         y = whole_df.label
-        x[x < 0] = 0
 
         return x, y
 
 
 class TestImporter:
     def __init__(self, config):
-        config.get('dataset_path')
-        self.df = pd.read_csv(config.get('dataset_path'), delimiter=';', error_bad_lines=False).dropna()
+        pos_path = os.path.join(config.get('datasets_dir_path'), config.get('positive_dataset_name'))
+        neg_path = os.path.join(config.get('datasets_dir_path'), config.get('negative_dataset_name'))
+
+        positives = pd.read_csv(pos_path, delimiter=';').dropna().drop(columns=['RepositoryName'])
+        negatives = pd.read_csv(neg_path, delimiter=';').dropna().drop(columns=['RepositoryName', 'Score'])
+        self.df = pd.concat([positives, negatives], ignore_index=True)
 
     def make_test(self):
         return self.df.drop(columns=['label']), self.df.label

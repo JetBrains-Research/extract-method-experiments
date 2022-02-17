@@ -33,7 +33,7 @@ open class RunNegativesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     //Path to the output directory
     val outputFilePath: String? by project
 
-    val index: Int? by project
+    val index: String? by project
 
     init {
         jvmArgs = listOf(

@@ -27,8 +27,7 @@ public class RunnerUtils {
             fw.append(Feature.fromId(i).getName());
             fw.append(';');
         }
-        fw.append("RepositoryName;CommitHash;PathToFile;BeginLine;EndLine;Score");
-        fw.append("\n");
+        fw.append("RepositoryName;CommitHash;PathToFile;BeginLine;EndLine;Score;RawCode\n");
         return fw;
     }
 }

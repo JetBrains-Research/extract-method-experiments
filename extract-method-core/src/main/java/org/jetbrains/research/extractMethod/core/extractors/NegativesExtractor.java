@@ -19,9 +19,10 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.research.extractMethod.core.utils.LocUtil.writeAuxLocFeatures;
+import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeAuxLocFeatures;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.extractFiles;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.getNumberOfLine;
+import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeCodeFragment;
 import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 /**
@@ -89,7 +90,9 @@ public class NegativesExtractor implements RefactoringsExtractor {
 
                 writeFeaturesToFile(method, statementsString, beginLine, endLine, this.fileWriter);
                 writeAuxLocFeatures(repoFullName, headCommitHash, filePath, beginLine, endLine, this.fileWriter);
-                this.fileWriter.append(String.format(";%f\n", candidate.getScore()));
+                this.fileWriter.append(String.format(";%f;", candidate.getScore()));
+                writeCodeFragment(statementsString, this.fileWriter);
+                this.fileWriter.append('\n');
             }
         }
     }

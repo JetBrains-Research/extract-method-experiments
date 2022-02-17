@@ -26,25 +26,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.research.extractMethod.core.utils.LocUtil.writeAuxLocFeatures;
+import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeAuxLocFeatures;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.findMethodBySignature;
 import static org.jetbrains.research.extractMethod.core.utils.StringUtil.calculateSignature;
+import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeCodeFragment;
 import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
     private final GitCommit gitCommit;
     private final String repoFullName;
+    private final String priorCommitHash;
     private final FileWriter fileWriter;
     private final Logger LOG = LogManager.getLogger(CustomRefactoringHandler.class);
 
     public CustomRefactoringHandler(Project project,
                                     String repoFullName,
                                     GitCommit gitCommit,
+                                    String priorCommitHash,
                                     FileWriter fileWriter) {
         this.project = project;
         this.repoFullName = repoFullName;
         this.gitCommit = gitCommit;
+        this.priorCommitHash = priorCommitHash;
         this.fileWriter = fileWriter;
     }
 
@@ -99,6 +103,8 @@ public class CustomRefactoringHandler extends RefactoringHandler {
             }
         }
 
+
+
         for (Refactoring ref : extractMethodRefactorings) {
             ExtractOperationRefactoring extractOperationRefactoring = (ExtractOperationRefactoring) ref;
             UMLOperation sourceOperation = extractOperationRefactoring.getSourceOperationBeforeExtraction();
@@ -110,18 +116,21 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                     String extractedFragment = getMethodSlice(changedSourceJavaFiles.get(path),
                             codeLocation.getStartLine(), codeLocation.getEndLine());
                     handleFragment(dummyMethod, extractedFragment, sourceLocationInfo.getFilePath(), codeLocation.getStartLine(), codeLocation.getEndLine());
+
                     // TODO: check uniformity of the file-paths between neg and pos
                 }
             }
         }
     }
 
-    private void handleFragment(PsiMethod dummyPsiMethod, String code, String filePath,
+    private void handleFragment(PsiMethod dummyPsiMethod, String codeStr, String filePath,
                                 int beginLine, int endLine) throws IOException {
 
-        writeFeaturesToFile(dummyPsiMethod, code, beginLine, endLine, this.fileWriter);
+        writeFeaturesToFile(dummyPsiMethod, codeStr, beginLine, endLine, this.fileWriter);
 
-        writeAuxLocFeatures(this.repoFullName, this.gitCommit.getId().asString(), filePath, beginLine, endLine, this.fileWriter);
-        this.fileWriter.append(String.format(";%f\n", 0.0)); // Setting haas-score as 0 for uniformity
+        writeAuxLocFeatures(this.repoFullName, priorCommitHash, filePath, beginLine, endLine, this.fileWriter);
+        this.fileWriter.append(String.format("%f;", 0.0)); // Setting haas-score as 0 for uniformity
+        writeCodeFragment(codeStr, this.fileWriter);
+        this.fileWriter.append('\n'); // Setting haas-score as 0 for uniformity
     }
 }

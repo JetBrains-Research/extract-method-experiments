@@ -39,6 +39,18 @@ public class MetricCalculator {
         computeFeatureVector();
     }
 
+    public static void writeFeaturesToFile(PsiMethod dummyPsiMethod, String code,
+                                           int beginLine, int endLine, FileWriter fileWriter) throws IOException {
+        MetricCalculator metricCalculator =
+                new MetricCalculator(code, dummyPsiMethod, beginLine, endLine);
+        FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
+
+        for (int i = 0; i < featuresVector.getDimension(); i++) {
+            fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
+            fileWriter.append(';');
+        }
+    }
+
     private void computeFeatureVector() {
         couplingFeatures();
         keywordFeatures();
@@ -147,18 +159,5 @@ public class MetricCalculator {
         featuresVector.addFeature(new FeatureItem(
                 Feature.AreaPerLine, (double) fragmentArea / lineCount));
 
-    }
-
-    public static void writeFeaturesToFile(PsiMethod dummyPsiMethod, String code, String sourceRepoName,
-                                           int beginLine, int endLine, FileWriter fileWriter) throws IOException {
-        MetricCalculator metricCalculator =
-                new MetricCalculator(code, dummyPsiMethod, beginLine, endLine);
-        FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
-
-        for (int i = 0; i < featuresVector.getDimension(); i++) {
-            fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
-            fileWriter.append(';');
-        }
-        fileWriter.append(sourceRepoName);
     }
 }

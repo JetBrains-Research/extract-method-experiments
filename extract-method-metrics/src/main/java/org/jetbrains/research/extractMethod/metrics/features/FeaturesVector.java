@@ -55,4 +55,17 @@ public class FeaturesVector implements IFeaturesVector {
 
         return result;
     }
+
+    public List<Float> buildCroppedVector(List<Integer> indexList){
+        List<Float> result = new ArrayList<>();
+        int itemsPtr = 0;
+        for (int i: indexList) {
+            if (itemsPtr != features.size() && features.get(itemsPtr).getId() == i) {
+                result.add((float) features.get(itemsPtr++).getValue());
+            } else {
+                result.add(0f);
+            }
+        }
+        return result;
+    }
 }

@@ -1,6 +1,5 @@
 package org.jetbrains.research.extractMethod.core.extractors;
 
-import com.ibm.icu.impl.Pair;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
@@ -14,7 +13,6 @@ import git4idea.repo.GitRepositoryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.lib.Repository;
-import org.jdesktop.swingx.plaf.PainterUIResource;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
@@ -48,8 +46,8 @@ public class PositivesExtractor implements RefactoringsExtractor {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
                     GitCommit currentCommit;
                     String previousCommitHash;
-                    for(int i = 0; i < gitCommits.size()-1; i++){
-                        previousCommitHash = gitCommits.get(i+1).getId().asString();
+                    for (int i = 0; i < gitCommits.size() - 1; i++) {
+                        previousCommitHash = gitCommits.get(i + 1).getId().asString();
                         currentCommit = gitCommits.get(i);
                         processCommit(currentCommit, previousCommitHash, project, repoFullName);
                     }

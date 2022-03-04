@@ -14,11 +14,11 @@ public class DatasetRecord {
 
     public DatasetRecord(FeaturesVector featuresVector, LocationVector locationVector,
                          double score, String rawCode) {
-        for(FeatureItem item : featuresVector.getItems()){
+        for (FeatureItem item : featuresVector.getItems()) {
             jsonRecord.put(item.getName(), item.getValue());
         }
 
-        for(LocationItem item : locationVector.getItems()){
+        for (LocationItem item : locationVector.getItems()) {
             jsonRecord.put(item.getName(), item.getValue());
         }
 
@@ -27,6 +27,6 @@ public class DatasetRecord {
     }
 
     public void writeRecord(FileWriter fw) throws IOException {
-        fw.write(jsonRecord.toString(2)+",\n");
+        fw.write(jsonRecord.toString(2) + ",\n");
     }
 }

@@ -14,12 +14,15 @@ public enum LocationBasis {
         this.name = name;
         this.id = id;
     }
+
     public static LocationBasis fromId(int id) {
         return LocationBasis.values()[id];
     }
+
     public String getName() {
         return name;
     }
+
     public int getId() {
         return id;
     }

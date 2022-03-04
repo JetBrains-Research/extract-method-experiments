@@ -23,9 +23,9 @@ public class Candidate implements Comparable<Candidate> {
     private final double maxLengthScore = 3;
     private final double lengthScoreSensitivity = 0.1;
     private final String candidateAsString;
-    private String remainderAsString = "";
     private final int methodArea;
     private final int methodDepth;
+    private String remainderAsString = "";
     private double score;
 
     public Candidate(List<PsiStatement> statements, PsiMethod psiMethod) {

@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethod.core.haas.Candidate;
 import org.jetbrains.research.extractMethod.core.haas.HaasAlgorithm;
 import org.jetbrains.research.extractMethod.metrics.MetricCalculator;
-import org.jetbrains.research.extractMethod.metrics.features.Feature;
 import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
 import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
 import org.jetbrains.research.extractMethod.metrics.utils.DatasetRecord;
@@ -25,11 +24,8 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.research.extractMethod.core.utils.LocationUtil.buildLocationVector;
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeAuxLocFeatures;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.extractFiles;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.getNumberOfLine;
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeCodeFragment;
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,

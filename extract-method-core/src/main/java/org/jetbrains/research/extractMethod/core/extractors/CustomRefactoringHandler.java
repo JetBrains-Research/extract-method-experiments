@@ -15,11 +15,7 @@ import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.research.extractMethod.metrics.MetricCalculator;
-import org.jetbrains.research.extractMethod.metrics.features.Feature;
-import org.jetbrains.research.extractMethod.metrics.features.FeatureItem;
 import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
-import org.jetbrains.research.extractMethod.metrics.location.LocationBasis;
-import org.jetbrains.research.extractMethod.metrics.location.LocationItem;
 import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
 import org.jetbrains.research.extractMethod.metrics.utils.DatasetRecord;
 import org.refactoringminer.api.Refactoring;
@@ -35,11 +31,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.research.extractMethod.core.utils.LocationUtil.buildLocationVector;
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeAuxLocFeatures;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.findMethodBySignature;
 import static org.jetbrains.research.extractMethod.core.utils.StringUtil.calculateSignature;
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeCodeFragment;
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
@@ -111,7 +104,6 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                 LOG.error("Cannot extract changes from commit: " + gitCommit.getId());
             }
         }
-
 
 
         for (Refactoring ref : extractMethodRefactorings) {

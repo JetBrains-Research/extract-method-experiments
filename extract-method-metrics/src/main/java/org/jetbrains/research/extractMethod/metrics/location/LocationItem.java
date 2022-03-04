@@ -1,7 +1,5 @@
 package org.jetbrains.research.extractMethod.metrics.location;
 
-import org.jetbrains.research.extractMethod.metrics.features.Feature;
-
 public class LocationItem {
     private final LocationBasis type;
     private String value;

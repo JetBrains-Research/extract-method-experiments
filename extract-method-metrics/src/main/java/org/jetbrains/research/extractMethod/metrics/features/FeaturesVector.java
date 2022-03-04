@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class FeaturesVector {
     private final List<FeatureItem> features = new ArrayList<>();
@@ -14,7 +12,7 @@ public class FeaturesVector {
     public FeaturesVector(int dimension) {
         this.dimension = dimension;
     }
-    
+
     public void addFeature(final FeatureItem item) {
         int bestIndex = Collections.binarySearch(this.features, item, Comparator.comparing(FeatureItem::getId));
         if (bestIndex < 0) {
@@ -26,7 +24,7 @@ public class FeaturesVector {
     public int getDimension() {
         return dimension;
     }
-    
+
     public double getFeatureValue(Feature toSearch) {
         return features.get(toSearch.getId()).getValue();
     }
@@ -48,10 +46,10 @@ public class FeaturesVector {
         return result;
     }
 
-    public List<Float> buildCroppedVector(List<Integer> indexList){
+    public List<Float> buildCroppedVector(List<Integer> indexList) {
         List<Float> result = new ArrayList<>();
         int itemsPtr = 0;
-        for (int i: indexList) {
+        for (int i : indexList) {
             if (itemsPtr != features.size() && features.get(itemsPtr).getId() == i) {
                 result.add((float) features.get(itemsPtr++).getValue());
             } else {

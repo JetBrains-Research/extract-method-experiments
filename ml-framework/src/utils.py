@@ -32,7 +32,9 @@ def import_test_configuration(config_file):
     content.read(config_file)
 
     config = {
-        'dataset_path': content['testing'].get('dataset_path'),
+        'datasets_dir_path': content['testing'].get('datasets_dir_path'),
+        'positive_dataset_name': content['testing'].get('positive_dataset_name'),
+        'negative_dataset_name': content['testing'].get('negative_dataset_name'),
         'model_path': content['testing'].get('model_path')
     }
 
@@ -86,8 +88,7 @@ def import_gridsearch_args(model_config_path, classifier_type):
 def import_classifier_args(hyperparameters, classifier_type):
     classifier_arg_parsers = {
         'rf': import_rf_args,
-        'svc': import_svc_args,
-        'lsvc': import_linear_svc_args,
+        'gbc': import_gbc_args,
         'sgd': import_sgd_args,
         'mlp': import_mlp_args,
         'gnb': import_gnb_args,
@@ -101,7 +102,7 @@ def import_classifier_args(hyperparameters, classifier_type):
 
 def import_rf_args(hyperparameters):
     """
-    Returns parsed config for RandomForest classifier from provided settings
+    Returns parsed config for RandomForest classifier from provided train_settings
     *Grid-search friendly
     """
 
@@ -129,52 +130,27 @@ def import_rf_args(hyperparameters):
     return args
 
 
-def import_svc_args(hyperparameters):
+def import_gbc_args(hyperparameters):
     """
-        Returns parsed config for SupportVectorMachine from provided settings
+        Returns parsed config for SupportVectorMachine from provided train_settings
         *Grid-search friendly
     """
     types = {
-        'C': float,
-        'kernel': str,
-        'degree': int,
-        'gamma': str,
-        'tol': float,
-    }
-
-    args = {
-        'C': hyperparameters.get('C', fallback='1'),
-        'kernel': hyperparameters.get('kernel', fallback='rbf'),
-        'degree': hyperparameters.get('degree', fallback='3'),
-        'gamma': hyperparameters.get('gamma', fallback='scale'),
-        'tol': hyperparameters.get('tol', fallback='1e-3'),
-    }
-
-    for key in args.keys():
-        args[key] = cast_to_typed_list(args[key], types[key])
-
-    return args
-
-
-def import_linear_svc_args(hyperparameters):
-    """
-        Returns parsed config for LinearSupportVectorMachine from provided settings
-        *Grid-search friendly
-    """
-    types = {
-        'C': float,
-        'tol': float,
+        'max_features': str,
+        'n_estimators': int,
+        'max_depth': int,
+        'min_samples_split': int,
+        'min_samples_leaf': int,
         'loss': str,
-        'dual': cast_bool,
-        'penalty': str,
     }
 
     args = {
-        'C': hyperparameters.get('C', fallback='1'),
-        'tol': hyperparameters.get('tol', fallback='1e-4'),
-        'loss': hyperparameters.get('loss', fallback='squared_hinge'),
-        'dual': hyperparameters.get('dual', fallback='False'),
-        'penalty': hyperparameters.get('penalty', fallback='l2'),
+        'max_features': hyperparameters.get('max_features', fallback='sqrt'),
+        'n_estimators': hyperparameters.get('n_estimators', fallback='100'),
+        'max_depth': hyperparameters.get('max_depth', fallback='3'),
+        'min_samples_split': hyperparameters.get('min_samples_split', fallback='2'),
+        'min_samples_leaf': hyperparameters.get('min_samples_leaf', fallback='1'),
+        'loss': hyperparameters.get('loss', fallback='deviance'),
     }
 
     for key in args.keys():
@@ -185,7 +161,7 @@ def import_linear_svc_args(hyperparameters):
 
 def import_sgd_args(hyperparameters):
     """
-        Returns parsed config for StochasticGradientDescent over SVM from provided settings
+        Returns parsed config for StochasticGradientDescent over SVM from provided train_settings
         *Grid-search friendly
     """
     types = {
@@ -200,7 +176,7 @@ def import_sgd_args(hyperparameters):
     args = {
         'alpha': hyperparameters.get('alpha', fallback='1e-4'),
         'tol': hyperparameters.get('tol', fallback='1e-3'),
-        'loss': hyperparameters.get('loss', fallback='hinge'),
+        'loss': hyperparameters.get('loss', fallback='modified_huber'),
         'max_iter': hyperparameters.get('max_iter', fallback='1000'),
         'penalty': hyperparameters.get('penalty', fallback='l2'),
         'fit_intercept': hyperparameters.get('fit_intercept', fallback='False'),
@@ -214,7 +190,7 @@ def import_sgd_args(hyperparameters):
 
 def import_mlp_args(hyperparameters):
     """
-    Returns parsed config for MultiLayerPerceptron classifier from provided settings
+    Returns parsed config for MultiLayerPerceptron classifier from provided train_settings
     *Grid-search friendly
     """
     types = {
@@ -249,7 +225,7 @@ def import_mlp_args(hyperparameters):
 
 def import_gnb_args(hyperparameters):
     """
-        Returns parsed config for GaussianNaiveBayes from provided settings
+        Returns parsed config for GaussianNaiveBayes from provided train_settings
         *Grid-search friendly
     """
     types = {
@@ -268,7 +244,7 @@ def import_gnb_args(hyperparameters):
 
 def import_cnb_args(hyperparameters):
     """
-        Returns parsed config for ComplementNaiveBayes from provided settings
+        Returns parsed config for ComplementNaiveBayes from provided train_settings
         *Grid-search friendly
     """
     types = {
@@ -289,7 +265,7 @@ def import_cnb_args(hyperparameters):
 
 def import_lrc_args(hyperparameters):
     """
-    Returns parsed config for LogisticRegressionClassifier from provided settings
+    Returns parsed config for LogisticRegressionClassifier from provided train_settings
     *Grid-search friendly
     """
     types = {

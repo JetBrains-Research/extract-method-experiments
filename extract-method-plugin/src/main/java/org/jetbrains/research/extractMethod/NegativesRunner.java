@@ -46,7 +46,8 @@ public class NegativesRunner extends BaseRunner {
 
         FileWriter negativeFW = null;
         try {
-            negativeFW = RunnerUtils.makeHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
+//            negativeFW = RunnerUtils.makeHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
+            negativeFW = new FileWriter(cmdLine.getOptionValue("outputFilePath"));
         } catch (IOException e) {
             LOG.error("Failed to make header for output file");
             return;

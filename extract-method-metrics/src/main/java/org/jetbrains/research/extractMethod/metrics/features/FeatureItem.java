@@ -1,6 +1,6 @@
 package org.jetbrains.research.extractMethod.metrics.features;
 
-public class FeatureItem implements IFeatureItem {
+public class FeatureItem {
     private final Feature type;
     private double value;
 
@@ -9,17 +9,18 @@ public class FeatureItem implements IFeatureItem {
         this.value = value;
     }
 
-    @Override
     public int getId() {
         return type.getId();
     }
 
-    @Override
+    public String getName() {
+        return type.getName();
+    }
+
     public double getValue() {
         return value;
     }
 
-    @Override
     public void setValue(double newValue) {
         this.value = newValue;
     }

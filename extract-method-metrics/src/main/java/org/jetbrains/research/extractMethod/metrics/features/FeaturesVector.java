@@ -1,48 +1,41 @@
 package org.jetbrains.research.extractMethod.metrics.features;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class FeaturesVector implements IFeaturesVector {
-    private final List<IFeatureItem> features = new ArrayList<>();
+public class FeaturesVector {
+    private final List<FeatureItem> features = new ArrayList<>();
     private final int dimension;
 
     public FeaturesVector(int dimension) {
         this.dimension = dimension;
     }
-
-    public void addFeature(final IFeatureItem item) {
-        this.features.add(item);
+    
+    public void addFeature(final FeatureItem item) {
+        int bestIndex = Collections.binarySearch(this.features, item, Comparator.comparing(FeatureItem::getId));
+        if (bestIndex < 0) {
+            bestIndex = -bestIndex - 1;
+        }
+        this.features.add(bestIndex, item);
     }
 
     public int getDimension() {
         return dimension;
     }
-
-    public List<Integer> getMissingFeaturesId() {
-        List<Integer> range = IntStream.range(0, dimension)
-                .boxed().collect(Collectors.toList());
-        features.forEach(c -> range.remove(c.getId()));
-
-        return range;
+    
+    public double getFeatureValue(Feature toSearch) {
+        return features.get(toSearch.getId()).getValue();
     }
 
-    @Override
-    public double getFeature(Feature toSearch) {
-        for (IFeatureItem item : features) {
-            if (item.getId() == toSearch.getId()) {
-                return item.getValue();
-            }
-        }
-
-        return 0.0;
+    public List<FeatureItem> getItems() {
+        return features;
     }
 
     public List<Float> buildVector() {
-        features.sort(Comparator.comparingInt(IFeatureItem::getId));
         int itemsPtr = 0;
         List<Float> result = new ArrayList<>();
         for (int i = 0; i < dimension; ++i) {
@@ -52,7 +45,6 @@ public class FeaturesVector implements IFeaturesVector {
                 result.add(0f);
             }
         }
-
         return result;
     }
 

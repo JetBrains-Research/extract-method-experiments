@@ -30,7 +30,7 @@ public class MetricCalculator {
     private final int endLine;
     private final FeaturesVector featuresVector;
 
-    public MetricCalculator(String code, PsiMethod dummyPsiMethod, int beginLine, int endLine) {
+    public MetricCalculator(PsiMethod dummyPsiMethod, String code, int beginLine, int endLine) {
         this.method = dummyPsiMethod;
         this.statementsStr = code;
         this.beginLine = beginLine;
@@ -42,11 +42,11 @@ public class MetricCalculator {
     public static void writeFeaturesToFile(PsiMethod dummyPsiMethod, String code,
                                            int beginLine, int endLine, FileWriter fileWriter) throws IOException {
         MetricCalculator metricCalculator =
-                new MetricCalculator(code, dummyPsiMethod, beginLine, endLine);
+                new MetricCalculator(dummyPsiMethod, code, beginLine, endLine);
         FeaturesVector featuresVector = metricCalculator.getFeaturesVector();
 
         for (int i = 0; i < featuresVector.getDimension(); i++) {
-            fileWriter.append(String.valueOf(featuresVector.getFeature(Feature.fromId(i))));
+            fileWriter.append(String.valueOf(featuresVector.getFeatureValue(Feature.fromId(i))));
             fileWriter.append(';');
         }
     }

@@ -124,16 +124,16 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         }
     }
 
-    private void handleFragment(PsiMethod dummyPsiMethod, String codeStr, String filePath,
+    private void handleFragment(PsiMethod dummyPsiMethod, String codeAsString, String filePath,
                                 int beginLine, int endLine) throws IOException {
 
         FeaturesVector featuresVector = new
-                MetricCalculator(dummyPsiMethod, codeStr, beginLine, endLine).getFeaturesVector();
+                MetricCalculator(dummyPsiMethod, codeAsString, beginLine, endLine).getFeaturesVector();
 
         LocationVector locationVector = buildLocationVector(this.repoFullName,
                 this.priorCommitHash, filePath, beginLine, endLine);
 
-        DatasetRecord jsonRecord = new DatasetRecord(featuresVector, locationVector, 0.0, codeStr);
+        DatasetRecord jsonRecord = new DatasetRecord(featuresVector, locationVector, 0.0, codeAsString);
         jsonRecord.writeRecord(this.fileWriter);
     }
 }

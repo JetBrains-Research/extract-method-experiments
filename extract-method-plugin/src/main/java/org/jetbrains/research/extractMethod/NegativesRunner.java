@@ -63,16 +63,12 @@ public class NegativesRunner extends BaseRunner {
             return;
         }
 
-        int index;
-
-        index = Integer.parseInt(cmdLine.getOptionValue("index"));
-
+        int index = Integer.parseInt(cmdLine.getOptionValue("index"));
         try {
             runner.runSingleExtraction(mappingPath, extractor, index);
         } catch (Exception e) {
             LOG.error("Unexpected error in negative" +
-                    " samples' procedure. \n");
-            e.printStackTrace();
+                    " samples' procedure. \n" + e.getMessage());
         }
     }
 }

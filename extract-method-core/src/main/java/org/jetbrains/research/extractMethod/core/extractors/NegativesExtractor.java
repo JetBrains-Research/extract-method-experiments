@@ -51,7 +51,7 @@ public class NegativesExtractor implements RefactoringsExtractor {
 
     private static String getRelativePath(Project project, PsiJavaFile file) {
         // Removes prefix "PsiDirectory:" (13 characters)
-        String absolutePath = file.getContainingDirectory().toString().substring(13);
+        String absolutePath = file.getContainingDirectory().getVirtualFile().getPath();
         absolutePath = absolutePath + '/' + file.getName();
         String projectPath = project.getBasePath();
 
@@ -81,23 +81,24 @@ public class NegativesExtractor implements RefactoringsExtractor {
         }
     }
 
-    private void handleCandidates(PsiFile psiFile, PsiMethod psiMethod, List<Candidate> candidateList, String filePath, String repoFullName, String headCommitHash) throws IOException {
+    private void handleCandidates(PsiFile psiFile, PsiMethod psiMethod, List<Candidate> candidateList,
+                                  String filePath, String repoFullName, String headCommitHash) throws IOException {
         for (Candidate candidate : candidateList) {
             if (candidate != null) {
                 List<PsiStatement> statementList = candidate.getStatementList();
                 int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
                 int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
 
-                String codeStr = statementsAsStr(candidate.getStatementList());
+                String codeAsString = statementsAsStr(candidate.getStatementList());
 
                 FeaturesVector featuresVector = new
-                        MetricCalculator(psiMethod, codeStr, beginLine, endLine).getFeaturesVector();
+                        MetricCalculator(psiMethod, codeAsString, beginLine, endLine).getFeaturesVector();
 
                 LocationVector locationVector = buildLocationVector(repoFullName, headCommitHash,
                         filePath, beginLine, endLine);
 
                 DatasetRecord jsonRecord = new DatasetRecord(featuresVector, locationVector,
-                        candidate.getScore(), codeStr);
+                        candidate.getScore(), codeAsString);
                 jsonRecord.writeRecord(this.fileWriter);
             }
         }

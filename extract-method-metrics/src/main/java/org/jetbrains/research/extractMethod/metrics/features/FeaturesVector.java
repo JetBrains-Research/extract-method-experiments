@@ -1,24 +1,24 @@
 package org.jetbrains.research.extractMethod.metrics.features;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class FeaturesVector {
     private final List<FeatureItem> features = new ArrayList<>();
     private final int dimension;
 
+    /**
+     * Creates a vector of size `dimension` and fills it with pairs (`feature`;zero).
+     * */
     public FeaturesVector(int dimension) {
         this.dimension = dimension;
+        for (int i = 0; i < dimension; i++){
+            features.add(new FeatureItem(Feature.fromId(i), 0));
+        }
     }
 
-    public void addFeature(final FeatureItem item) {
-        int bestIndex = Collections.binarySearch(this.features, item, Comparator.comparing(FeatureItem::getId));
-        if (bestIndex < 0) {
-            bestIndex = -bestIndex - 1;
-        }
-        this.features.add(bestIndex, item);
+    public void setFeature(final FeatureItem item) {
+        features.set(item.getId(), item);
     }
 
     public int getDimension() {
@@ -32,29 +32,24 @@ public class FeaturesVector {
     public List<FeatureItem> getItems() {
         return features;
     }
-
+    /**
+     * Returns vector of floats, corresponding to computed features.
+     * */
     public List<Float> buildVector() {
-        int itemsPtr = 0;
         List<Float> result = new ArrayList<>();
         for (int i = 0; i < dimension; ++i) {
-            if (itemsPtr != features.size() && features.get(itemsPtr).getId() == i) {
-                result.add((float) features.get(itemsPtr++).getValue());
-            } else {
-                result.add(0f);
-            }
+            result.add((float) features.get(i).getValue());
         }
         return result;
     }
-
+    /**
+     * Returns vector of floats, corresponding to computed features,
+     * indices of which are passed in `indexList`.
+     * */
     public List<Float> buildCroppedVector(List<Integer> indexList) {
         List<Float> result = new ArrayList<>();
-        int itemsPtr = 0;
         for (int i : indexList) {
-            if (itemsPtr != features.size() && features.get(itemsPtr).getId() == i) {
-                result.add((float) features.get(itemsPtr++).getValue());
-            } else {
-                result.add(0f);
-            }
+            result.add((float) features.get(i).getValue());
         }
         return result;
     }

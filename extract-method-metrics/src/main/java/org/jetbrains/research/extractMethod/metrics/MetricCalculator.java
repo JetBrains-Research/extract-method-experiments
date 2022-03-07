@@ -94,14 +94,14 @@ public class MetricCalculator {
 
         totalMatches = methodMatches + fieldMatches;
 
-        featuresVector.addFeature(new FeatureItem(Feature.TotalConnectivity, totalMatches));
-        featuresVector.addFeature(new FeatureItem(
+        featuresVector.setFeature(new FeatureItem(Feature.TotalConnectivity, totalMatches));
+        featuresVector.setFeature(new FeatureItem(
                 Feature.TotalConnectivityPerLine, (double) totalMatches / linesCount));
-        featuresVector.addFeature(new FeatureItem(Feature.FieldConnectivity, fieldMatches));
-        featuresVector.addFeature(new FeatureItem(
+        featuresVector.setFeature(new FeatureItem(Feature.FieldConnectivity, fieldMatches));
+        featuresVector.setFeature(new FeatureItem(
                 Feature.FieldConnectivityPerLine, (double) fieldMatches / linesCount));
-        featuresVector.addFeature(new FeatureItem(Feature.MethodConnectivity, methodMatches));
-        featuresVector.addFeature(new FeatureItem(
+        featuresVector.setFeature(new FeatureItem(Feature.MethodConnectivity, methodMatches));
+        featuresVector.setFeature(new FeatureItem(
                 Feature.MethodConnectivityPerLine, (double) methodMatches / linesCount));
     }
 
@@ -126,8 +126,8 @@ public class MetricCalculator {
         int id = 16; // initialized with 16 to account for shift in Keyword-Features begin id.
         for (String keyword : allKeywords) {
             Integer count = counts.get(keyword);
-            featuresVector.addFeature(new FeatureItem(Feature.fromId(id++), count));
-            featuresVector.addFeature(new FeatureItem(Feature.fromId(id++), (double) count / linesCount));
+            featuresVector.setFeature(new FeatureItem(Feature.fromId(id++), count));
+            featuresVector.setFeature(new FeatureItem(Feature.fromId(id++), (double) count / linesCount));
         }
     }
 
@@ -136,12 +136,12 @@ public class MetricCalculator {
         int methodArea = getNestingArea(methodStr);
         int lineCount = StringUtils.countMatches(methodStr, '\n') + 1;
 
-        featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationLines, lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationSymbols, methodStr.length()));
-        featuresVector.addFeature(new FeatureItem(
+        featuresVector.setFeature(new FeatureItem(Feature.MethodDeclarationLines, lineCount));
+        featuresVector.setFeature(new FeatureItem(Feature.MethodDeclarationSymbols, methodStr.length()));
+        featuresVector.setFeature(new FeatureItem(
                 Feature.MethodDeclarationSymbolsPerLine, (double) methodStr.length() / lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.MethodDeclarationArea, methodArea));
-        featuresVector.addFeature(new FeatureItem(
+        featuresVector.setFeature(new FeatureItem(Feature.MethodDeclarationArea, methodArea));
+        featuresVector.setFeature(new FeatureItem(
                 Feature.MethodDeclarationAreaPerLine, (double) methodArea / lineCount));
 
     }
@@ -151,12 +151,12 @@ public class MetricCalculator {
         int fragmentArea = getNestingArea(fragment);
         int lineCount = StringUtils.countMatches(fragment, '\n') + 1;
 
-        featuresVector.addFeature(new FeatureItem(Feature.TotalLinesOfCode, lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.TotalSymbols, fragment.length()));
-        featuresVector.addFeature(new FeatureItem(
+        featuresVector.setFeature(new FeatureItem(Feature.TotalLinesOfCode, lineCount));
+        featuresVector.setFeature(new FeatureItem(Feature.TotalSymbols, fragment.length()));
+        featuresVector.setFeature(new FeatureItem(
                 Feature.SymbolsPerLine, (double) fragment.length() / lineCount));
-        featuresVector.addFeature(new FeatureItem(Feature.Area, fragmentArea));
-        featuresVector.addFeature(new FeatureItem(
+        featuresVector.setFeature(new FeatureItem(Feature.Area, fragmentArea));
+        featuresVector.setFeature(new FeatureItem(
                 Feature.AreaPerLine, (double) fragmentArea / lineCount));
 
     }

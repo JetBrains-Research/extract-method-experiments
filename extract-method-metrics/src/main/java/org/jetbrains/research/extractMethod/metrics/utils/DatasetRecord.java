@@ -27,6 +27,6 @@ public class DatasetRecord {
     }
 
     public void writeRecord(FileWriter fw) throws IOException {
-        fw.write(jsonRecord.toString(2) + ",\n");
+        fw.write(jsonRecord + ",\n");
     }
 }

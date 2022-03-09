@@ -14,39 +14,54 @@ import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.research.extractMethod.metrics.MetricCalculator;
+import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
+import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
+import org.jetbrains.research.extractMethod.metrics.utils.DatasetRecord;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jetbrains.research.extractMethod.core.utils.LocationUtil.buildLocationVector;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.findMethodBySignature;
 import static org.jetbrains.research.extractMethod.core.utils.StringUtil.calculateSignature;
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
     private final GitCommit gitCommit;
-    private final String repositoryPath;
+    private final String repoFullName;
+    private final String priorCommitHash;
     private final FileWriter fileWriter;
     private final Logger LOG = LogManager.getLogger(CustomRefactoringHandler.class);
 
     public CustomRefactoringHandler(Project project,
-                                    String repositoryPath,
+                                    String repoFullName,
                                     GitCommit gitCommit,
+                                    String priorCommitHash,
                                     FileWriter fileWriter) {
         this.project = project;
-        this.repositoryPath = repositoryPath;
+        this.repoFullName = repoFullName;
         this.gitCommit = gitCommit;
+        this.priorCommitHash = priorCommitHash;
         this.fileWriter = fileWriter;
+    }
+
+    private static String getMethodSlice(PsiFile psiFile, int beginLine, int endLine) {
+        String[] fileLines = psiFile.getText().split("\n");
+        List<String> resultingLines = new ArrayList<>();
+        for (int i = 0; i < fileLines.length; i++)
+            if (i + 1 >= beginLine && i + 1 <= endLine)
+                resultingLines.add(fileLines[i]);
+
+        return String.join("\n", resultingLines);
     }
 
     @Override
@@ -64,7 +79,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
     }
 
     public void handleException(String commitId, Exception e) {
-        LOG.error("Cannot handle commit with ID: " + commitId);
+        LOG.error(String.format("Cannot handle commit with ID %s, at project %s", commitId, project.getName()));
     }
 
     private void handleCommit(List<Refactoring> refactorings) throws Exception {
@@ -90,6 +105,7 @@ public class CustomRefactoringHandler extends RefactoringHandler {
             }
         }
 
+
         for (Refactoring ref : extractMethodRefactorings) {
             ExtractOperationRefactoring extractOperationRefactoring = (ExtractOperationRefactoring) ref;
             UMLOperation sourceOperation = extractOperationRefactoring.getSourceOperationBeforeExtraction();
@@ -100,29 +116,24 @@ public class CustomRefactoringHandler extends RefactoringHandler {
                     PsiMethod dummyMethod = findMethodBySignature(changedSourceJavaFiles.get(path), calculateSignature(sourceOperation));
                     String extractedFragment = getMethodSlice(changedSourceJavaFiles.get(path),
                             codeLocation.getStartLine(), codeLocation.getEndLine());
-                    handleFragment(dummyMethod, extractedFragment, codeLocation.getStartLine(), codeLocation.getEndLine());
+                    handleFragment(dummyMethod, extractedFragment, sourceLocationInfo.getFilePath(), codeLocation.getStartLine(), codeLocation.getEndLine());
+
+                    // TODO: check uniformity of the file-paths between neg and pos
                 }
             }
         }
     }
 
-    private void handleFragment(PsiMethod dummyPsiMethod, String code,
+    private void handleFragment(PsiMethod dummyPsiMethod, String codeAsString, String filePath,
                                 int beginLine, int endLine) throws IOException {
 
-        Path tmpRepoPath = Paths.get(repositoryPath);
-        String repoName = tmpRepoPath.getName(tmpRepoPath.getNameCount() - 1).toString();
+        FeaturesVector featuresVector = new
+                MetricCalculator(dummyPsiMethod, codeAsString, beginLine, endLine).getFeaturesVector();
 
-        writeFeaturesToFile(dummyPsiMethod, code, repoName, beginLine, endLine, this.fileWriter);
-        this.fileWriter.append('\n');
-    }
+        LocationVector locationVector = buildLocationVector(this.repoFullName,
+                this.priorCommitHash, filePath, beginLine, endLine);
 
-    private static String getMethodSlice(PsiFile psiFile, int beginLine, int endLine) {
-        String[] fileLines = psiFile.getText().split("\n");
-        List<String> resultingLines = new ArrayList<>();
-        for (int i = 0; i < fileLines.length; i++)
-            if (i + 1 >= beginLine && i + 1 <= endLine)
-                resultingLines.add(fileLines[i]);
-
-        return String.join("\n", resultingLines);
+        DatasetRecord jsonRecord = new DatasetRecord(featuresVector, locationVector, 0.0, codeAsString);
+        jsonRecord.writeRecord(this.fileWriter);
     }
 }

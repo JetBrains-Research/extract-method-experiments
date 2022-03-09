@@ -8,7 +8,7 @@ dependencies {
 
 open class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Path to the directory containing projects for the dataset
-    val projectsDirPath: String? by project
+    val inputMappingPath: String? by project
 
     //Path to the output directory
     val outputFilePath: String? by project
@@ -28,10 +28,12 @@ open class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
 
 open class RunNegativesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Path to the directory containing projects for the dataset
-    val inputProjectPath: String? by project
+    val inputMappingPath: String? by project
 
     //Path to the output directory
     val outputFilePath: String? by project
+
+    val index: String? by project
 
     init {
         jvmArgs = listOf(
@@ -51,7 +53,7 @@ tasks {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "PositiveRefactorings",
-            projectsDirPath?.let { "--projectsDirPath=$it" },
+            inputMappingPath?.let { "--inputMappingPath=$it" },
             outputFilePath?.let { "--outputFilePath=$it" }
         )
     }
@@ -60,8 +62,9 @@ tasks {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "NegativeRefactorings",
-            inputProjectPath?.let { "--inputProjectPath=$it" },
-            outputFilePath?.let { "--outputFilePath=$it" }
+            inputMappingPath?.let { "--inputMappingPath=$it" },
+            outputFilePath?.let { "--outputFilePath=$it" },
+            index?.let { "--index=$it" }
         )
     }
 }

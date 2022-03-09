@@ -35,7 +35,7 @@ public class PositivesExtractor implements RefactoringsExtractor {
     }
 
     @Override
-    public void collectSamples(Project project) {
+    public void collectSamples(Project project, String repoFullName, String headCommitHash) {
         GitRepositoryManager gitRepoManager = ServiceManager.getService(project, GitRepositoryManager.class);
         ProjectLevelVcsManagerImpl vcsManager = vcsSetup(project, project.getProjectFilePath());
         VirtualFile[] gitRoots = vcsManager.getRootsUnderVcs(GitVcs.getInstance(project));
@@ -44,7 +44,13 @@ public class PositivesExtractor implements RefactoringsExtractor {
             if (repo != null) {
                 try {
                     List<GitCommit> gitCommits = GitHistoryUtils.history(project, root, "--all");
-                    gitCommits.forEach(c -> processCommit(c, project));
+                    GitCommit currentCommit;
+                    String previousCommitHash;
+                    for (int i = 0; i < gitCommits.size() - 1; i++) {
+                        previousCommitHash = gitCommits.get(i + 1).getId().asString();
+                        currentCommit = gitCommits.get(i);
+                        processCommit(currentCommit, previousCommitHash, project, repoFullName);
+                    }
                 } catch (VcsException e) {
                     LOG.error("Error occurred while processing commit in " + project.getProjectFilePath());
                 }
@@ -52,7 +58,7 @@ public class PositivesExtractor implements RefactoringsExtractor {
         }
     }
 
-    private void processCommit(GitCommit commit, Project project) {
+    private void processCommit(GitCommit commit, String previousCommitHash, Project project, String repoFullName) {
         GitService gitService = new GitServiceImpl();
         Repository repository = null;
         try {
@@ -63,8 +69,7 @@ public class PositivesExtractor implements RefactoringsExtractor {
         GitHistoryRefactoringMiner refactoringMiner = new GitHistoryRefactoringMinerImpl();
         refactoringMiner.detectAtCommit(repository, commit.getId().asString(),
                 new CustomRefactoringHandler(project,
-                        project.getProjectFilePath().replace(".idea/misc.xml", ""),
-                        commit, fileWriter));
+                        repoFullName, commit, previousCommitHash, fileWriter));
     }
 
 }

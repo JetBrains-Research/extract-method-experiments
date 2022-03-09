@@ -1,33 +1,31 @@
 package org.jetbrains.research.extractMethod.core.extractors;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
 import com.intellij.psi.util.PsiTreeUtil;
-import git4idea.GitCommit;
-import git4idea.GitVcs;
-import git4idea.history.GitHistoryUtils;
-import git4idea.repo.GitRepository;
-import git4idea.repo.GitRepositoryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethod.core.haas.Candidate;
 import org.jetbrains.research.extractMethod.core.haas.HaasAlgorithm;
+import org.jetbrains.research.extractMethod.metrics.MetricCalculator;
+import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
+import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
+import org.jetbrains.research.extractMethod.metrics.utils.DatasetRecord;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.*;
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
+import static org.jetbrains.research.extractMethod.core.utils.LocationUtil.buildLocationVector;
+import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.extractFiles;
+import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.getNumberOfLine;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
@@ -42,44 +40,6 @@ public class NegativesExtractor implements RefactoringsExtractor {
         this.fileWriter = fw;
     }
 
-    @Override
-    public void collectSamples(Project project) {
-        List<PsiJavaFile> javaFiles = extractFiles(project);
-        for (PsiJavaFile javaFile : javaFiles) {
-            try {
-                handleMethods(javaFile);
-            } catch (IOException e) {
-                LOG.error("Cannot process file " + javaFile.getName());
-            }
-        }
-    }
-
-    public void handleMethods(PsiFile psiFile) throws IOException {
-        @NotNull Collection<PsiMethod> psiMethods = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class);
-        for (PsiMethod method : psiMethods) {
-            HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
-            List<Candidate> candidateList = haasAlgorithm.getCandidateList();
-            handleCandidates(psiFile, method, candidateList);
-        }
-    }
-
-    private void handleCandidates(PsiFile psiFile, PsiMethod method, List<Candidate> candidateList) throws IOException {
-        for (Candidate candidate : candidateList) {
-            if (candidate != null) {
-                List<PsiStatement> statementList = candidate.getStatementList();
-                int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
-                int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
-
-                String repoName = psiFile.getProject().getName();
-
-                String statementsString = statementsAsStr(candidate.getStatementList());
-
-                writeFeaturesToFile(method, statementsString, repoName, beginLine, endLine, this.fileWriter);
-                this.fileWriter.append(String.format(";%f\n", candidate.getScore()));
-            }
-        }
-    }
-
     public static String statementsAsStr(List<PsiStatement> statementList) {
         StringBuilder result = new StringBuilder();
         for (PsiStatement statement : statementList) {
@@ -87,5 +47,59 @@ public class NegativesExtractor implements RefactoringsExtractor {
             result.append('\n');
         }
         return result.toString().strip();
+    }
+
+    private static String getRelativePath(Project project, PsiJavaFile file) {
+        String absolutePath = file.getContainingDirectory().getVirtualFile().getPath();
+        absolutePath = absolutePath + '/' + file.getName();
+        String projectPath = project.getBasePath();
+
+        // Relativize absolute path via Paths
+        Path relativeFilePath = Paths.get(projectPath).relativize(Paths.get(absolutePath));
+        return relativeFilePath.toString();
+    }
+
+    @Override
+    public void collectSamples(Project project, String repoFullName, String headCommitHash) {
+        List<PsiJavaFile> javaFiles = extractFiles(project);
+        for (PsiJavaFile javaFile : javaFiles) {
+            try {
+                handleMethods(javaFile, getRelativePath(project, javaFile), repoFullName, headCommitHash);
+            } catch (IOException e) {
+                LOG.error("Cannot process file " + javaFile.getName());
+            }
+        }
+    }
+
+    public void handleMethods(PsiFile psiFile, String filePath, String repoFullName, String headCommitHash) throws IOException {
+        @NotNull Collection<PsiMethod> psiMethods = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class);
+        for (PsiMethod method : psiMethods) {
+            HaasAlgorithm haasAlgorithm = new HaasAlgorithm(method);
+            List<Candidate> candidateList = haasAlgorithm.getCandidateList();
+            handleCandidates(psiFile, method, candidateList, filePath, repoFullName, headCommitHash);
+        }
+    }
+
+    private void handleCandidates(PsiFile psiFile, PsiMethod psiMethod, List<Candidate> candidateList,
+                                  String filePath, String repoFullName, String headCommitHash) throws IOException {
+        for (Candidate candidate : candidateList) {
+            if (candidate != null) {
+                List<PsiStatement> statementList = candidate.getStatementList();
+                int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
+                int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
+
+                String codeAsString = statementsAsStr(candidate.getStatementList());
+
+                FeaturesVector featuresVector = new
+                        MetricCalculator(psiMethod, codeAsString, beginLine, endLine).getFeaturesVector();
+
+                LocationVector locationVector = buildLocationVector(repoFullName, headCommitHash,
+                        filePath, beginLine, endLine);
+
+                DatasetRecord jsonRecord = new DatasetRecord(featuresVector, locationVector,
+                        candidate.getScore(), codeAsString);
+                jsonRecord.writeRecord(this.fileWriter);
+            }
+        }
     }
 }

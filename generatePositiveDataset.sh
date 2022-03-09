@@ -9,4 +9,5 @@ fi
 
 "$DIR/gradlew" --stop
 "$DIR/gradlew" clean
-"$DIR/gradlew" runPositiveRefactorings -PprojectsDirPath="$PWD/$1" -PoutputFilePath="$PWD/$2"
+"$DIR/gradlew" runPositiveRefactorings -PinputMappingPath="$PWD/$1" -PoutputFilePath="$PWD/$2"
+

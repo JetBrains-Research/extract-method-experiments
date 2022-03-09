@@ -26,10 +26,8 @@ public class PositivesRunner extends BaseRunner {
     @Override
     Options configureOptionsForCLI() {
         Options options = new Options();
-        options.addRequiredOption("paths", "projectsDirPath",
-                true, "Path to the directory containing the projects.");
-        options.addRequiredOption("out", "outputFilePath",
-                true, "Path to the desired output destination.");
+        options.addRequiredOption("input", "inputMappingPath", true, "Path to the input mapping.");
+        options.addRequiredOption("output", "outputFilePath", true, "Path to the desired output destination.");
 
         return options;
     }
@@ -40,24 +38,26 @@ public class PositivesRunner extends BaseRunner {
         try {
             RunnerUtils.configureOutput(cmdLine);
         } catch (MissingArgumentException e) {
-            LOG.error("<datasetsDirPath> is a required argument.");
+            LOG.error("<outputFilePath> is a required argument.");
             return;
         } catch (IOException e) {
             LOG.error("Failed to create output directory.");
         }
 
-        Path inputDir = null;
+        Path mappingPath = null;
         try {
-            inputDir = Paths.get(cmdLine.getOptionValue("projectsDirPath"));
+            mappingPath = Paths.get(cmdLine.getOptionValue("inputMappingPath"));
         } catch (InvalidPathException e) {
-            LOG.error("<projectsDirPath> has to be a valid path.");
+            LOG.error("<inputMappingPath> has to be a valid path.");
             return;
         }
 
 
         FileWriter positiveFW = null;
         try {
-            positiveFW = RunnerUtils.makePositiveHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
+//            positiveFW = RunnerUtils.makeHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
+            positiveFW = new FileWriter(cmdLine.getOptionValue("outputFilePath"));
+            positiveFW.append('[');
         } catch (IOException e) {
             LOG.error("Failed to make header for the output file");
             return;
@@ -66,7 +66,7 @@ public class PositivesRunner extends BaseRunner {
         RefactoringsExtractor extractor = new PositivesExtractor(positiveFW);
 
         try {
-            runner.runMultipleExtractions(inputDir, extractor);
+            runner.runMultipleExtractions(mappingPath, extractor);
         } catch (Exception e) {
             LOG.error("Unexpected error in positive" +
                     " samples' procedure. \n" + e.getMessage());

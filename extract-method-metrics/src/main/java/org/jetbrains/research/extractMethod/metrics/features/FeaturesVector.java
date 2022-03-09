@@ -9,10 +9,10 @@ public class FeaturesVector {
 
     /**
      * Creates a vector of size `dimension` and fills it with pairs (`feature`;zero).
-     * */
+     */
     public FeaturesVector(int dimension) {
         this.dimension = dimension;
-        for (int i = 0; i < dimension; i++){
+        for (int i = 0; i < dimension; i++) {
             features.add(new FeatureItem(Feature.fromId(i), 0));
         }
     }
@@ -32,9 +32,10 @@ public class FeaturesVector {
     public List<FeatureItem> getItems() {
         return features;
     }
+
     /**
      * Returns vector of floats, corresponding to computed features.
-     * */
+     */
     public List<Float> buildVector() {
         List<Float> result = new ArrayList<>();
         for (int i = 0; i < dimension; ++i) {
@@ -42,10 +43,11 @@ public class FeaturesVector {
         }
         return result;
     }
+
     /**
      * Returns vector of floats, corresponding to computed features,
      * indices of which are passed in `indexList`.
-     * */
+     */
     public List<Float> buildCroppedVector(List<Integer> indexList) {
         List<Float> result = new ArrayList<>();
         for (int i : indexList) {

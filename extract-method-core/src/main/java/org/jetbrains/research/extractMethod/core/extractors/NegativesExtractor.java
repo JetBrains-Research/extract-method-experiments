@@ -50,7 +50,6 @@ public class NegativesExtractor implements RefactoringsExtractor {
     }
 
     private static String getRelativePath(Project project, PsiJavaFile file) {
-        // Removes prefix "PsiDirectory:" (13 characters)
         String absolutePath = file.getContainingDirectory().getVirtualFile().getPath();
         absolutePath = absolutePath + '/' + file.getName();
         String projectPath = project.getBasePath();

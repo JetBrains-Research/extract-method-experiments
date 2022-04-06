@@ -1,6 +1,5 @@
 #import libraries
-from GetData import getData #TODO: greate function that returns processed data to train with
-from CreateModel import newModel
+from GetData import getData 
 import sys
 import traceback
 

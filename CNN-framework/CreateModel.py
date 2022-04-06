@@ -18,7 +18,7 @@ dropout = .215
 numDenseNodes = 190
 
 """
-def newModel(numConvFilters, dropout, numDenseNodes):
+def newModel(numConvFilters = 242, dropout = .215, numDenseNodes = 190):
     #Create new sequential model
     model = Sequential()
 

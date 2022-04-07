@@ -2,7 +2,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.externals.joblib import dump
+import joblib
+from joblib import dump
 
 def getData():
     #Read in raw data and convert to dataframe
@@ -17,7 +18,7 @@ def getData():
     except:
         pass
 
-    #Drop dulicates in code
+    #Drop dulicates in code and balance samples
     trainNegatives = trainNegatives.drop_duplicates().sample(frac = 1 )[0:len(trainPositives)]
     testNegatives = testNegatives.drop_duplicates().sample(frac = 1 )[0:len(testPositives)]
     

@@ -1,7 +1,13 @@
 #import libraries
-from GetData import getData 
-import sys
+from GetData import getData
+from CreateModel import newModel 
+import sys 
 import traceback
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+import joblib
+from joblib import dump
 
 #path to export trained model
 outfile = "TrainedModel.h5"

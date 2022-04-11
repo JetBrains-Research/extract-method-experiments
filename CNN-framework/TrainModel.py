@@ -1,5 +1,5 @@
 #import libraries
-from GetData import getData
+from GetData import getData, getPreprocessedData
 from CreateModel import newModel 
 import sys 
 import traceback
@@ -14,7 +14,7 @@ outfile = "TrainedModel.h5"
 
 print("Creating data set...")
 try:
-    trainX, trainY = getData()
+    trainX, trainY = getPreprocessedData()
     print("Dataset creation successful\n")
 except:
     print("Failed to create data set, system exiting")
@@ -30,9 +30,9 @@ except:
     print(traceback.format_exc())
     sys.exit()
     
-print("Begin training (Default 20 epochs)...")
+print("Begin training (Default 30 epochs)...")
 try:
-    trainedModel = model.fit(trainX, trainY, epochs = 20, batch_size=20, verbose = 1)
+    model.fit(trainX, trainY, epochs = 30, batch_size=20, verbose = 1)
     print("Training complete, exporting model...\n")
 except:
     print("Training failed, please see tensorflow documentation, system exiting")
@@ -40,12 +40,11 @@ except:
     sys.exit()
 
 try:
-    trainedModel.save(outfile,save_format="h5")
-    print("Model successfully export: " + outfile)
+    model.save(outfile,save_format="h5")
+    print("Model successfully exported: " + outfile)
     print("Exiting...")
-    sys.exit()
 except:
     print("Model failed to export, system exiting")
     print(traceback.format_exc())
-    sys.exit()
+    
     

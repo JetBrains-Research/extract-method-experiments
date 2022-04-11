@@ -10,7 +10,7 @@ import joblib
 from joblib import dump
 
 #path to export trained model
-outfile = "TrainedModel.h5"
+outFile = "TrainedModel"
 
 print("Creating data set...")
 try:
@@ -32,7 +32,7 @@ except:
     
 print("Begin training (Default 30 epochs)...")
 try:
-    model.fit(trainX, trainY, epochs = 30, batch_size=20, verbose = 1)
+    model.fit(trainX, trainY, epochs = 3, batch_size=20, verbose = 1)
     print("Training complete, exporting model...\n")
 except:
     print("Training failed, please see tensorflow documentation, system exiting")
@@ -40,8 +40,8 @@ except:
     sys.exit()
 
 try:
-    model.save(outfile,save_format="h5")
-    print("Model successfully exported: " + outfile)
+    model.save_weights(outFile)
+    print("Model successfully exported: " + outFile)
     print("Exiting...")
 except:
     print("Model failed to export, system exiting")

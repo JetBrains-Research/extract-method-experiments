@@ -43,19 +43,7 @@ def getData():
     trainY = trainFull.iloc[:,-2]
     testX = testFull.iloc[:,:-3]
     testY = testFull.iloc[:,-2]
-    #Standard scale training data
-    trainScaler = StandardScaler()
-    trainScaler.fit(trainX)
-    trainX = trainScaler.transform(trainX)
     
-    #Export standard scale
-    dump(trainScaler, 'standardScaler.bin', compress=True)
-
-    #Standard scale testing data
-    testScaler = StandardScaler()
-    testScaler.fit(testX)
-    testX = testScaler.transform(testX)
-
     #Reshape data to 3D for CNN
     trainX = trainX[..., None]
     trainY = trainY[..., None]
@@ -72,37 +60,30 @@ Change the paths in trainFull and TestFull to desired preprocessedData
 
 """
 def getPreprocessedData():
-	#Concatenate positive and negative samples
-    trainFull = pd.read_csv("PreprocessedData/trainFull.csv", delimiter = ";")
-    testFull = pd.read_csv("PreprocessedData/testFull.csv", delimiter = ";")
+    
+    #Concatenate positive and negative samples
+    trainFull = pd.read_csv("PreprocessedData/trainFull.csv")
+    testFull = pd.read_csv("PreprocessedData/testFull.csv")
+    
+    #Randomize samples
+    trainFull = trainFull.sample(len(trainFull))
+    testFull = testFull.sample(len(testFull))
 
     #Randomize samples
     trainFull = trainFull.sample(len(trainFull))
     testFull = testFull.sample(len(testFull))
 
     #Reduce features and extract labels
-    trainX = trainFull.iloc[:,:-2]
+    trainX = trainFull.iloc[:,:-1]
     trainY = trainFull.iloc[:,-1]
-    testX = testFull.iloc[:,:-2]
+    testX = testFull.iloc[:,:-1]
     testY = testFull.iloc[:,-1]
-    #Standard scale training data
-    trainScaler = StandardScaler()
-    trainScaler.fit(trainX)
-    trainX = trainScaler.transform(trainX)
-
-    #Export standard scale
-    dump(trainScaler, 'standardScaler.bin', compress=True)
-
-    #Standard scale testing data
-    testScaler = StandardScaler()
-    testScaler.fit(testX)
-    testX = testScaler.transform(testX)
 
     #Reshape data to 3D for CNN
-    trainX = trainX[..., None]
-    trainY = trainY[..., None]
-    testX = testX[..., None]
-    testY = testY[..., None]
+    trainX = trainX.to_numpy()[..., None]
+    trainY = trainY.to_numpy()[..., None]
+    testX = testX.to_numpy()[..., None]
+    testY = testY.to_numpy()[..., None]
 
     return trainX, trainY
 

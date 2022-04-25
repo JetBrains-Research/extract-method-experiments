@@ -32,7 +32,7 @@ except:
     
 print("Begin training (Default 30 epochs)...")
 try:
-    model.fit(trainX, trainY, epochs = 3, batch_size=20, verbose = 1)
+    model.fit(trainX, trainY, epochs = 100, batch_size=20, verbose = 1)
     print("Training complete, exporting model...\n")
 except:
     print("Training failed, please see tensorflow documentation, system exiting")
@@ -40,7 +40,7 @@ except:
     sys.exit()
 
 try:
-    model.save_weights(outFile)
+    model.save(outFile)
     print("Model successfully exported: " + outFile)
     print("Exiting...")
 except:

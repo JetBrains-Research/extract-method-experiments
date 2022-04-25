@@ -1,7 +1,7 @@
 #import libraries 
 import tensorflow as tf
 from keras.models import Sequential
-from keras.layers import Dropout, LSTM, Flatten, Dense
+from keras.layers import Dropout, LSTM, Flatten, Dense, BatchNormalization
 from keras.layers.convolutional import Conv1D, MaxPooling1D
 
 """
@@ -23,6 +23,7 @@ def newModel(numConvFilters = 242, dropout = .215, numDenseNodes = 190):
     model = Sequential()
 
     #Add 1D Convolutional layers
+    model.add(BatchNormalization())
     model.add((Conv1D(filters=32, kernel_size=3, activation='relu')))
     model.add((Conv1D(filters=numConvFilters, kernel_size=3, activation='relu')))
     #Add Max Pooling layer

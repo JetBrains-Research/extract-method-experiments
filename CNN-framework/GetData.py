@@ -62,8 +62,8 @@ Change the paths in trainFull and TestFull to desired preprocessedData
 def getPreprocessedData():
     
     #Concatenate positive and negative samples
-    trainFull = pd.read_csv("PreprocessedData/trainFull.csv")
-    testFull = pd.read_csv("PreprocessedData/testFull.csv")
+    trainFull = pd.read_csv("PreprocessedData/trainFull.csv", index_col=0)
+    testFull = pd.read_csv("PreprocessedData/testFull.csv", index_col=0)
     
     #Randomize samples
     trainFull = trainFull.sample(len(trainFull))

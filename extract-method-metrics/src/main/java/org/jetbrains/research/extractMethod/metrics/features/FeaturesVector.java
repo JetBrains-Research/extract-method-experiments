@@ -51,7 +51,7 @@ public class FeaturesVector {
 
         for (int i = 0; i < dimension; i++) {
             float to_insert = (float) features.get(i).getValue();
-            floatArray[i] = to_insert; // Or whatever default you want.
+            floatArray[i] = to_insert;
         }
 
         return floatArray;

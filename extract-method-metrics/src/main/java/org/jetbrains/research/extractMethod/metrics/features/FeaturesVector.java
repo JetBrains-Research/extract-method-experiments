@@ -42,6 +42,7 @@ public class FeaturesVector {
             result.add((float) features.get(i).getValue());
         }
         return result;
+
     }
     /**
      * Returns Array of floats, corresponding to computed features.
@@ -66,6 +67,7 @@ public class FeaturesVector {
         for (int i : indexList) {
             result.add((float) features.get(i).getValue());
         }
+
         return result;
     }
 }

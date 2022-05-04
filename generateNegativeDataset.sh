@@ -4,7 +4,7 @@ if uname -s | grep -iq cygwin ; then
     PWD=$(cygpath -w "$PWD")
 fi
 
-for i in $(seq 0 1 $3) ; do # iterating through 20 rows of
+for i in $(seq 0 1 $3) ; do # iterating through N rows of mapping
   "$DIR/gradlew" runNegativeRefactorings -PinputMappingPath="$PWD/$1" -PoutputFilePath="$PWD/$2/$i.csv" -Pindex=$i
 done
 

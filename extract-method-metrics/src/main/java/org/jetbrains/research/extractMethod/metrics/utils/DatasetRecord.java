@@ -1,10 +1,11 @@
 package org.jetbrains.research.extractMethod.metrics.utils;
 
+import com.google.gson.JsonObject;
 import org.jetbrains.research.extractMethod.metrics.features.FeatureItem;
 import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
 import org.jetbrains.research.extractMethod.metrics.location.LocationItem;
 import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
-import com.google.gson.JsonObject;
+
 import java.io.FileWriter;
 import java.io.IOException;
 

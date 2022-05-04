@@ -43,6 +43,7 @@ public class FeaturesVector {
         }
         return result;
     }
+
     /**
      * Returns Array of floats, corresponding to computed features.
      */

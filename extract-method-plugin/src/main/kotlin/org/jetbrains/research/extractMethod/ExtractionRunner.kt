@@ -18,7 +18,7 @@ class ExtractionRunner {
         }
 
         val lines = mappingPath.toFile().readLines()
-        val index = 0;
+        val index = 0
         for (line: String in lines) {
             val components = line.split(';')
             val path = Paths.get(components[0])
@@ -32,11 +32,11 @@ class ExtractionRunner {
         val wrapperFunction = { project: Project, s1: String, s2: String ->
             extractor.collectSamples(project, s1, s2)
         }
-        val components = mappingPath.toFile().readLines()[index].split(';');
+        val components = mappingPath.toFile().readLines()[index].split(';')
         val path = Paths.get(components[0])
         val projectName = components[1]
         val sha = components[2]
-        openRunAndClose(index, path, wrapperFunction, projectName, sha);
+        openRunAndClose(index, path, wrapperFunction, projectName, sha)
     }
 
     /**

@@ -14,6 +14,10 @@ import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.research.extractMethod.metrics.MetricCalculator;
+import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
+import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
+import org.jetbrains.research.extractMethod.metrics.utils.DatasetRecord;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
@@ -26,11 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeAuxLocFeatures;
+import static org.jetbrains.research.extractMethod.core.utils.LocationUtil.buildLocationVector;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.findMethodBySignature;
 import static org.jetbrains.research.extractMethod.core.utils.StringUtil.calculateSignature;
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeCodeFragment;
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
     private final Project project;
@@ -104,7 +106,6 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         }
 
 
-
         for (Refactoring ref : extractMethodRefactorings) {
             ExtractOperationRefactoring extractOperationRefactoring = (ExtractOperationRefactoring) ref;
             UMLOperation sourceOperation = extractOperationRefactoring.getSourceOperationBeforeExtraction();
@@ -123,14 +124,16 @@ public class CustomRefactoringHandler extends RefactoringHandler {
         }
     }
 
-    private void handleFragment(PsiMethod dummyPsiMethod, String codeStr, String filePath,
+    private void handleFragment(PsiMethod dummyPsiMethod, String codeAsString, String filePath,
                                 int beginLine, int endLine) throws IOException {
 
-        writeFeaturesToFile(dummyPsiMethod, codeStr, beginLine, endLine, this.fileWriter);
+        FeaturesVector featuresVector = new
+                MetricCalculator(dummyPsiMethod, codeAsString, beginLine, endLine).getFeaturesVector();
 
-        writeAuxLocFeatures(this.repoFullName, priorCommitHash, filePath, beginLine, endLine, this.fileWriter);
-        this.fileWriter.append(String.format("%f;", 0.0)); // Setting haas-score as 0 for uniformity
-        writeCodeFragment(codeStr, this.fileWriter);
-        this.fileWriter.append('\n'); // Setting haas-score as 0 for uniformity
+        LocationVector locationVector = buildLocationVector(this.repoFullName,
+                this.priorCommitHash, filePath, beginLine, endLine);
+
+        DatasetRecord jsonRecord = new DatasetRecord(featuresVector, locationVector, 0.0, codeAsString);
+        jsonRecord.writeRecord(this.fileWriter);
     }
 }

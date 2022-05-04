@@ -46,7 +46,9 @@ public class NegativesRunner extends BaseRunner {
 
         FileWriter negativeFW = null;
         try {
-            negativeFW = RunnerUtils.makeHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
+//            negativeFW = RunnerUtils.makeHeader(cmdLine.getOptionValue("outputFilePath"), featureCount);
+            negativeFW = new FileWriter(cmdLine.getOptionValue("outputFilePath"));
+            negativeFW.append('[');
         } catch (IOException e) {
             LOG.error("Failed to make header for output file");
             return;
@@ -61,16 +63,12 @@ public class NegativesRunner extends BaseRunner {
             return;
         }
 
-        int index;
-
-        index = Integer.parseInt(cmdLine.getOptionValue("index"));
-
+        int index = Integer.parseInt(cmdLine.getOptionValue("index"));
         try {
             runner.runSingleExtraction(mappingPath, extractor, index);
         } catch (Exception e) {
             LOG.error("Unexpected error in negative" +
-                    " samples' procedure. \n");
-            e.printStackTrace();
+                    " samples' procedure. \n" + e.getMessage());
         }
     }
 }

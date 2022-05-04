@@ -1,70 +1,70 @@
 package org.jetbrains.research.extractMethod.metrics.features;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class FeaturesVector implements IFeaturesVector {
-    private final List<IFeatureItem> features = new ArrayList<>();
+public class FeaturesVector {
+    private final List<FeatureItem> features = new ArrayList<>();
     private final int dimension;
 
+    /**
+     * Creates a vector of size `dimension` and fills it with pairs (`feature`;zero).
+     */
     public FeaturesVector(int dimension) {
         this.dimension = dimension;
+        for (int i = 0; i < dimension; i++) {
+            features.add(new FeatureItem(Feature.fromId(i), 0));
+        }
     }
 
-    public void addFeature(final IFeatureItem item) {
-        this.features.add(item);
+    public void setFeature(final FeatureItem item) {
+        features.set(item.getId(), item);
     }
 
     public int getDimension() {
         return dimension;
     }
 
-    public List<Integer> getMissingFeaturesId() {
-        List<Integer> range = IntStream.range(0, dimension)
-                .boxed().collect(Collectors.toList());
-        features.forEach(c -> range.remove(c.getId()));
-
-        return range;
+    public double getFeatureValue(Feature toSearch) {
+        return features.get(toSearch.getId()).getValue();
     }
 
-    @Override
-    public double getFeature(Feature toSearch) {
-        for (IFeatureItem item : features) {
-            if (item.getId() == toSearch.getId()) {
-                return item.getValue();
-            }
-        }
-
-        return 0.0;
+    public List<FeatureItem> getItems() {
+        return features;
     }
 
-    public List<Float> buildVector() {
-        features.sort(Comparator.comparingInt(IFeatureItem::getId));
-        int itemsPtr = 0;
+    /**
+     * Returns List of floats, corresponding to computed features.
+     */
+    public List<Float> buildList() {
         List<Float> result = new ArrayList<>();
         for (int i = 0; i < dimension; ++i) {
-            if (itemsPtr != features.size() && features.get(itemsPtr).getId() == i) {
-                result.add((float) features.get(itemsPtr++).getValue());
-            } else {
-                result.add(0f);
-            }
+            result.add((float) features.get(i).getValue());
         }
-
         return result;
     }
+    /**
+     * Returns Array of floats, corresponding to computed features.
+     */
+    public float[] buildArray() {
+        float[] floatArray = new float[dimension];
 
-    public List<Float> buildCroppedVector(List<Integer> indexList){
+        for (int i = 0; i < dimension; i++) {
+            float to_insert = (float) features.get(i).getValue();
+            floatArray[i] = to_insert;
+        }
+
+        return floatArray;
+    }
+
+    /**
+     * Returns List of floats, corresponding to computed features,
+     * indices of which are passed in `indexList`.
+     */
+    public List<Float> buildCroppedVector(List<Integer> indexList) {
         List<Float> result = new ArrayList<>();
-        int itemsPtr = 0;
-        for (int i: indexList) {
-            if (itemsPtr != features.size() && features.get(itemsPtr).getId() == i) {
-                result.add((float) features.get(itemsPtr++).getValue());
-            } else {
-                result.add(0f);
-            }
+        for (int i : indexList) {
+            result.add((float) features.get(i).getValue());
         }
         return result;
     }

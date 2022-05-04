@@ -36,6 +36,7 @@ allprojects {
         }
         implementation("org.apache.logging.log4j:log4j-api:2.17.1")
         implementation("org.apache.logging.log4j:log4j-core:2.17.1")
+        implementation("com.google.code.gson:gson:2.9.0")
     }
 
     intellij {

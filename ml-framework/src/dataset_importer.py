@@ -24,9 +24,7 @@ class TrainImporter:
         negatives = negatives.assign(label=lambda value: 0)  # Set label to zero, meaning negative
         positives = self.df_pos.assign(label=lambda value: 1)  # Set label to one, meaning positive
 
-
         whole_df = pd.concat([positives, negatives], ignore_index=True).drop(columns=['RepositoryName', 'Score').sample(frac=1)
-
         x = whole_df.drop(columns=['label'])
         y = whole_df.label
 

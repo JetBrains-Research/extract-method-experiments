@@ -11,6 +11,10 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.extractMethod.core.haas.Candidate;
 import org.jetbrains.research.extractMethod.core.haas.HaasAlgorithm;
+import org.jetbrains.research.extractMethod.metrics.MetricCalculator;
+import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
+import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
+import org.jetbrains.research.extractMethod.metrics.utils.DatasetRecord;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,11 +23,9 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeAuxLocFeatures;
+import static org.jetbrains.research.extractMethod.core.utils.LocationUtil.buildLocationVector;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.extractFiles;
 import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.getNumberOfLine;
-import static org.jetbrains.research.extractMethod.core.utils.WriteUtil.writeCodeFragment;
-import static org.jetbrains.research.extractMethod.metrics.MetricCalculator.writeFeaturesToFile;
 
 /**
  * Processes repositories, gets the changes Java files from the latest commit,
@@ -48,8 +50,7 @@ public class NegativesExtractor implements RefactoringsExtractor {
     }
 
     private static String getRelativePath(Project project, PsiJavaFile file) {
-        // Removes prefix "PsiDirectory:" (13 characters)
-        String absolutePath = file.getContainingDirectory().toString().substring(13);
+        String absolutePath = file.getContainingDirectory().getVirtualFile().getPath();
         absolutePath = absolutePath + '/' + file.getName();
         String projectPath = project.getBasePath();
 
@@ -79,20 +80,25 @@ public class NegativesExtractor implements RefactoringsExtractor {
         }
     }
 
-    private void handleCandidates(PsiFile psiFile, PsiMethod method, List<Candidate> candidateList, String filePath, String repoFullName, String headCommitHash) throws IOException {
+    private void handleCandidates(PsiFile psiFile, PsiMethod psiMethod, List<Candidate> candidateList,
+                                  String filePath, String repoFullName, String headCommitHash) throws IOException {
         for (Candidate candidate : candidateList) {
             if (candidate != null) {
                 List<PsiStatement> statementList = candidate.getStatementList();
                 int beginLine = getNumberOfLine(psiFile, statementList.get(0).getTextRange().getStartOffset());
                 int endLine = getNumberOfLine(psiFile, statementList.get(statementList.size() - 1).getTextRange().getEndOffset());
 
-                String statementsString = statementsAsStr(candidate.getStatementList());
+                String codeAsString = statementsAsStr(candidate.getStatementList());
 
-                writeFeaturesToFile(method, statementsString, beginLine, endLine, this.fileWriter);
-                writeAuxLocFeatures(repoFullName, headCommitHash, filePath, beginLine, endLine, this.fileWriter);
-                this.fileWriter.append(String.format(";%f;", candidate.getScore()));
-                writeCodeFragment(statementsString, this.fileWriter);
-                this.fileWriter.append('\n');
+                FeaturesVector featuresVector = new
+                        MetricCalculator(psiMethod, codeAsString, beginLine, endLine).getFeaturesVector();
+
+                LocationVector locationVector = buildLocationVector(repoFullName, headCommitHash,
+                        filePath, beginLine, endLine);
+
+                DatasetRecord jsonRecord = new DatasetRecord(featuresVector, locationVector,
+                        candidate.getScore(), codeAsString);
+                jsonRecord.writeRecord(this.fileWriter);
             }
         }
     }

@@ -34,9 +34,9 @@ public class FeaturesVector {
     }
 
     /**
-     * Returns vector of floats, corresponding to computed features.
+     * Returns List of floats, corresponding to computed features.
      */
-    public List<Float> buildVector() {
+    public List<Float> buildList() {
         List<Float> result = new ArrayList<>();
         for (int i = 0; i < dimension; ++i) {
             result.add((float) features.get(i).getValue());
@@ -45,7 +45,21 @@ public class FeaturesVector {
     }
 
     /**
-     * Returns vector of floats, corresponding to computed features,
+     * Returns Array of floats, corresponding to computed features.
+     */
+    public float[] buildArray() {
+        float[] floatArray = new float[dimension];
+
+        for (int i = 0; i < dimension; i++) {
+            float to_insert = (float) features.get(i).getValue();
+            floatArray[i] = to_insert;
+        }
+
+        return floatArray;
+    }
+
+    /**
+     * Returns List of floats, corresponding to computed features,
      * indices of which are passed in `indexList`.
      */
     public List<Float> buildCroppedVector(List<Integer> indexList) {

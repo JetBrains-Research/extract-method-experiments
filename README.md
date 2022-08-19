@@ -65,6 +65,7 @@ Currently, there are a number of ML algorithms implemented in the experiments' p
 | GaussianNaiveBayes  | `sklearn.naive_bayes.GaussianNB`   | GNB |
 | ComplementNaiveBayes | `sklearn.naive_bayes.ComplementNB`   |CNB  |
 | MultiLayerPerceptron  | `sklearn.neural_network.MLPClassifier` | MLP|
+| convolutional neural network  | `CNN-framework/TrainedModel/saved_model.pb` | CNN|
 
 
 The `ml-framework/` directory contains Python scripts for creation, training and evaluation of machine learning models on the collected datasets. 

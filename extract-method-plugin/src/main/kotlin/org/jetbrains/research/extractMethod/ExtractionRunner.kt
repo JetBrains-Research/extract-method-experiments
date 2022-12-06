@@ -1,6 +1,7 @@
 package org.jetbrains.research.extractMethod
 
 import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.ide.impl.OpenProjectTaskBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
@@ -53,7 +54,8 @@ class ExtractionRunner {
         ApplicationManager.getApplication().invokeAndWait {
             ProjectManagerEx.getInstanceEx().openProject(
                 projectPath,
-                OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                OpenProjectTask(isNewProject = true, forceOpenInNewFrame = true)
+                    .withRunConfigurators()
             )?.let { project ->
                 try {
                     runAction(project, projectIndex, action, projectName, commitID)

@@ -6,7 +6,7 @@ dependencies {
     implementation(project(":extract-method-metrics"))
 }
 
-open class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
+abstract class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Path to the directory containing projects for the dataset
     val inputMappingPath: String? by project
 
@@ -26,7 +26,7 @@ open class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     }
 }
 
-open class RunNegativesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
+abstract class RunNegativesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Path to the directory containing projects for the dataset
     val inputMappingPath: String? by project
 

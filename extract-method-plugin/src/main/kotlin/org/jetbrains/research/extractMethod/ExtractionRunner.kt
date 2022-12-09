@@ -2,16 +2,16 @@ package org.jetbrains.research.extractMethod
 
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import org.apache.logging.log4j.LogManager
 import org.jetbrains.research.extractMethod.core.extractors.RefactoringsExtractor
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class ExtractionRunner {
-    private val logger = LogManager.getLogger(ExtractionRunner::class)
+private val logger = Logger.getInstance(ExtractionRunner::class.java)
 
+class ExtractionRunner {
     fun runMultipleExtractions(mappingPath: Path, extractor: RefactoringsExtractor) {
         val wrapperFunction = { project: Project, s1: String, s2: String ->
             extractor.collectSamples(project, s1, s2)
@@ -53,7 +53,8 @@ class ExtractionRunner {
         ApplicationManager.getApplication().invokeAndWait {
             ProjectManagerEx.getInstanceEx().openProject(
                 projectPath,
-                OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                OpenProjectTask(isNewProject = true, forceOpenInNewFrame = true)
+                    .withRunConfigurators()
             )?.let { project ->
                 try {
                     runAction(project, projectIndex, action, projectName, commitID)

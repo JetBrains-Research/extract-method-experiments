@@ -1,6 +1,7 @@
 package org.jetbrains.research.extractMethod.core.extractors;
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
@@ -10,8 +11,6 @@ import git4idea.GitVcs;
 import git4idea.history.GitHistoryUtils;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
@@ -27,8 +26,8 @@ import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.vcsSetup;
  * Runs RefactoringMiner and processes discovered "Extract Method" refactorings in project's changes history.
  */
 public class PositivesExtractor implements RefactoringsExtractor {
+    private static final Logger LOG = Logger.getInstance(PositivesExtractor.class);
     private final FileWriter fileWriter;
-    private final Logger LOG = LogManager.getLogger(PositivesExtractor.class);
 
     public PositivesExtractor(FileWriter fw) {
         this.fileWriter = fw;

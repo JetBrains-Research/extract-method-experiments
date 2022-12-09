@@ -1,8 +1,8 @@
 package org.jetbrains.research.extractMethod.core.extractors;
 
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -12,8 +12,6 @@ import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.research.extractMethod.metrics.MetricCalculator;
 import org.jetbrains.research.extractMethod.metrics.features.FeaturesVector;
 import org.jetbrains.research.extractMethod.metrics.location.LocationVector;
@@ -35,12 +33,12 @@ import static org.jetbrains.research.extractMethod.core.utils.PsiUtil.findMethod
 import static org.jetbrains.research.extractMethod.core.utils.StringUtil.calculateSignature;
 
 public class CustomRefactoringHandler extends RefactoringHandler {
+    private static final Logger LOG = Logger.getInstance(CustomRefactoringHandler.class);
     private final Project project;
     private final GitCommit gitCommit;
     private final String repoFullName;
     private final String priorCommitHash;
     private final FileWriter fileWriter;
-    private final Logger LOG = LogManager.getLogger(CustomRefactoringHandler.class);
 
     public CustomRefactoringHandler(Project project,
                                     String repoFullName,

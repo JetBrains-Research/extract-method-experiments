@@ -6,8 +6,6 @@ import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.research.extractMethod.metrics.features.Feature;
@@ -22,7 +20,6 @@ import java.util.*;
 import static org.jetbrains.research.extractMethod.metrics.utils.DepthAnalyzer.getNestingArea;
 
 public class MetricCalculator {
-    private static final Logger LOG = LogManager.getLogger(MetricCalculator.class);
     private final String statementsStr;
     private final PsiMethod method;
 

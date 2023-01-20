@@ -19,22 +19,15 @@ allprojects {
     }
 
     repositories {
+        maven("https://packages.jetbrains.team/maven/p/big-code/bigcode")
         mavenCentral()
     }
 
-    val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
-
-        // Plugin utilities modules
-        dependencies {
-            implementation("$utilitiesProjectName:plugin-utilities-core") {
-                version {
-                    branch = "main"
-                }
-            }
-        }
         implementation("com.google.code.gson:gson:2.9.0")
+        implementation("org.jetbrains.research:plugin-utilities-core:1.0")
+        implementation("org.jetbrains.research:plugin-utilities-test:1.0")
     }
 
     intellij {

@@ -8,9 +8,12 @@ dependencies {
 
 abstract class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Path to the directory containing projects for the dataset
+    @get:Input
+    @get:Optional
     val inputMappingPath: String? by project
 
     //Path to the output directory
+    @get:OutputFile
     val outputFilePath: String? by project
 
     init {
@@ -28,9 +31,12 @@ abstract class RunPositivesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
 
 abstract class RunNegativesCLITask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Path to the directory containing projects for the dataset
+    @get:Input
+    @get:Optional
     val inputMappingPath: String? by project
 
     //Path to the output directory
+    @get:OutputFile
     val outputFilePath: String? by project
 
     val index: String? by project

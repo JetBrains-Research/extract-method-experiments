@@ -7,8 +7,8 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     java
-    kotlin("jvm") version "1.7.21" apply true
-    id("org.jetbrains.intellij") version "1.10.0" apply true
+    kotlin("jvm") version "1.8.0" apply true
+    id("org.jetbrains.intellij") version "1.12.0" apply true
 }
 
 allprojects {

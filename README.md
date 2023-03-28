@@ -2,14 +2,6 @@
 
 The repository contains the tools and scripts used in [AntiCopyPaster project](https://github.com/JetBrains-Research/anti-copy-paster) to recommend extract method refactoring. Please refer to our paper for more details: https://arxiv.org/abs/2302.03416
 
-To cite our tool:
-
-> Alomar, Eman Abdullah, Anton Ivanov, Zarina Kurbatova, Yaroslav Golubev, Mohamed Wiem Mkaouer, Ali Ouni, Timofey Bryksin, Le Nguyen, Amit Kini, and Aditya Thakur. "AntiCopyPaster: Extracting Code Duplicates As Soon As They Are Introduced in the IDE." In 37th IEEE/ACM International Conference on Automated Software Engineering, pp. 1-4. 2022.
-
-The extended version of this work:
-
-> AlOmar, Eman Abdullah, Anton Ivanov, Zarina Kurbatova, Yaroslav Golubev, Mohamed Wiem Mkaouer, Ali Ouni, Timofey Bryksin, Le Nguyen, Amit Kini, and Aditya Thakur. "Just-in-time code duplicates extraction." Information and Software Technology 158 (2023): 107169.
-
 ## Repository cloning
 
 The tools provided in this repository depend on having cloned repositories directly on the local machine. 
@@ -98,3 +90,28 @@ Similarly to the training, function `test_by_config()` specified in `trainer.py`
 ### Additional information
 For more on the ml-framework we recommend visiting GitHub wiki page of this repository
 
+### How to cite?
+Please, use the following bibtex entry:
+
+```tex
+@inproceedings{alomar2022anticopypaster,
+  title={AntiCopyPaster: Extracting Code Duplicates As Soon As They Are Introduced in the IDE},
+  author={Alomar, Eman Abdullah and Ivanov, Anton and Kurbatova, Zarina and Golubev, Yaroslav and Mkaouer, Mohamed Wiem and Ouni, Ali and Bryksin, Timofey and Nguyen, Le and Kini, Amit and Thakur, Aditya},
+  booktitle={37th IEEE/ACM International Conference on Automated Software Engineering (ASE)},
+  pages={1--4},
+  year={2022}
+}
+```
+
+Also, refer to our extended version of this work here:
+```tex
+@article{alomar2023just,
+  title={Just-in-time code duplicates extraction},
+  author={AlOmar, Eman Abdullah and Ivanov, Anton and Kurbatova, Zarina and Golubev, Yaroslav and Mkaouer, Mohamed Wiem and Ouni, Ali and Bryksin, Timofey and Nguyen, Le and Kini, Amit and Thakur, Aditya},
+  journal={Information and Software Technology},
+  volume={158},
+  pages={107169},
+  year={2023},
+  publisher={Elsevier}
+}
+```

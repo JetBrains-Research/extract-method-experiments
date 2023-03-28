@@ -1,6 +1,14 @@
 # extract-method-experiments
 
-The repository contains the tools and scripts used in [AntiCopyPaster project](https://github.com/JetBrains-Research/anti-copy-paster) to recommend extract method refactoring.
+The repository contains the tools and scripts used in [AntiCopyPaster project](https://github.com/JetBrains-Research/anti-copy-paster) to recommend extract method refactoring. Please refer to our paper for more details: https://arxiv.org/abs/2302.03416
+
+To cite our tool:
+
+> Alomar, Eman Abdullah, Anton Ivanov, Zarina Kurbatova, Yaroslav Golubev, Mohamed Wiem Mkaouer, Ali Ouni, Timofey Bryksin, Le Nguyen, Amit Kini, and Aditya Thakur. "AntiCopyPaster: Extracting Code Duplicates As Soon As They Are Introduced in the IDE." In 37th IEEE/ACM International Conference on Automated Software Engineering, pp. 1-4. 2022.
+
+The extended version of this work:
+
+> AlOmar, Eman Abdullah, Anton Ivanov, Zarina Kurbatova, Yaroslav Golubev, Mohamed Wiem Mkaouer, Ali Ouni, Timofey Bryksin, Le Nguyen, Amit Kini, and Aditya Thakur. "Just-in-time code duplicates extraction." Information and Software Technology 158 (2023): 107169.
 
 ## Repository cloning
 
